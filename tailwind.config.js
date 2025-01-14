@@ -13,9 +13,17 @@ export default {
         'secondary-1': '#DFDFDF',
         'secondary-2': '#A6A6A6',
         'danger': '#FF4141',
-        'danger-50%': '#FF4141',
         'success': '#27C651',
         'warning': '#FEB43D',
+      },
+      animation: {
+        pulse2: 'pulse2 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
+      keyframes: {
+        pulse2: {
+          '0%, 100%': { opacity: 1 },
+          '50%': { opacity: .2 }
+        }
       }
     },
   },

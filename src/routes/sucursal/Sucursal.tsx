@@ -3,6 +3,7 @@ import logoVertical from '../../assets/vertical.png'
 import { useForm } from '../../hooks';
 import { InputLoginPassword, InputLoginText } from '../../components/Input';
 import { Button } from '../../components/Button';
+import { InfoNotification } from '../../components/Notification';
 
 interface FormularioInterface {
     nit: string;
@@ -21,6 +22,12 @@ export default function Sucursal() {
     }
     return (
         <div>
+
+            <InfoNotification 
+                tittle='Titulo' 
+                description='Lorem Ipsum is simply dummy text of the.' 
+            />
+
             <div className="w-full h-screen bg-primary-1 flex items-center justify-center " >
                 <div className="p-10 rounded-[20px] bg-white flex flex-col items-center justify-center" >
                     <img src={logoVertical} alt="logo-vertical" width={'400px'} />
@@ -44,7 +51,7 @@ export default function Sucursal() {
                             required={true}
                             />
                         <div className='flex justify-center items-center mt-6' >
-                            <Button label='Iniciar sesion' type={'submit'} />
+                            <Button label='Iniciar sesion' type={'submit'}/>
                         </div>
                     </form>
                 </div>
