@@ -3,7 +3,10 @@ import logoVertical from '../../assets/vertical.png'
 import { useForm } from '../../hooks';
 import { InputLoginPassword, InputLoginText } from '../../components/Input';
 import { Button } from '../../components/Button';
-import { InfoNotification } from '../../components/Notification';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+// import { showNotificationError, showNotificationInfo, showNotificationLoading, showNotificationSuccess, showNotificationWarning } from '../../redux/notificationSlice';
+import { Notification } from '../../components/Notification';
 
 interface FormularioInterface {
     nit: string;
@@ -14,6 +17,8 @@ export default function Sucursal() {
 
     const formulario: FormularioInterface = { nit:'', password:''}
     const {data, handleInputChange} = useForm<FormularioInterface>(formulario);
+    // const dispatch = useDispatch<AppDispatch>();
+    const { showNotification } = useSelector((s: RootState) => s.Notification)
 
 
     const onSubmit = (e: FormEvent) => {
@@ -22,11 +27,7 @@ export default function Sucursal() {
     }
     return (
         <div>
-
-            <InfoNotification 
-                tittle='Titulo' 
-                description='Lorem Ipsum is simply dummy text of the.' 
-            />
+            { showNotification&& <Notification/> }
 
             <div className="w-full h-screen bg-primary-1 flex items-center justify-center " >
                 <div className="p-10 rounded-[20px] bg-white flex flex-col items-center justify-center" >
@@ -54,6 +55,14 @@ export default function Sucursal() {
                             <Button label='Iniciar sesion' type={'submit'}/>
                         </div>
                     </form>
+
+                    {/* <div>
+                        <button type="button" onClick={ () => { dispatch( showNotificationLoading( { tittle:'Loading', description: 'Una descripcion del loading' }))}}>Loading</button>
+                        <button type="button" onClick={ () => { dispatch( showNotificationError( { tittle:'Error', description: 'Una descripcion del error' }))}}>Error</button>
+                        <button type="button" onClick={ () => { dispatch( showNotificationSuccess( { tittle:'Success', description: 'Una descripcion del success' }))}}>Success</button>
+                        <button type="button" onClick={ () => { dispatch( showNotificationInfo( { tittle:'Info', description: 'Una descripcion del info' }))}}>Info</button>
+                        <button type="button" onClick={ () => { dispatch( showNotificationWarning( { tittle:'Warning', description: 'Una descripcion del warning' }))}}>Warning</button>
+                    </div> */}
                 </div>
             </div>
         </div>
