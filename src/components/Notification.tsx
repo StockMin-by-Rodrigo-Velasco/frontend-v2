@@ -5,7 +5,7 @@ import { MdErrorOutline } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from '../redux/store';
 import { TiWarningOutline } from "react-icons/ti";
-import { hideNotification } from "../redux/notificationSlice";
+import { hideNotification } from "../redux/notification/notificationSlice";
 
 
 

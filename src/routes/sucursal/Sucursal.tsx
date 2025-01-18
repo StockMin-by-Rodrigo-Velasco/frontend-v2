@@ -3,27 +3,24 @@ import logoVertical from '../../assets/vertical.png'
 import { useForm } from '../../hooks';
 import { InputLoginPassword, InputLoginText } from '../../components/Input';
 import { Button } from '../../components/Button';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../redux/store';
 // import { showNotificationError, showNotificationInfo, showNotificationLoading, showNotificationSuccess, showNotificationWarning } from '../../redux/notificationSlice';
 import { Notification } from '../../components/Notification';
-
-interface FormularioInterface {
-    nit: string;
-    password: string;
-}
+import { SucursalLoginInterface } from '../../interface';
+import { sucursalLoginAPI } from '../../redux/sucursal/sucursalThunk';
 
 export default function Sucursal() {
 
-    const formulario: FormularioInterface = { nit:'', password:''}
-    const {data, handleInputChange} = useForm<FormularioInterface>(formulario);
-    // const dispatch = useDispatch<AppDispatch>();
+    const formulario: SucursalLoginInterface = { nit:'', password:''}
+    const {data, handleInputChange} = useForm<SucursalLoginInterface>(formulario);
+    const dispatch = useDispatch<AppDispatch>();
     const { showNotification } = useSelector((s: RootState) => s.Notification)
 
 
     const onSubmit = (e: FormEvent) => {
         e.preventDefault();
-        console.log(data)
+        dispatch( sucursalLoginAPI( data ) );
     }
     return (
         <div>
