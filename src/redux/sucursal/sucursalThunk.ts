@@ -1,26 +1,154 @@
 import axios, { AxiosResponse } from "axios";
 import { AppDispatch } from "../store"
 import api from "../../api/config";
-import { SucursalLoginInterface } from "../../interface";
+import { LoginSucursalInterface, LoginSucursalUserInterface } from "../../interface";
 import { hideNotification, showNotificationError } from "../notification/notificationSlice";
-import { sucursalLogin } from "./sucursalSlice";
+import { getSucursalUsers, loginSucursal, loginSucursalUser } from "./sucursalSlice";
+import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from "../aplication/aplicationSlice";
+import Cookie from 'js-cookie';
 
 
-export const sucursalLoginAPI = ( data: SucursalLoginInterface ) => {
+export const loginSucursalAPI = ( data: LoginSucursalInterface, navigate: (path: string)=>void ) => {
     return async (dispatch: AppDispatch) => {
         try {
-            const res: AxiosResponse = await api.post('sucursal-ms/login', data )
-            // console.log(res.data)
-            dispatch(sucursalLogin( {...res.data} ))
-            
+            dispatch(startLoadingData());
+            const res: AxiosResponse = await api.post('sucursal-ms/login-sucursal', data )
+            const {token} = res.data;
+
+            Cookie.set( 'token', token, {path:'/'} )
+
+            dispatch(loginSucursal( {...res.data} ));
+            dispatch(finishLoadingData());
+            navigate('/login-user');
         } catch (error) {
             if( axios.isAxiosError(error) && error.response ){
                 const {data} = error.response;
                 dispatch(showNotificationError({tittle: 'INICIO DE SESION', description: data.message}));
+                dispatch(finishLoadingData());
+                setTimeout( () => dispatch(hideNotification()), 5000 );
+            }else console.log(error);
+        }
+    }
+}
+
+export const loginSucursalUserAPI = (data: LoginSucursalUserInterface, navigate: (path: string) => void) => {
+    return async (dispatch: AppDispatch) => {
+        try {
+            dispatch(startLoadingData());
+            const res: AxiosResponse = await api.post('sucursal-ms/login-sucursal-user', data )
+            const {token} = res.data;
+
+            Cookie.set( 'userToken', token, {path:'/'} );
+
+            const {data: userData} = res.data;
+            dispatch(loginSucursalUser({...userData}));
+            dispatch(finishLoadingData());
+            navigate('/main');
+        } catch (error) {
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                dispatch(showNotificationError({tittle: 'INICIO DE SESION', description: data.message}));
+                dispatch(finishLoadingData());
 
                 setTimeout( () => dispatch(hideNotification()), 5000 );
-
             }else console.log(error);
+        }
+    }
+}
+
+export const getSucursalUsersAPI = ( sucursalId: string ) => {
+    return async ( dispatch: AppDispatch ) => {
+        try {
+            const res: AxiosResponse = await api.get(`sucursal-ms/get-sucursal-users/${sucursalId}`)
+            const {users} = res.data;
+            dispatch(getSucursalUsers([...users]));        
+        } catch (error) {
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                dispatch(showNotificationError({tittle: 'USUARIOS', description: data.message}));
+                setTimeout( () => dispatch(hideNotification()), 5000 );
+            }else console.log(error);            
+        }
+    }
+}
+
+export const verifyTokenSucursalByCookieAPI = ( navigate: (path:string) => void ) => {
+    return async ( dispatch: AppDispatch ) => {
+        try {
+            dispatch(startLoadingAplication());
+            const token = Cookie.get('token');
+
+            if(token){
+                const res:AxiosResponse = await api.get('sucursal-ms/verify-token-sucursal', {
+                    headers: {Authorization: `Bearer ${token}`}
+                });
+                const { token: newToken, ...data } = res.data;
+                dispatch(loginSucursal( {...data} ));
+                Cookie.set('token', token, {path:'/'});
+                navigate('/login-user');
+            }
+            dispatch(finishLoadingAplication());
+        } catch (error) {
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                console.log(data)
+            }else console.log(error);  
+            dispatch(finishLoadingAplication());
+        }
+    }
+}
+
+export const verifyTokenSucursalUsersByCookieAPI = ( navigate: (path:string) => void ) => {
+    return async ( dispatch: AppDispatch ) => {
+        try {
+            dispatch(startLoadingAplication());
+            const token = Cookie.get('token');
+
+            if(token){
+
+                const res:AxiosResponse = await api.get('sucursal-ms/verify-token-sucursal', {
+                    headers: {Authorization: `Bearer ${token}`}
+                });
+                const { token: newToken, ...data } = res.data;
+                dispatch(loginSucursal( {...data} ));
+                Cookie.set('token', token, {path:'/'});
+                dispatch(getSucursalUsersAPI(data.id));
+
+            }else navigate('/');
+            dispatch(finishLoadingAplication());
+        } catch (error) {
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                console.log(data)
+            }else console.log(error);  
+            dispatch(finishLoadingAplication());
+            navigate('/')
+        }
+    }
+}
+
+export const verifyTokenSucursalUserByCookieAPI = ( navigate: (path:string) => void ) => {
+    return async ( dispatch: AppDispatch ) => {
+        try {
+            dispatch(startLoadingAplication());
+            const token = Cookie.get('tokenUser');
+
+            if(token){
+                const res:AxiosResponse = await api.get('sucursal-ms/verify-token-sucursal-user', {
+                    headers: {Authorization: `Bearer ${token}`}
+                });
+                const {data} = res.data;
+                dispatch(loginSucursalUser( {...data} ));
+                navigate('/main');
+            }else navigate('/login-user');
+            dispatch(finishLoadingAplication());
+        } catch (error) {
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                console.log(data)
+            }else console.log(error);  
+            dispatch(finishLoadingAplication());
+            navigate('/login-user');
         }
     }
 }

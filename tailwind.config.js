@@ -17,12 +17,12 @@ export default {
         'warning': '#FEB43D',
       },
       animation: {
-        pulse2: 'pulse2 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        leftToRight: 'leftToRight 2s infinite',
       },
       keyframes: {
-        pulse2: {
-          '0%, 100%': { opacity: 1 },
-          '50%': { opacity: .2 }
+        leftToRight: {
+          '0%': { left: '-400px' },
+          '100%': { left: '500px' }
         }
       }
     },
