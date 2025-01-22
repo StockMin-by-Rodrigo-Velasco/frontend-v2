@@ -4,10 +4,11 @@ import { Outlet, useNavigate } from "react-router";
 import { AppDispatch, RootState } from "../../redux/store";
 import { getSucursalUsersAPI, verifyTokenSucursalUsersByCookieAPI } from "../../redux/sucursal/sucursalThunk";
 import logos from "../../assets/logos";
-import perfil from "../../assets/users/img1.svg";
 import { selectSucursalUser, logoutSucursal } from "../../redux/sucursal/sucursalSlice";
 import { ButtonLogout } from "../../components/Buttons";
 import LoadingApplication from "../../components/LoadingApplication";
+
+import perfil from "../../assets/users/img1.svg";
 
 export default function SucursalUsers() {
 

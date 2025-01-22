@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { AppDispatch } from "../store"
+import { AppDispatch, RootState } from "../store"
 import api from "../../api/config";
 import { LoginSucursalInterface, LoginSucursalUserInterface } from "../../interface";
 import { hideNotification, showNotificationError } from "../notification/notificationSlice";
@@ -105,7 +105,6 @@ export const verifyTokenSucursalUsersByCookieAPI = ( navigate: (path:string) => 
             const token = Cookie.get('token');
 
             if(token){
-
                 const res:AxiosResponse = await api.get('sucursal-ms/verify-token-sucursal', {
                     headers: {Authorization: `Bearer ${token}`}
                 });
@@ -113,7 +112,6 @@ export const verifyTokenSucursalUsersByCookieAPI = ( navigate: (path:string) => 
                 dispatch(loginSucursal( {...data} ));
                 Cookie.set('token', token, {path:'/'});
                 dispatch(getSucursalUsersAPI(data.id));
-
             }else navigate('/');
             dispatch(finishLoadingAplication());
         } catch (error) {
@@ -128,14 +126,33 @@ export const verifyTokenSucursalUsersByCookieAPI = ( navigate: (path:string) => 
 }
 
 export const verifyTokenSucursalUserByCookieAPI = ( navigate: (path:string) => void ) => {
-    return async ( dispatch: AppDispatch ) => {
+    return async ( dispatch: AppDispatch, getState: () => RootState) => {
         try {
             dispatch(startLoadingAplication());
-            const token = Cookie.get('tokenUser');
+            const {id: sucursalId} = getState().Sucursal;
 
-            if(token){
+            //1. Verificar los datos de la sucursal
+            if(sucursalId === ''){
+                const token = Cookie.get('token');
+                if(!token){
+                    navigate('/');
+                    return;
+                }else{
+                    const res:AxiosResponse = await api.get('sucursal-ms/verify-token-sucursal', {
+                        headers: {Authorization: `Bearer ${token}`}
+                    });
+                    const { token: newToken, ...data } = res.data;
+                    dispatch(loginSucursal( {...data} ));
+                    Cookie.set('token', token, {path:'/'});
+                    dispatch(getSucursalUsersAPI(data.id));
+                }
+            }
+
+            //2. Verificar los datos del usuario
+            const userToken = Cookie.get('userToken');
+            if(userToken){
                 const res:AxiosResponse = await api.get('sucursal-ms/verify-token-sucursal-user', {
-                    headers: {Authorization: `Bearer ${token}`}
+                    headers: {Authorization: `Bearer ${userToken}`}
                 });
                 const {data} = res.data;
                 dispatch(loginSucursalUser( {...data} ));

@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
-import { useNavigate } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 import { verifyTokenSucursalUserByCookieAPI } from "../../redux/sucursal/sucursalThunk";
+import Navbar from "./Navbar";
 
 export default function MainAplication() {
   const navigate = useNavigate();
@@ -13,8 +14,11 @@ export default function MainAplication() {
     if( userData.id === '') dispatch(verifyTokenSucursalUserByCookieAPI(navigate));  
   }, [])
   return (
-    <div>
-      <h1>Hello MainAplication</h1>
+    <div className="w-screen h-screen bg-primary-1 p-2 flex" >
+      <Navbar/>
+      <div className="w-full h-full bg-white ms-2 rounded p-2" >
+        <Outlet/>
+      </div>
     </div>
   );
 }
