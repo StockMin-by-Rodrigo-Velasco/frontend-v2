@@ -16,6 +16,7 @@ export default function MainAplication() {
   return (
     <div className="w-screen h-screen bg-primary-1 p-2 flex" >
       <Navbar/>
+
       <div className="w-full h-full bg-white ms-2 rounded p-2" >
         <Outlet/>
       </div>

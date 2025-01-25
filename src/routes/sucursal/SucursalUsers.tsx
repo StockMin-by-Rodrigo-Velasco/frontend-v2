@@ -8,7 +8,8 @@ import { selectSucursalUser, logoutSucursal } from "../../redux/sucursal/sucursa
 import { ButtonLogout } from "../../components/Buttons";
 import LoadingApplication from "../../components/LoadingApplication";
 
-import perfil from "../../assets/users/img1.svg";
+import { perfilColor, perfilImg } from "../../assets/perfil";
+
 
 export default function SucursalUsers() {
 
@@ -43,14 +44,15 @@ export default function SucursalUsers() {
 
         <div className="flex my-5">
           {users?.map(u => (
-            <div
-              key={u.id}
-              className="bg-slate-400 me-4 rounded-lg flex flex-col items-center border-2 border-transparent hover:border-primary-3 transition-all cursor-pointer"
-              onClick={() => { openSucursalLoginUser(u.id, u.sucursalId) }}
-            >
-              <img src={perfil} width='100px' />
-              <p className="uppercase font-semibold" >{u.nombre}</p>
-            </div>
+              <div
+                key={u.id}
+                style={{backgroundColor: perfilColor(u.imagen.split(' ')[1])}}
+                className='me-4 rounded-lg flex flex-col items-center border-2 border-transparent hover:border-primary-3 transition-all cursor-pointer'
+                onClick={() => { openSucursalLoginUser(u.id, u.sucursalId) }}
+              >
+                <img src={perfilImg(u.imagen.split(' ')[0])} width='100px'/>
+                <p className="uppercase font-semibold" >{u.nombre}</p>
+              </div>
           ))}
         </div>
         <div className="flex m-4">

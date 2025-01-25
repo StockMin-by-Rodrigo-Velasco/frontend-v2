@@ -2,17 +2,20 @@ import logos from "../../assets/logos";
 import { FaPlus, FaRegUser } from "react-icons/fa";
 import { TbCar, TbLogout2 } from "react-icons/tb";
 import { IoOptions } from "react-icons/io5";
-import { Link, NavLink, useLocation, useNavigate } from "react-router";
+import { NavLink, useLocation, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
 
-import perfil from "../../assets/users/img1.svg";
+
 import { logoutSucursalUser } from "../../redux/sucursal/sucursalSlice";
 import { BiObjectsHorizontalLeft } from "react-icons/bi";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { GrScorecard } from "react-icons/gr";
 import { HiOutlineInboxStack } from "react-icons/hi2";
 import { AiOutlineAudit } from "react-icons/ai";
+import { useState } from 'react';
+import PerfilWindow from "./windows/PerfilWindow";
+import { perfilColor, perfilImg } from "../../assets/perfil";
 
 const menu = [
     {
@@ -61,6 +64,7 @@ export default function Navbar() {
     const {userData} = useSelector((s:RootState) => s.Sucursal);
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
+    const [viewPerfil, setViewPerfil] = useState(false);
 
 
     const logout = () => {
@@ -69,6 +73,10 @@ export default function Navbar() {
     }
     return (
         <div className="bg-primary-3 w-[270px] flex flex-col items-center text-white rounded" >
+
+            {viewPerfil&& <PerfilWindow closeButton={() => setViewPerfil(false)} />}
+
+
             <img src={logos.logoVerticalWhite} width={'150px'} className="mt-3 mb-10" />
             {menu.map(i => (
                 <div key={i.path} className="mb-2" >
@@ -93,9 +101,12 @@ export default function Navbar() {
             ))}
             
             <div className="w-full mt-auto p-2 flex items-center">
-                <Link to='#' className="bg-slate-400 w-8 h-8 rounded">
-                    <img src={perfil} width='30px'/>
-                </Link>
+                <div className="flex justify-center items-center w-8 h-8 rounded cursor-pointer transition-all duration-300 hover:w-9 hover:h-9"
+                    style={{backgroundColor: perfilColor(userData.imagen.split(' ')[1])}}
+                    onClick={() => {setViewPerfil(true)}}
+                >
+                    <img src={perfilImg(userData.imagen.split(' ')[0])} width='30px'/>
+                </div>
                 <div className="flex flex-col mx-2">
                     <span className="uppercase text-[12px]" >{userData.nombre} {userData.apellido}</span>
                     <span className="text-[11px] font-thin" >{userData.ci}</span>       

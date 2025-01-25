@@ -28,6 +28,6 @@ const {data, handleInputChange} = useForm<FormularioInterface>(initialForm);
 ### Uso de Componentes
 #### Notificaciones
 ~~~
-// Usar el reducer y en y enviar el titulo (tittle) y su descripcion (description)
+// Usar el reducer y enviar el titulo (tittle) con su descripcion (description)
 dispatch( showNotificationLoading( { tittle:'Loading', description: 'Una descripcion del loading' } ) )
 ~~~

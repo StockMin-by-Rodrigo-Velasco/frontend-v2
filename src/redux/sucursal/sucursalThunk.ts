@@ -1,9 +1,9 @@
 import axios, { AxiosResponse } from "axios";
 import { AppDispatch, RootState } from "../store"
 import api from "../../api/config";
-import { LoginSucursalInterface, LoginSucursalUserInterface } from "../../interface";
-import { hideNotification, showNotificationError } from "../notification/notificationSlice";
-import { getSucursalUsers, loginSucursal, loginSucursalUser } from "./sucursalSlice";
+import { LoginSucursalInterface, LoginSucursalUserInterface, UpdateSucursalUserInterface } from "../../interface";
+import { hideNotification, showNotificationError, showNotificationSuccess } from "../notification/notificationSlice";
+import { getSucursalUsers, loginSucursal, loginSucursalUser, updateSucursalUser } from "./sucursalSlice";
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from "../aplication/aplicationSlice";
 import Cookie from 'js-cookie';
 
@@ -52,6 +52,29 @@ export const loginSucursalUserAPI = (data: LoginSucursalUserInterface, navigate:
 
                 setTimeout( () => dispatch(hideNotification()), 5000 );
             }else console.log(error);
+        }
+    }
+}
+
+export const updateSucursalUserAPI = (dataUpdate: UpdateSucursalUserInterface) => {
+    return async (dispatch: AppDispatch) => {
+        try {
+            dispatch(startLoadingData());
+            const res: AxiosResponse = await api.post('sucursal-ms/update-sucursal-user', dataUpdate );
+            const {message, data} = res.data;
+
+            dispatch(updateSucursalUser({...data}))
+            dispatch(showNotificationSuccess({tittle: 'Actualizacion de perfil', description: message}));
+            setTimeout( () => dispatch(hideNotification()), 5000 );
+            dispatch(finishLoadingData());            
+        } catch (error) {
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                dispatch(showNotificationError({tittle: 'Actualizacion de perfil', description: data.message}));
+                dispatch(finishLoadingData());
+
+                setTimeout( () => dispatch(hideNotification()), 5000 );
+            }else console.log(error);            
         }
     }
 }

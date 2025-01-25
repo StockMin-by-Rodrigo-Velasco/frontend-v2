@@ -76,6 +76,9 @@ const SucursalSlice = createSlice({
     loginSucursalUser: (state, action: PayloadAction<UserDataInterface>) => {
         state.userData = {...action.payload};
     },
+    updateSucursalUser: (state, action: PayloadAction<UserDataInterface>) => {
+        state.userData = {...state.userData,...action.payload};
+    },
     logoutSucursalUser: (state) => {
         state.userData = { id:'', sucursalId:'', nombre:'', apellido:'', ci:'', imagen:'', contacto:'', direccion:'', permisos:'', activo:false };
     },
@@ -93,6 +96,7 @@ export const {
     logoutSucursal,
     loginSucursalUser,
     logoutSucursalUser,
+    updateSucursalUser,
     getSucursalUsers,
     selectSucursalUser,
 } = SucursalSlice.actions

@@ -8,3 +8,16 @@ export interface LoginSucursalUserInterface{
     sucursalId: string;
     password: string;
 }
+
+export interface UpdateSucursalUserInterface{
+    id: string;
+    sucursalId: string;
+    nombre?: string;
+    apellido?: string;
+    ci?: string;
+    imagen?: string;
+    contacto?: string;
+    direccion?: string;
+    oldPassword?: string;
+    password?: string;
+}
