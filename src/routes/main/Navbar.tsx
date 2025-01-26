@@ -72,7 +72,7 @@ export default function Navbar() {
         navigate('/login-user');
     }
     return (
-        <div className="bg-primary-3 w-[270px] flex flex-col items-center text-white rounded" >
+        <div className="bg-primary w-[270px] flex flex-col items-center text-white rounded" >
 
             {viewPerfil&& <PerfilWindow closeButton={() => setViewPerfil(false)} />}
 
@@ -83,7 +83,7 @@ export default function Navbar() {
                     <NavLink
                         to={i.path}
                         className={
-                            ({ isActive }) => `bg-primary-2 ${isActive ? 'bg-opacity-100' : 'bg-opacity-60'} mb-2 w-[180px] px-3 py-1 rounded-full flex items-center hover:bg-opacity-100`
+                            ({ isActive }) => `bg-info ${isActive ? 'bg-opacity-100' : 'bg-opacity-60'} mb-2 w-[180px] px-3 py-1 rounded-full flex items-center hover:bg-opacity-100`
                         }
                     >
                         {i.icon}
@@ -91,7 +91,7 @@ export default function Navbar() {
                     </NavLink>
                 {(pathname === i.path)&& i.subTitles.map(subI => (
                     <div key={subI.title} 
-                        className="flex font-thin text-sm ms-5 border-b-2 rounded-tl rounded-tr border-primary-2 items-center py-[2px] px-1 cursor-pointer hover:bg-white hover:bg-opacity-15" 
+                        className="flex font-thin text-sm ms-5 border-b-2 rounded-tl rounded-tr border-info items-center py-[2px] px-1 cursor-pointer hover:bg-white hover:bg-opacity-15" 
                     >
                         {subI.icon}
                         <span className="ms-2" >{subI.title} </span>                      

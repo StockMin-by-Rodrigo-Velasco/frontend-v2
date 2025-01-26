@@ -7,21 +7,29 @@ import React, { useState } from "react";
 import { IoCheckmark, IoClose} from "react-icons/io5";
 import { updateSucursalUserAPI } from "../../../redux/sucursal/sucursalThunk";
 import { AiOutlineLoading } from "react-icons/ai";
-import { Notification } from "../../../components/Notification";
+import { InputText } from "../../../components/Input";
+import { useForm } from "../../../hooks";
 
 interface PerfilInterface {
   closeButton: () => void
+}
+
+interface UpdateUserInterface {
+  nombre: string;
+  apellido: string;
+  contacto: string;
+  direccion: string;
 }
 
 export default function PerfilWindow({ closeButton }: PerfilInterface) {
 
   const { userData } = useSelector((s: RootState) => s.Sucursal);
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
-  const {showNotification} = useSelector((s: RootState) => s.Notification);
   const dispatch = useDispatch<AppDispatch>();
 
   const [imagen, setImagen] = useState(userData.imagen);
   const [modeEditImagen, setModeEditImagen] = useState(false);
+  const [modeEditData, setModeEditData] = useState(false);
 
   const changeColor = (e: React.MouseEvent<HTMLButtonElement>) => {
     const newColor = e.currentTarget.value;
@@ -44,16 +52,26 @@ export default function PerfilWindow({ closeButton }: PerfilInterface) {
     setModeEditImagen(false);  
   }
 
+  const initialStateForm: UpdateUserInterface = {nombre:userData.nombre, apellido:userData.apellido, contacto:userData.contacto, direccion:userData.direccion};
+  const {data: formData, handleInputChange, resetData} = useForm<UpdateUserInterface>(initialStateForm);
+
+  const saveData = () => {
+    dispatch(updateSucursalUserAPI( {id: userData.id, sucursalId: userData.sucursalId, ...formData} ));
+    setModeEditData(false);
+  }
+
+  const cancelSaveData = () => {
+    resetData();
+    setModeEditData(false);
+  }
+
   return (
     <Windows tittle="configuracion de perfil" closeButton={closeButton} >
-      {showNotification&& <Notification/>}
-
       {/* AVATAR EDIT */}
       <div className="flex">
-
-        <div className="p-3 flex flex-col">
+        <div className="p-5 flex flex-col">
           <div style={{ backgroundColor: perfilColor(imagen.split(' ')[1]) }} className="rounded relative">
-            <img src={perfilImg(imagen.split(' ')[0])} width='300px' />
+            <img src={perfilImg(imagen.split(' ')[0])} width={modeEditImagen?'245px':'300px'}/>
             {!modeEditImagen &&
               <button
                 type="button"
@@ -70,14 +88,14 @@ export default function PerfilWindow({ closeButton }: PerfilInterface) {
               <div className="absolute top-2 right-2 flex">
                 <button
                   type="button"
-                  className="text-white transition-all bg-success bg-opacity-70 rounded-full w-[30px] h-[30px] flex justify-center items-center me-3 text-[24px] hover:bg-opacity-100"
+                  className="text-white transition-all border-white border-2 bg-success rounded-full w-[30px] h-[30px] flex justify-center items-center me-3 text-[24px] hover:brightness-75"
                   onClick={saveImagen}
                 >
                   <IoCheckmark/>
                 </button>
                 <button
                   type="button"
-                  className=" text-white transition-all bg-danger bg-opacity-70 rounded-full w-[30px] h-[30px] flex justify-center items-center text-[24px] hover:bg-opacity-100"
+                  className=" text-white transition-all border-white border-2 bg-danger rounded-full w-[30px] h-[30px] flex justify-center items-center text-[24px] hover:brightness-75"
                   onClick={cancelSaveImagen}
                 >
                   <IoClose/>
@@ -105,6 +123,31 @@ export default function PerfilWindow({ closeButton }: PerfilInterface) {
         }
 
       </div>
+
+      <form className="flex flex-col px-5 pb-5" >
+        <h1 className="text-secondary flex items-center hover:cursor-pointer" onClick={() => {setModeEditData(!modeEditData)}} > <span className="me-2" >DATOS DE USUARIO </span> <FaEdit/></h1>
+        <InputText className="w-full" handleInputChange={handleInputChange} name="nombre" value={formData.nombre} placeholder="Nombre" required disabled={!modeEditData} />
+        <InputText className="w-full" handleInputChange={handleInputChange} name="apellido" value={formData.apellido} placeholder="Apellido" required disabled={!modeEditData} />
+        <InputText className="w-full" handleInputChange={handleInputChange} name="direccion" value={formData.direccion} placeholder="Direccion" required disabled={!modeEditData} />
+        <InputText className="w-full" handleInputChange={handleInputChange} name="contacto" value={formData.contacto} placeholder="Contacto" required disabled={!modeEditData} />
+
+        {modeEditData&& <div className="mt-3 flex justify-center" >
+          <button 
+            className="bg-danger me-3 bg-opacity-85 px-2 rounded-full text-white hover:bg-opacity-100 disabled:bg-opacity-85 disabled:cursor-not-allowed" 
+            disabled={loadingData} 
+            type="button" 
+            onClick={cancelSaveData} 
+          >Cancelar
+          </button>
+          <button 
+          className="bg-success bg-opacity-85 px-2 rounded-full text-white hover:bg-opacity-100 disabled:bg-opacity-85 disabled:cursor-not-allowed flex items-center" 
+          disabled={loadingData} 
+          type="submit" 
+          onClick={saveData} 
+          >Guardar {loadingData&&<AiOutlineLoading className="ms-2 animate-spin h-[12px] w-[12px]" color="white" />}
+          </button>
+        </div>}
+      </form>
     </Windows>
   );
 }

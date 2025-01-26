@@ -13,7 +13,7 @@ export default function Windows({children, tittle, closeButton}:WindowsPropInter
         <div className="bg-white max-w-[80%] rounded-lg text-black overflow-hidden">
             
             {/* HEADER */}
-            <div className="bg-primary-3 text-white w-full flex" >
+            <div className="bg-primary text-white w-full flex" >
                 <span className="ms-5 uppercase" >{tittle}</span>
                 <button className="ms-auto bg-danger bg-opacity-60 w-5 flex justify-center items-center text-[18px] hover:bg-opacity-100" type="button" onClick={closeButton}> <IoIosClose/> </button>
             </div>
