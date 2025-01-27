@@ -20,4 +20,5 @@ export interface UpdateSucursalUserInterface{
     direccion?: string;
     oldPassword?: string;
     password?: string;
+    rePassword?: string;
 }

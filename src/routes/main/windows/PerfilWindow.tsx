@@ -4,11 +4,12 @@ import { AppDispatch, RootState } from "../../../redux/store";
 import { perfilColor, perfilImg } from "../../../assets/perfil";
 import { FaEdit } from "react-icons/fa";
 import React, { useState } from "react";
-import { IoCheckmark, IoClose} from "react-icons/io5";
+import { IoCheckmark, IoClose } from "react-icons/io5";
 import { updateSucursalUserAPI } from "../../../redux/sucursal/sucursalThunk";
 import { AiOutlineLoading } from "react-icons/ai";
-import { InputText } from "../../../components/Input";
+import { InputPassword, InputText } from "../../../components/Input";
 import { useForm } from "../../../hooks";
+import { FormEvent } from 'react';
 
 interface PerfilInterface {
   closeButton: () => void
@@ -21,15 +22,22 @@ interface UpdateUserInterface {
   direccion: string;
 }
 
+interface UpdateUserPasswordInterface {
+  oldPassword: string;
+  password: string;
+  rePassword: string;
+}
+
 export default function PerfilWindow({ closeButton }: PerfilInterface) {
 
   const { userData } = useSelector((s: RootState) => s.Sucursal);
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
   const dispatch = useDispatch<AppDispatch>();
 
+  //* ----- EDIT IMAGE -----
   const [imagen, setImagen] = useState(userData.imagen);
   const [modeEditImagen, setModeEditImagen] = useState(false);
-  const [modeEditData, setModeEditData] = useState(false);
+
 
   const changeColor = (e: React.MouseEvent<HTMLButtonElement>) => {
     const newColor = e.currentTarget.value;
@@ -43,25 +51,49 @@ export default function PerfilWindow({ closeButton }: PerfilInterface) {
   }
 
   const saveImagen = () => {
-    dispatch(updateSucursalUserAPI( {id: userData.id, sucursalId: userData.sucursalId, imagen} ));
-    setModeEditImagen(false);  
+    dispatch(updateSucursalUserAPI({ id: userData.id, sucursalId: userData.sucursalId, imagen }));
+    setModeEditImagen(false);
   }
 
   const cancelSaveImagen = () => {
     setImagen(userData.imagen);
-    setModeEditImagen(false);  
+    setModeEditImagen(false);
+  }
+  const initialStateFormData: UpdateUserInterface = { nombre: userData.nombre, apellido: userData.apellido, contacto: userData.contacto, direccion: userData.direccion };
+  const { data: formData, handleInputChange: handleInputChangeData, resetData: resetFormData } = useForm<UpdateUserInterface>(initialStateFormData);
+
+  const initialStateFormPassword: UpdateUserPasswordInterface = { oldPassword: '', password: '', rePassword: '' };
+  const { data: formPassword, handleInputChange: handleInputChangePassword, resetData: resetDataPassword } = useForm<UpdateUserPasswordInterface>(initialStateFormPassword);
+
+  //* ----- EDIT PASSWORS -----
+  const [modeEditPassword, setModeEditPassword] = useState(false);
+
+  const handleModeEditPassword = () => {
+    setModeEditPassword(!modeEditPassword);
+    setModeEditData(false);
+    resetFormData();
   }
 
-  const initialStateForm: UpdateUserInterface = {nombre:userData.nombre, apellido:userData.apellido, contacto:userData.contacto, direccion:userData.direccion};
-  const {data: formData, handleInputChange, resetData} = useForm<UpdateUserInterface>(initialStateForm);
+  //* ----- EDIT DATA -----
+  const [modeEditData, setModeEditData] = useState(false);
 
-  const saveData = () => {
-    dispatch(updateSucursalUserAPI( {id: userData.id, sucursalId: userData.sucursalId, ...formData} ));
-    setModeEditData(false);
+  const handleModeEditData = () => {
+    setModeEditData(!modeEditData);
+    setModeEditPassword(false);
+    resetDataPassword();
+  }
+
+  //* ----- SUBMIT -----
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    
+    // console.log({ id: userData.id, sucursalId: userData.sucursalId, ...formData, ...formPassword })
+    dispatch(updateSucursalUserAPI( {id: userData.id, sucursalId: userData.sucursalId, ...formData, ...formPassword} ));
   }
 
   const cancelSaveData = () => {
-    resetData();
+    resetFormData();
+    resetDataPassword();
     setModeEditData(false);
   }
 
@@ -71,7 +103,7 @@ export default function PerfilWindow({ closeButton }: PerfilInterface) {
       <div className="flex">
         <div className="p-5 flex flex-col">
           <div style={{ backgroundColor: perfilColor(imagen.split(' ')[1]) }} className="rounded relative">
-            <img src={perfilImg(imagen.split(' ')[0])} width={modeEditImagen?'245px':'300px'}/>
+            <img src={perfilImg(imagen.split(' ')[0])} width={modeEditImagen ? '245px' : '300px'} />
             {!modeEditImagen &&
               <button
                 type="button"
@@ -79,8 +111,8 @@ export default function PerfilWindow({ closeButton }: PerfilInterface) {
                 onClick={() => { setModeEditImagen(true) }}
                 disabled={loadingData}
               >
-                {!loadingData&&<FaEdit/>}
-                {loadingData&&<AiOutlineLoading className="ms-2 animate-spin h-[40px] w-[40px]" color="white" />}
+                {!loadingData && <FaEdit />}
+                {loadingData && <AiOutlineLoading className="ms-2 animate-spin h-[40px] w-[40px]" color="white" />}
               </button>
             }
 
@@ -91,14 +123,14 @@ export default function PerfilWindow({ closeButton }: PerfilInterface) {
                   className="text-white transition-all border-white border-2 bg-success rounded-full w-[30px] h-[30px] flex justify-center items-center me-3 text-[24px] hover:brightness-75"
                   onClick={saveImagen}
                 >
-                  <IoCheckmark/>
+                  <IoCheckmark />
                 </button>
                 <button
                   type="button"
                   className=" text-white transition-all border-white border-2 bg-danger rounded-full w-[30px] h-[30px] flex justify-center items-center text-[24px] hover:brightness-75"
                   onClick={cancelSaveImagen}
                 >
-                  <IoClose/>
+                  <IoClose />
                 </button>
               </div>
             }
@@ -123,31 +155,72 @@ export default function PerfilWindow({ closeButton }: PerfilInterface) {
         }
 
       </div>
+      <div className="flex flex-col px-5 mb-3" >
+        <h1
+          className="text-secondary text-[12px] flex items-center hover:cursor-pointer hover:text-info"
+          onClick={handleModeEditData}
+        > <span className="me-2" >CAMBIAR INFORMACION </span> <FaEdit />
+        </h1>
+        <h1
+          className="text-secondary text-[12px] flex items-center hover:cursor-pointer hover:text-info"
+          onClick={handleModeEditPassword}
+        > <span className="me-2" >CAMBIAR CONTRASEÑA </span> <FaEdit />
+        </h1>
+      </div>
 
-      <form className="flex flex-col px-5 pb-5" >
-        <h1 className="text-secondary flex items-center hover:cursor-pointer" onClick={() => {setModeEditData(!modeEditData)}} > <span className="me-2" >DATOS DE USUARIO </span> <FaEdit/></h1>
-        <InputText className="w-full" handleInputChange={handleInputChange} name="nombre" value={formData.nombre} placeholder="Nombre" required disabled={!modeEditData} />
-        <InputText className="w-full" handleInputChange={handleInputChange} name="apellido" value={formData.apellido} placeholder="Apellido" required disabled={!modeEditData} />
-        <InputText className="w-full" handleInputChange={handleInputChange} name="direccion" value={formData.direccion} placeholder="Direccion" required disabled={!modeEditData} />
-        <InputText className="w-full" handleInputChange={handleInputChange} name="contacto" value={formData.contacto} placeholder="Contacto" required disabled={!modeEditData} />
+      {modeEditData&&
+        <form onSubmit={onSubmit} className="flex flex-col px-5 pb-5" >
+          <h1 className="text-center text-secondary" >CAMBIA TU INFORMACION</h1>
+          <div>
+            <InputText className="w-full" handleInputChange={handleInputChangeData} name="nombre" value={formData.nombre} placeholder="Nombre" required disabled={loadingData} />
+            <InputText className="w-full" handleInputChange={handleInputChangeData} name="apellido" value={formData.apellido} placeholder="Apellido" required disabled={loadingData} />
+            <InputText className="w-full" handleInputChange={handleInputChangeData} name="direccion" value={formData.direccion} placeholder="Direccion" required disabled={loadingData} />
+            <InputText className="w-full" handleInputChange={handleInputChangeData} name="contacto" value={formData.contacto} placeholder="Contacto" required disabled={loadingData} />
+          </div>
 
-        {modeEditData&& <div className="mt-3 flex justify-center" >
-          <button 
-            className="bg-danger me-3 bg-opacity-85 px-2 rounded-full text-white hover:bg-opacity-100 disabled:bg-opacity-85 disabled:cursor-not-allowed" 
-            disabled={loadingData} 
-            type="button" 
-            onClick={cancelSaveData} 
-          >Cancelar
-          </button>
-          <button 
-          className="bg-success bg-opacity-85 px-2 rounded-full text-white hover:bg-opacity-100 disabled:bg-opacity-85 disabled:cursor-not-allowed flex items-center" 
-          disabled={loadingData} 
-          type="submit" 
-          onClick={saveData} 
-          >Guardar {loadingData&&<AiOutlineLoading className="ms-2 animate-spin h-[12px] w-[12px]" color="white" />}
-          </button>
-        </div>}
-      </form>
+          <div className="mt-4 flex justify-center" >
+            <button
+              className="bg-danger me-3 bg-opacity-85 px-2 rounded-full text-white hover:bg-opacity-100 disabled:bg-opacity-85 disabled:cursor-not-allowed"
+              disabled={loadingData}
+              type="button"
+              onClick={cancelSaveData}
+            >Cancelar
+            </button>
+            <button
+              className="bg-success bg-opacity-85 px-2 rounded-full text-white hover:bg-opacity-100 disabled:bg-opacity-85 disabled:cursor-not-allowed flex items-center"
+              disabled={loadingData}
+              type="submit"
+            >Guardar {loadingData && <AiOutlineLoading className="ms-2 animate-spin h-[12px] w-[12px]" color="white" />}
+            </button>
+          </div>
+        </form>
+      }
+
+      {modeEditPassword&&
+        <form onSubmit={onSubmit} className="flex flex-col px-5 pb-5">
+          <h1 className="text-center text-secondary">CAMBIA TU INFORMACION</h1>
+          <div>
+            <InputPassword className="w-full" handleInputChange={handleInputChangePassword} name="oldPassword" value={formPassword.oldPassword} placeholder="Ingresa tu contraseña" required disabled={loadingData} />
+            <InputPassword className="w-full" handleInputChange={handleInputChangePassword} name="password" value={formPassword.password} placeholder="Nueva contraseña" required disabled={loadingData} />
+            <InputPassword className="w-full" handleInputChange={handleInputChangePassword} name="rePassword" value={formPassword.rePassword} placeholder="Confirmar nueva contraseña" required disabled={loadingData} />
+          </div>
+          <div className="mt-4 flex justify-center" >
+            <button
+              className="bg-danger me-3 bg-opacity-85 px-2 rounded-full text-white hover:bg-opacity-100 disabled:bg-opacity-85 disabled:cursor-not-allowed"
+              disabled={loadingData}
+              type="button"
+              onClick={cancelSaveData}
+            >Cancelar
+            </button>
+            <button
+              className="bg-success bg-opacity-85 px-2 rounded-full text-white hover:bg-opacity-100 disabled:bg-opacity-85 disabled:cursor-not-allowed flex items-center"
+              disabled={loadingData}
+              type="submit"
+            >Guardar {loadingData && <AiOutlineLoading className="ms-2 animate-spin h-[12px] w-[12px]" color="white" />}
+            </button>
+          </div>
+        </form>
+      }
     </Windows>
   );
 }

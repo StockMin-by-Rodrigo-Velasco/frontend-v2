@@ -17,8 +17,35 @@ function InputText({ handleInputChange, value, name, placeholder, required=false
 
     <div className = {`${className} relative mt-6`} >
       <input 
-        className = {`px-2 w-full focus:outline-none rounded-t border-b-2 border-primary focus:border-info peer disabled:bg-light/80 disabled:cursor-not-allowed disabled:text-black/70`}
+        className = {`w-full focus:outline-none rounded-t border-b-2 border-primary focus:border-info peer disabled:bg-light/80 disabled:cursor-not-allowed disabled:text-black/70`}
         type="text" 
+        onChange={ handleInputChange }
+        name={name}
+        id={name}
+        value={value}
+        required={required}
+        disabled={disabled}
+      />
+      <label
+        className={ value === '' ?
+          "absolute text-secondary left-0 top-0  transition-all peer-focus:text-secondary peer-focus:top-[-20px] peer-focus:text-[12px] cursor-text"
+          :
+          "absolute left-0 text-secondary top-[-20px] text-[12px]"
+        }
+        htmlFor={name}> {placeholder}
+      </label>
+    </div>
+    
+  )
+}
+
+function InputPassword({ handleInputChange, value, name, placeholder, required=false, disabled=false, className='' }:InputProps){
+  return(
+
+    <div className = {`${className} relative mt-6`} >
+      <input 
+        className = {`w-full focus:outline-none rounded-t border-b-2 border-primary focus:border-info peer disabled:bg-light/80 disabled:cursor-not-allowed disabled:text-black/70`}
+        type="password" 
         onChange={ handleInputChange }
         name={name}
         id={name}
@@ -104,4 +131,4 @@ function InputLoginText({ handleInputChange, value, name, placeholder, required=
   );
 }
 
-export { InputLoginPassword, InputLoginText, InputText }
+export { InputLoginPassword, InputLoginText, InputText, InputPassword }

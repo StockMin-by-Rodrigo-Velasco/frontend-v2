@@ -60,10 +60,21 @@ export const updateSucursalUserAPI = (dataUpdate: UpdateSucursalUserInterface) =
     return async (dispatch: AppDispatch) => {
         try {
             dispatch(startLoadingData());
-            const res: AxiosResponse = await api.post('sucursal-ms/update-sucursal-user', dataUpdate );
+
+            if(dataUpdate.password && dataUpdate.oldPassword && dataUpdate.rePassword && dataUpdate.password !==''){
+                if(dataUpdate.password !== dataUpdate.rePassword){
+                    dispatch(showNotificationError({tittle: 'Actualizacion de perfil', description:'Error al confirmar la nueva contraseña, verifica que ambas coincidan'}));
+                    setTimeout( () => dispatch(hideNotification()), 5000 );
+                    dispatch(finishLoadingData());
+                    return;
+                }         
+            }
+
+            const {rePassword, ...newData} = dataUpdate;
+            const res: AxiosResponse = await api.post('sucursal-ms/update-sucursal-user', newData );
             const {message, data} = res.data;
 
-            dispatch(updateSucursalUser({...data}))
+            if (data) dispatch(updateSucursalUser({...data}));
             dispatch(showNotificationSuccess({tittle: 'Actualizacion de perfil', description: message}));
             setTimeout( () => dispatch(hideNotification()), 5000 );
             dispatch(finishLoadingData());            
