@@ -2,9 +2,9 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router";
 import { AppDispatch, RootState } from "../../redux/store";
-import { getSucursalUsersAPI, verifyTokenSucursalUsersByCookieAPI } from "../../redux/sucursal/sucursalThunk";
+import { getSucursalUsersAPI, logoutSucursalAPI, verifyTokenSucursalUsersByCookieAPI } from "../../redux/sucursal/sucursalThunk";
 import logos from "../../assets/logos";
-import { selectSucursalUser, logoutSucursal } from "../../redux/sucursal/sucursalSlice";
+import { selectSucursalUser } from "../../redux/sucursal/sucursalSlice";
 import LoadingApplication from "../../components/LoadingApplication";
 
 import { perfilColor, perfilImg } from "../../assets/perfil";
@@ -24,7 +24,7 @@ export default function SucursalUsers() {
   }
 
   const logout = () => {
-    dispatch(logoutSucursal());
+    dispatch(logoutSucursalAPI());
     navigate('/');
   }
 
@@ -67,8 +67,6 @@ export default function SucursalUsers() {
         onClick={logout}
         >Cambiar de sucursal <TbLogout2 className="ms-2"/> 
       </button>
-      {/* <ButtonLogout label="Cambiar de sucursal" className="absolute left-5 bottom-5" onClick={logout} /> */}
-
       <Outlet />
     </div>
   );

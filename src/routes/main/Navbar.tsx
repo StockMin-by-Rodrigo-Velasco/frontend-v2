@@ -1,13 +1,12 @@
 import logos from "../../assets/logos";
-import { FaPlus, FaRegUser } from "react-icons/fa";
-import { TbCar, TbLogout2 } from "react-icons/tb";
-import { IoOptions } from "react-icons/io5";
 import { NavLink, useLocation, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
 
 
-import { logoutSucursalUser } from "../../redux/sucursal/sucursalSlice";
+import { FaPlus, FaRegUser } from "react-icons/fa";
+import { TbCar, TbLogout2 } from "react-icons/tb";
+import { IoOptions } from "react-icons/io5";
 import { BiObjectsHorizontalLeft } from "react-icons/bi";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { GrScorecard } from "react-icons/gr";
@@ -16,45 +15,47 @@ import { AiOutlineAudit } from "react-icons/ai";
 import { useState } from 'react';
 import PerfilWindow from "./windows/PerfilWindow";
 import { perfilColor, perfilImg } from "../../assets/perfil";
+import { CiCircleList } from "react-icons/ci";
+import { logoutSucursalUserAPI } from "../../redux/sucursal/sucursalThunk";
 
 const menu = [
     {
-        title: 'Items', path: '/main/items', icon: <BiObjectsHorizontalLeft size='20px' className="me-2" />,
+        title: 'Productos', path: '/main/productos', icon: <BiObjectsHorizontalLeft size='20px' className="me-2" />,
         subTitles: [
-            { title: 'Registrar item', icon: <FaPlus size='14px' /> },
-            { title: 'Configuracion', icon: <IoOptions size='14px' /> },
+            { title: 'Lista', path: '/main/productos/lista', icon: <CiCircleList size='14px' /> },
+            { title: 'Configuracion', path: '/main/productos/configuracion', icon: <IoOptions size='14px' /> },
         ]
     },
     {
         title: 'Almacen', path: '/main/almacen', icon: <HiOutlineInboxStack size='20px' className="me-2" />,
         subTitles: [
-            { title: 'Registrar Almacen', icon: <FaPlus size='14px' /> },
+            { title: 'Registrar Almacen', path: '/main/almacen/lista', icon: <FaPlus size='14px' /> },
         ]
     },
     {
         title: 'Compras', path: '/main/compras', icon: <GrScorecard size='20px' className="me-2" />,
         subTitles: [
-            { title: 'Registrar compra', icon: <FaPlus size='14px' /> },
+            { title: 'Registrar compra', path: '/main/compras/lista', icon: <FaPlus size='14px' /> },
         ]
     },
     {
         title: 'Ventas', path: '/main/ventas', icon: <MdOutlineShoppingCart size='20px' className="me-2" />,
         subTitles: [
-            { title: 'Registrar venta', icon: <FaPlus size='14px' /> },
+            { title: 'Registrar venta', path: '/main/ventas/lista', icon: <FaPlus size='14px' /> },
         ]
     },
     {
         title: 'Usuarios', path: '/main/usuarios', icon: <FaRegUser size='20px' className="me-2" />,
         subTitles: [
-            { title: 'Registrar usuario', icon: <FaPlus size='14px' /> },
-            { title: 'Permisos', icon: <TbCar size='14px' /> },
+            { title: 'Registrar usuario', path: '/main/productos/lista', icon: <FaPlus size='14px' /> },
+            { title: 'Permisos', path: '/main/usuarios/lista', icon: <TbCar size='14px' /> },
         ]
     },
     {
         title: 'Auditoria', path: '/main/auditoria', icon: <AiOutlineAudit size='20px' className="me-2" />,
         subTitles: [
-            { title: 'Registrar usuario', icon: <FaPlus size='14px' /> },
-            { title: 'Permisos', icon: <TbCar size='14px' /> },
+            { title: 'Registrar usuario', path: '/main/auditoria/lista', icon: <FaPlus size='14px' /> },
+            { title: 'Permisos', path: '/main/auditoria/permisos', icon: <TbCar size='14px' /> },
         ]
     }
 ]
@@ -68,7 +69,7 @@ export default function Navbar() {
 
 
     const logout = () => {
-        dispatch( logoutSucursalUser() );    
+        dispatch( logoutSucursalUserAPI() );    
         navigate('/login-user');
     }
     return (
@@ -89,13 +90,15 @@ export default function Navbar() {
                         {i.icon}
                         {i.title}
                     </NavLink>
-                {(pathname === i.path)&& i.subTitles.map(subI => (
-                    <div key={subI.title} 
-                        className="flex font-thin text-sm ms-5 border-b-2 rounded-tl rounded-tr border-info items-center py-[2px] px-1 cursor-pointer hover:bg-white hover:bg-opacity-15" 
+                {(pathname.includes(i.path))&& i.subTitles.map(subI => (
+                    <NavLink to={subI.path} key={subI.title} 
+                        className={({isActive}) => 
+                            `${isActive&& 'bg-white bg-opacity-15'} flex font-thin text-sm ms-5 border-b-2 rounded-tl rounded-tr border-info items-center py-[2px] px-1 cursor-pointer hover:bg-white hover:bg-opacity-15`
+                        }
                     >
                         {subI.icon}
                         <span className="ms-2" >{subI.title} </span>                      
-                    </div>
+                    </NavLink>
                 ))}
                 </div>
             ))}

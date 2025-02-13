@@ -29,7 +29,7 @@ export default function LoginSucursalUser() {
       onSubmit={handleSubmit}
       >
 
-        <Link to='/users' >
+        <Link to='/login-user' >
           <IoCloseSharp className="text-5xl absolute top-16 right-16"/>
         </Link>
 

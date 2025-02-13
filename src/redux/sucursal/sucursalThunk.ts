@@ -3,10 +3,9 @@ import { AppDispatch, RootState } from "../store"
 import api from "../../api/config";
 import { LoginSucursalInterface, LoginSucursalUserInterface, UpdateSucursalUserInterface } from "../../interface";
 import { hideNotification, showNotificationError, showNotificationSuccess } from "../notification/notificationSlice";
-import { getSucursalUsers, loginSucursal, loginSucursalUser, updateSucursalUser } from "./sucursalSlice";
+import { getSucursalUsers, loginSucursal, loginSucursalUser, logoutSucursal, logoutSucursalUser, updateSucursalUser } from "./sucursalSlice";
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from "../aplication/aplicationSlice";
 import Cookie from 'js-cookie';
-
 
 export const loginSucursalAPI = ( data: LoginSucursalInterface, navigate: (path: string)=>void ) => {
     return async (dispatch: AppDispatch) => {
@@ -28,6 +27,13 @@ export const loginSucursalAPI = ( data: LoginSucursalInterface, navigate: (path:
                 setTimeout( () => dispatch(hideNotification()), 5000 );
             }else console.log(error);
         }
+    }
+}
+
+export const logoutSucursalAPI = () => {
+    return async (dispatch: AppDispatch) => {
+        Cookie.remove('token');
+        dispatch( logoutSucursal() );
     }
 }
 
@@ -53,6 +59,13 @@ export const loginSucursalUserAPI = (data: LoginSucursalUserInterface, navigate:
                 setTimeout( () => dispatch(hideNotification()), 5000 );
             }else console.log(error);
         }
+    }
+}
+
+export const logoutSucursalUserAPI = () => {
+    return async (dispatch: AppDispatch) => {
+        Cookie.remove('userToken');
+        dispatch( logoutSucursalUser() );
     }
 }
 
@@ -190,7 +203,6 @@ export const verifyTokenSucursalUserByCookieAPI = ( navigate: (path:string) => v
                 });
                 const {data} = res.data;
                 dispatch(loginSucursalUser( {...data} ));
-                navigate('/main');
             }else navigate('/login-user');
             dispatch(finishLoadingAplication());
         } catch (error) {

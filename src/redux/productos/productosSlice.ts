@@ -1,0 +1,173 @@
+import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
+
+
+interface MarcaInterface {
+    id: string;
+    sucursalId: string;
+    nombre: string;
+    origen: string;
+    deleted: boolean;
+}
+
+interface CategoriaInterface {
+    id: string;
+    sucursalId: string;
+    nombre: string;
+    detalle: string;
+    deleted: boolean;
+}
+
+interface UnidadMedidaInterface {
+    id: string;
+    sucursalId: string;
+    nombre: string;
+    abreviatura: string;
+    detalle: string;
+    favorito: boolean;
+}
+
+interface ProductoInterface {
+    id: string;
+    sucursalId: string;
+    codigo: string;
+    nombre: string;
+    descripcion: string;
+    imagen: string;
+    activo: boolean;
+    deleted: boolean;
+    categoriaId: string;
+    categoria?: string;
+    marcaId: string;
+    marca?:string;
+    unidadMedidaId: string;
+    unidadMedida?: string;
+    createdAt: number;
+    updatedAt: number;
+}
+
+interface ProductoDetalladoInterface extends ProductoInterface{
+    Categoria: CategoriaInterface;
+    Marca: MarcaInterface;
+    UnidadMedida: UnidadMedidaInterface;
+}
+
+interface InitialStateInterface {
+    idUltimoProductoEliminado: string;
+    listaProductos: ProductoInterface[],
+    listaMarcas: MarcaInterface[],
+    listaCategorias: CategoriaInterface[],
+    listaUnidadMedida: UnidadMedidaInterface[],
+}
+
+const initialState: InitialStateInterface = {
+    idUltimoProductoEliminado: '',
+    listaProductos: [],
+    listaMarcas: [],
+    listaCategorias: [],
+    listaUnidadMedida: [],
+}
+const ProductosSlice = createSlice({
+    name: 'productos',
+    initialState,
+    reducers: {
+        getAllProductos: (state, action: PayloadAction<ProductoDetalladoInterface[]>) => {
+            const newListaProductos:ProductoInterface[] = action.payload.map(p => ({
+              id: p.id,
+              sucursalId: p.sucursalId,
+              codigo: p.codigo,
+              nombre: p.nombre,
+              activo: p.activo,
+              deleted: p.deleted,
+              descripcion: p.descripcion,
+              imagen: p.imagen,
+              marca: p.Marca.nombre,
+              marcaId: p.marcaId,
+              categoria: p.Categoria.nombre,
+              categoriaId: p.categoriaId,
+              unidadMedida: p.UnidadMedida.nombre,
+              unidadMedidaId: p.unidadMedidaId,
+              createdAt: p.createdAt,
+              updatedAt: p.updatedAt
+            }));
+            state.listaProductos = [...newListaProductos];
+        },
+        createProducto: (state, action: PayloadAction<ProductoDetalladoInterface>) => {
+            state.listaProductos = [action.payload, ...state.listaProductos]
+        },
+        deleteProducto: (state, action: PayloadAction<string>) => {
+            const newListaProductos = state.listaProductos.filter(p => p.id !== action.payload);
+            state.listaProductos = [...newListaProductos];
+            state.idUltimoProductoEliminado = action.payload;
+        },
+        updateProducto: (state, action: PayloadAction<ProductoDetalladoInterface>) => {
+            const updatedProducto:ProductoInterface = {
+                id: action.payload.id,
+                sucursalId: action.payload.sucursalId,
+                codigo: action.payload.codigo,
+                nombre: action.payload.nombre,
+                activo: action.payload.activo,
+                deleted: action.payload.deleted,
+                descripcion: action.payload.descripcion,
+                imagen: action.payload.imagen,
+                marca: action.payload.Marca.nombre,
+                marcaId: action.payload.marcaId,
+                categoria: action.payload.Categoria.nombre,
+                categoriaId: action.payload.categoriaId,
+                unidadMedida: action.payload.UnidadMedida.nombre,
+                unidadMedidaId: action.payload.unidadMedidaId,
+                createdAt: action.payload.createdAt,
+                updatedAt: action.payload.updatedAt
+              };
+            const updateListaProductos = current(state.listaProductos).map(p => (p.id === updatedProducto.id)?updatedProducto:p);
+            state.listaProductos = [...updateListaProductos];
+        },
+        getAllMarcas: (state, action: PayloadAction<MarcaInterface[]>) => {
+            state.listaMarcas = [...action.payload];
+        },
+        createMarca: (state, action: PayloadAction<MarcaInterface>) => {
+            state.listaMarcas = [action.payload, ...state.listaMarcas]
+        },
+        deleteMarca: (state, action: PayloadAction<string>) => {
+            const newListaMarcas = state.listaMarcas.filter(m => m.id !== action.payload);
+            state.listaMarcas = [...newListaMarcas];
+        },
+        updateMarca: (state, action: PayloadAction<MarcaInterface>) => {
+            const updateListaMarcas = state.listaMarcas.map(m => (m.id === action.payload.id)?{...m, ...action.payload}:m);
+            state.listaMarcas = [...updateListaMarcas];
+        },
+        getAllCategorias: (state, action: PayloadAction<CategoriaInterface[]>) => {
+            state.listaCategorias = [...action.payload];
+        },
+        createCategoria: (state, action: PayloadAction<CategoriaInterface>) => {
+            state.listaCategorias = [action.payload, ...state.listaCategorias]
+        },
+        deleteCategoria: (state, action: PayloadAction<string>) => {
+            const newListaCategorias = state.listaCategorias.filter(m => m.id !== action.payload);
+            state.listaCategorias = [...newListaCategorias];
+        },
+        updateCategoria: (state, action: PayloadAction<CategoriaInterface>) => {
+            const updateListaCategorias = state.listaCategorias.map(c => (c.id === action.payload.id)?{...c, ...action.payload}:c);
+            state.listaCategorias = [...updateListaCategorias];
+        },
+    }
+});
+
+export const {
+    getAllProductos,
+    createProducto,
+    deleteProducto,
+    updateProducto,
+
+    getAllMarcas,
+    createMarca,
+    deleteMarca,
+    updateMarca,
+
+    getAllCategorias,
+    createCategoria,
+    deleteCategoria,
+    updateCategoria,
+
+} = ProductosSlice.actions;
+
+export default ProductosSlice.reducer;

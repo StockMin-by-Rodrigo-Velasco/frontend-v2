@@ -1,0 +1,19 @@
+/* Estilos personalizados para el scroll */
+.scroll-custom::-webkit-scrollbar {
+  width: 8px; /* Ancho del scroll */
+}
+
+.scroll-custom::-webkit-scrollbar-track {
+  background: transparent; /* Color del fondo */
+  border-radius: 10px;
+}
+
+.scroll-custom::-webkit-scrollbar-thumb {
+  background: #dedede; /* Color del scroll */
+  border-radius: 10px;
+}
+
+.scroll-custom::-webkit-scrollbar-thumb:hover {
+  background: #b2b2b2; /* Color cuando se pasa el mouse */
+  cursor: pointer;
+}

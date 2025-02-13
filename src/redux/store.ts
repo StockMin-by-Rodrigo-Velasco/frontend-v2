@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import NotificationSlice from './notification/notificationSlice';
 import SucursalSlice from './sucursal/sucursalSlice';
 import AplicationSlice from './aplication/aplicationSlice';
+import ProductosSlice from './productos/productosSlice';
 
 
 export const store = configureStore({
@@ -9,6 +10,7 @@ export const store = configureStore({
         Aplication: AplicationSlice,
         Notification: NotificationSlice,
         Sucursal: SucursalSlice,
+        Productos: ProductosSlice,
     }
 })
 

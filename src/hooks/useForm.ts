@@ -2,7 +2,7 @@ import { useState } from "react";
 
 interface FormInterface<T extends object> {
     data: T;
-    handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    handleInputChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
     resetData: () => void
 }
 
@@ -26,10 +26,15 @@ export function useForm<T extends object>( obj: T ): FormInterface<T>
 {
     const [data, setData] = useState(obj);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { value, name } = e.target;
         setData({...data, [name]: value});
     }
+
+    // const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    //     const { value, name } = e.target;
+    //     setData({...data, [name]: value});
+    // }
 
     const resetData = () => {
         setData(obj);

@@ -20,7 +20,7 @@ export default function MainAplication() {
       {showNotification&& <Notification/>}
       <Navbar/>
 
-      <div className="w-full h-full bg-white ms-2 rounded p-2" >
+      <div className="flex flex-col p-2 w-full h-full bg-white ms-2 rounded overflow-hidden relative" >
         <Outlet/>
       </div>
     </div>
