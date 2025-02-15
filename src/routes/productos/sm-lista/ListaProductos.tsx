@@ -4,8 +4,11 @@ import BodySection from '../../../components/BodySection';
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { useEffect, useState } from "react";
-import { InputSearch } from "../../../components/Input";
-import ProductoSelectedWindow from "./ProductoSelectedWindow";
+import { InputSearch, InputSelectSearch } from "../../../components/Input";
+import SelectProductoWindow from "./windows/SelectProductoWindow";
+import LoadingSection from "../../../components/LoadingSection";
+import { FaPlus } from "react-icons/fa";
+import CreateProductoWindow from "./windows/CreateProductoWindow";
 
 interface DataInterface {
   id: string;
@@ -21,6 +24,7 @@ interface DataInterface {
   marcaId: string;
   marca?:string;
   unidadMedidaId: string;
+  unidadMedidaAbreviada?: string;
   unidadMedida?: string;
   createdAt: number;
   updatedAt: number;
@@ -59,14 +63,17 @@ const filterInitialState = {
 
 export default function ListaProductos() {
   const { listaProductos, listaMarcas, listaCategorias } = useSelector((s: RootState) => s.Productos);
+  const { loadingApplication } = useSelector((s: RootState) => s.Aplication);
   const [filter, setFilter] = useState<FilterInterface>(filterInitialState);
   const [data, setData] = useState<DataInterface[]>([]);
   const [openDataDetails, setOpenDataDetails] = useState(false);
+  const [openCreateProducto, setOpenCreateProducto] = useState(false);
   const [productoSelected, setProductoSelected] = useState<DataInterface>(dataInitialState);
 
   const columns: DataTableColumnInterface<DataInterface>[] = [
     { name: 'IMAGEN', type: DataTableColumnTypes.IMG, key: "imagen"},
     { name: 'CODIGO', type: DataTableColumnTypes.P , key: "codigo"},
+    { name: 'MEDIDA', type: DataTableColumnTypes.P , key: "unidadMedidaAbreviada"},
     { name: 'NOMBRE', type: DataTableColumnTypes.P, key: "nombre" },
     { name: 'MARCA', type: DataTableColumnTypes.P, key: "marca" },
     { name: 'CATEGORIA', type: DataTableColumnTypes.P, key: "categoria" },
@@ -98,10 +105,13 @@ export default function ListaProductos() {
   }, [listaProductos]);
   return (
     <>
-
       {openDataDetails&&
-        <ProductoSelectedWindow producto={productoSelected} closeButton={() => {setOpenDataDetails(s => !s)}} />
+        <SelectProductoWindow producto={productoSelected} closeButton={() => {setOpenDataDetails(s => !s)}} />
       }
+      {openCreateProducto&&
+        <CreateProductoWindow closeButton={() => {setOpenCreateProducto(s => !s)}} />
+      }
+      {loadingApplication&& <LoadingSection title="Cargando lista de productos"/>}
 
       <HeaderSection>
         <InputSearch
@@ -110,40 +120,36 @@ export default function ListaProductos() {
           placeholder="Buscar"
           value={filter.buscar}
         />
-        <div className="ms-auto border-[1px] rounded-lg border-secondary text-secondary flex justify-center items-center px-2 text-[14px]" >
-          <label htmlFor="categoria" className="text-secondary/70 me-1" > Categoria: </label>
-          <select 
-            id="categoria" 
-            name='categoria' 
-            className="rounded-lg focus:outline-none focus:bg-secondary-1"
-            onChange={handleChange}            
-          >
-            <option value=''>Todas...</option>
-            {listaCategorias.map(c => (
-              <option key={c.id} value={c.nombre}>{c.nombre.toLocaleUpperCase()}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="ms-2 border-[1px] rounded-lg border-secondary text-secondary flex justify-center items-center px-2 text-[14px]" >
-          <label htmlFor="marca" className="text-secondary/70 me-1" > Marca: </label>
-          <select 
-            id="marca" 
-            name="marca" 
-            className="rounded-lg focus:outline-none focus:bg-secondary-1"
-            onChange={handleChange}
-          >
-            <option value=''>Todas...</option>
-            {listaMarcas.map(m => (
-              <option key={m.id} value={m.nombre}>{m.nombre.toLocaleUpperCase()}</option>
-            ))}
-          </select>
-        </div>
+        <InputSelectSearch
+          value={filter.categoria}
+          className="ms-auto"
+          name="categoria"
+          placeholder="Categoría: "
+          options={listaCategorias.map(m => ({value: m.nombre, name:m.nombre}))}
+          optionDefault="Todas..."
+          handleInputChange={handleChange} 
+        />
+        <InputSelectSearch
+          value={filter.marca}
+          className="ms-3"
+          name="marca"
+          placeholder="Marca: "
+          options={listaMarcas.map(m => ({value: m.nombre, name:m.nombre}))}
+          optionDefault="Todas..."
+          handleInputChange={handleChange} 
+        />
       </HeaderSection>
       <BodySection>
         <DataTable<DataInterface> columns={columns} data={data} details={{name: 'MAS', action:getData}} />
       </BodySection>
 
+      <button 
+        onClick={() => {setOpenCreateProducto(true)}}
+        type="button" 
+        className="absolute bottom-2 right-2 flex justify-center items-center bg-primary bg-opacity-80 text-white text-[22px] hover:bg-opacity-100 w-14 h-14 rounded-full" 
+      >
+        <FaPlus/>
+      </button>
     </>
   );
 }

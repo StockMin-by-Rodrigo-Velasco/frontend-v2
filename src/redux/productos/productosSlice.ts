@@ -1,5 +1,13 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
 
+interface LogInterface {
+    id: string;
+    sucursalId: string;
+    userId: string;
+    titulo: string;
+    descripcion: string;
+    createdAt: number;
+}
 
 interface MarcaInterface {
     id: string;
@@ -41,6 +49,7 @@ interface ProductoInterface {
     marca?:string;
     unidadMedidaId: string;
     unidadMedida?: string;
+    unidadMedidaAbreviada?: string;
     createdAt: number;
     updatedAt: number;
 }
@@ -56,7 +65,8 @@ interface InitialStateInterface {
     listaProductos: ProductoInterface[],
     listaMarcas: MarcaInterface[],
     listaCategorias: CategoriaInterface[],
-    listaUnidadMedida: UnidadMedidaInterface[],
+    listaUnidadesMedida: UnidadMedidaInterface[],
+    listaLogs: LogInterface[],
 }
 
 const initialState: InitialStateInterface = {
@@ -64,7 +74,8 @@ const initialState: InitialStateInterface = {
     listaProductos: [],
     listaMarcas: [],
     listaCategorias: [],
-    listaUnidadMedida: [],
+    listaUnidadesMedida:[],
+    listaLogs: [],
 }
 const ProductosSlice = createSlice({
     name: 'productos',
@@ -85,6 +96,7 @@ const ProductosSlice = createSlice({
               categoria: p.Categoria.nombre,
               categoriaId: p.categoriaId,
               unidadMedida: p.UnidadMedida.nombre,
+              unidadMedidaAbreviada: p.UnidadMedida.abreviatura,
               unidadMedidaId: p.unidadMedidaId,
               createdAt: p.createdAt,
               updatedAt: p.updatedAt
@@ -92,7 +104,26 @@ const ProductosSlice = createSlice({
             state.listaProductos = [...newListaProductos];
         },
         createProducto: (state, action: PayloadAction<ProductoDetalladoInterface>) => {
-            state.listaProductos = [action.payload, ...state.listaProductos]
+            const newProducto:ProductoInterface = {
+                id: action.payload.id,
+                sucursalId: action.payload.sucursalId,
+                codigo: action.payload.codigo,
+                nombre: action.payload.nombre,
+                activo: action.payload.activo,
+                deleted: action.payload.deleted,
+                descripcion: action.payload.descripcion,
+                imagen: action.payload.imagen,
+                marca: action.payload.Marca.nombre,
+                marcaId: action.payload.marcaId,
+                categoria: action.payload.Categoria.nombre,
+                categoriaId: action.payload.categoriaId,
+                unidadMedida: action.payload.UnidadMedida.nombre,
+                unidadMedidaAbreviada: action.payload.UnidadMedida.abreviatura,
+                unidadMedidaId: action.payload.unidadMedidaId,
+                createdAt: action.payload.createdAt,
+                updatedAt: action.payload.updatedAt
+              };
+            state.listaProductos = [newProducto, ...state.listaProductos]
         },
         deleteProducto: (state, action: PayloadAction<string>) => {
             const newListaProductos = state.listaProductos.filter(p => p.id !== action.payload);
@@ -114,6 +145,7 @@ const ProductosSlice = createSlice({
                 categoria: action.payload.Categoria.nombre,
                 categoriaId: action.payload.categoriaId,
                 unidadMedida: action.payload.UnidadMedida.nombre,
+                unidadMedidaAbreviada: action.payload.UnidadMedida.abreviatura,
                 unidadMedidaId: action.payload.unidadMedidaId,
                 createdAt: action.payload.createdAt,
                 updatedAt: action.payload.updatedAt
@@ -149,6 +181,12 @@ const ProductosSlice = createSlice({
             const updateListaCategorias = state.listaCategorias.map(c => (c.id === action.payload.id)?{...c, ...action.payload}:c);
             state.listaCategorias = [...updateListaCategorias];
         },
+        getAllLogs: (state, action: PayloadAction<LogInterface[]>) => {
+            state.listaLogs = [...action.payload];
+        },
+        getAllUnidadesMedida: (state, action: PayloadAction<UnidadMedidaInterface[]>) => {
+            state.listaUnidadesMedida = [...action.payload];
+        },
     }
 });
 
@@ -167,6 +205,10 @@ export const {
     createCategoria,
     deleteCategoria,
     updateCategoria,
+
+    getAllLogs,
+
+    getAllUnidadesMedida,
 
 } = ProductosSlice.actions;
 

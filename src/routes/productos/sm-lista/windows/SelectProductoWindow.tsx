@@ -1,15 +1,15 @@
 import { useDispatch, useSelector } from "react-redux";
-import { InputSelect, InputText, InputTextarea } from "../../../components/Input";
-import Windows from "../../../components/Windows";
-import { useForm } from "../../../hooks";
-import { AppDispatch, RootState } from "../../../redux/store";
+import { InputSelect, InputText, InputTextarea } from "../../../../components/Input";
+import Windows from "../../../../components/Windows";
+import { useForm } from "../../../../hooks";
+import { AppDispatch, RootState } from "../../../../redux/store";
 import { FaEdit } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
 import { FormEvent, useState } from "react";
-import { deleteProductoAPI, updateProductoAPI } from "../../../redux/productos/productosThunk";
-import { Button, ButtonColors, ButtonSubmit } from "../../../components/Buttons";
+import { deleteProductoAPI, updateProductoAPI } from "../../../../redux/productos/productosThunk";
+import { Button, ButtonColors, ButtonSubmit } from "../../../../components/Buttons";
 import { BsFillTrashFill } from "react-icons/bs";
-import { hideNotification, showNotificationWarning } from "../../../redux/notification/notificationSlice";
+import { hideNotification, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
 
 interface ProductoInterface {
     id: string;
@@ -43,13 +43,13 @@ interface FormUpdateProducto {
 }
 
 
-export default function ProductoSelectedWindow({ producto, closeButton }: ProductoSelectedWindowsPropInterface) {
+export default function SelectProductoWindow({ producto, closeButton }: ProductoSelectedWindowsPropInterface) {
     const dateCreatedAt = new Date(producto.createdAt).toLocaleDateString("es-ES", {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute: '2-digit', second:'2-digit', hour12: false});
     const dateUpdatedAt = new Date(producto.updatedAt).toLocaleDateString("es-ES", {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute: '2-digit', second:'2-digit', hour12: false});
 
     const { loadingData } = useSelector((s: RootState) => s.Aplication);
     const { type: typeNotification, showNotification } = useSelector((s: RootState) => s.Notification);
-    const { idUltimoProductoEliminado, listaCategorias, listaMarcas } = useSelector((s: RootState) => s.Productos);
+    const { idUltimoProductoEliminado, listaCategorias, listaMarcas, listaUnidadesMedida } = useSelector((s: RootState) => s.Productos);
     const dispatch = useDispatch<AppDispatch>();
     const { codigo, nombre, descripcion, categoriaId, marcaId, unidadMedidaId } = producto;
     const { data, handleInputChange, resetData } = useForm<FormUpdateProducto>({ codigo, nombre, descripcion, categoriaId, marcaId, unidadMedidaId });
@@ -83,8 +83,8 @@ export default function ProductoSelectedWindow({ producto, closeButton }: Produc
                         <h1 className="text-danger text-[50px] font-bold" >ELIMINADO</h1>
                     </div>
                 }
-                <div>
-                    <img src={producto.imagen} alt={producto.nombre} width='250px' />
+                <div className="flex flex-col items-center border rounded-lg shadow-lg">
+                    <img src={producto.imagen} alt={producto.nombre} width='300px' />
                 </div>
 
                 <div className="ms-3" >
@@ -142,6 +142,14 @@ export default function ProductoSelectedWindow({ producto, closeButton }: Produc
                                     name='marcaId'
                                     placeholder="Marca"
                                     options={listaMarcas.map(m => ({ name: m.nombre, value: m.id }))}
+                                    disabled={!editMode}
+                                />
+                                <InputSelect
+                                    handleInputChange={handleInputChange}
+                                    value={data.unidadMedidaId}
+                                    name='unidadMedidaId'
+                                    placeholder="Unidad de medida"
+                                    options={listaUnidadesMedida.map(m => ({ name: m.nombre, value: m.id }))}
                                     disabled={!editMode}
                                 />
                             </div>

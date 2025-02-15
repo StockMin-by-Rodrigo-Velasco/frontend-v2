@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { FaCloudUploadAlt, FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
+import logos from "../assets/logos";
 
 
 interface InputProps {
@@ -13,9 +14,64 @@ interface InputProps {
   className?:string
 }
 
+interface InputFileProps {
+  setFileValue: (file:File|undefined) => void, // Funcion para obtener el archivo
+  name: string,
+  placeholder: string,
+  required?:boolean,
+  disabled?:boolean,
+  className?:string
+}
+
 interface InputSelectProps extends InputProps {
   options: {name: string, value: string}[],
+  optionDefault?: string
 }
+
+const InputFileImage = ({setFileValue, name, placeholder, required=false, disabled=false }:InputFileProps) => {
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageNamePreview, setImageNamePreview] = useState<string>('');
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]; // Obtener el primer archivo seleccionado
+    
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImagePreview(reader.result as string); // Guardar la imagen en el estado
+      };
+      reader.readAsDataURL(file); // Convertir la imagen a base64 para previsualizarla
+      setImageNamePreview(file?.name);
+      setFileValue(file);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center p-4 border rounded-lg shadow-lg">
+      <input
+        id={name}
+        type="file"
+        accept="image/jpg, image/jpeg, image/png"
+        onChange={handleFileChange}
+        className="hidden"
+        required={required}
+        disabled={disabled}
+      />     
+      <img
+        src={imagePreview || logos.logoColor}
+        alt="Preview"
+        className="object-cover rounded-lg h-[200px]"
+      />
+      <label 
+        className="text-white bg-secondary w-full rounded-full mt-2 flex items-center justify-center text-[14px] cursor-pointer" 
+        htmlFor={name}
+      > 
+        <span className="me-2 text-[18px]" ><FaCloudUploadAlt/></span>{placeholder}
+      </label>
+      <span className="text-secondary text-[12px]" >{imageNamePreview}</span>
+    </div>
+  );
+};
 
 function InputSearch({handleInputChange, value, name, placeholder, required=false, disabled=false, className=''}:InputProps){
   return(
@@ -39,6 +95,29 @@ function InputSearch({handleInputChange, value, name, placeholder, required=fals
       </label>
     </div>
   )
+}
+
+function InputSelectSearch({handleInputChange, value, name, placeholder, required=false, disabled=false, className='', options, optionDefault='...'}:InputSelectProps) {
+  return(
+    <div className = {`${className} border-[1px] rounded-lg border-secondary text-secondary flex justify-center items-center px-2 text-[14px]`} >
+      <label htmlFor={name} className="text-secondary/70 me-1" >{placeholder}</label>
+      <select
+        className='rounded-lg focus:outline-none focus:bg-secondary-1'
+        name={name}
+        id={name}
+        onChange={handleInputChange}
+        // defaultValue={value}
+        value={value}
+        required={required}
+        disabled={disabled}
+      >
+        <option value='' >{optionDefault}</option>
+        {options.map(o => (
+          <option key={o.value} value={o.value} >{o.name.toUpperCase()}</option>
+        ))}      
+      </select>
+    </div>
+  )  
 }
 
 function InputText({ handleInputChange, value, name, placeholder, required=false, disabled=false, className='' }:InputProps){
@@ -67,7 +146,7 @@ function InputText({ handleInputChange, value, name, placeholder, required=false
   )
 }
 
-function InputSelect({handleInputChange, value, name, placeholder, required=false, disabled=false, className='', options}:InputSelectProps) {
+function InputSelect({handleInputChange, value, name, placeholder, required=false, disabled=false, className='', options, optionDefault}:InputSelectProps) {
   return(
     <div className = {`${className} relative mt-6`} >
       <select
@@ -78,8 +157,10 @@ function InputSelect({handleInputChange, value, name, placeholder, required=fals
         // defaultValue={value}
         value={value}
         required={required}
-        disabled={disabled}
+        disabled={disabled || (options.length === 0)}
       >
+        {options.length === 0 && <option value='' >Sin opciones</option>}
+        {optionDefault&& <option value='' className="text-secondary" >{optionDefault}</option>}
         {options.map(o => (
           <option key={o.value} value={o.value} >{o.name.toUpperCase()}</option>
         ))}      
@@ -207,7 +288,9 @@ function InputLoginText({ handleInputChange, value, name, placeholder, required=
 }
 
 export { 
+  InputFileImage,
   InputSearch, 
+  InputSelectSearch,
   InputLoginPassword, 
   InputLoginText,
   InputSelect, 

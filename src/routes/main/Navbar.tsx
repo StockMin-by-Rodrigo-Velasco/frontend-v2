@@ -5,7 +5,7 @@ import { AppDispatch, RootState } from "../../redux/store";
 
 
 import { FaPlus, FaRegUser } from "react-icons/fa";
-import { TbCar, TbLogout2 } from "react-icons/tb";
+import { TbCar, TbHistory, TbLogout2 } from "react-icons/tb";
 import { IoOptions } from "react-icons/io5";
 import { BiObjectsHorizontalLeft } from "react-icons/bi";
 import { MdOutlineShoppingCart } from "react-icons/md";
@@ -24,6 +24,7 @@ const menu = [
         subTitles: [
             { title: 'Lista', path: '/main/productos/lista', icon: <CiCircleList size='14px' /> },
             { title: 'Configuracion', path: '/main/productos/configuracion', icon: <IoOptions size='14px' /> },
+            { title: 'Historial', path: '/main/productos/logs', icon: <TbHistory size='14px' /> },
         ]
     },
     {

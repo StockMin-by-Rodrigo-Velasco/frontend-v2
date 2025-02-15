@@ -104,17 +104,21 @@ export const updateSucursalUserAPI = (dataUpdate: UpdateSucursalUserInterface) =
 }
 
 export const getSucursalUsersAPI = ( sucursalId: string ) => {
-    return async ( dispatch: AppDispatch ) => {
+    return async ( dispatch: AppDispatch) => {
         try {
+            dispatch(startLoadingAplication());
+            
             const res: AxiosResponse = await api.get(`sucursal-ms/get-sucursal-users/${sucursalId}`)
             const {users} = res.data;
-            dispatch(getSucursalUsers([...users]));        
+            dispatch(getSucursalUsers([...users]));
+            dispatch(finishLoadingAplication());    
         } catch (error) {
             if( axios.isAxiosError(error) && error.response ){
                 const {data} = error.response;
                 dispatch(showNotificationError({tittle: 'USUARIOS', description: data.message}));
                 setTimeout( () => dispatch(hideNotification()), 5000 );
-            }else console.log(error);            
+            }else console.log(error);
+            dispatch(startLoadingAplication());         
         }
     }
 }

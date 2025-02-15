@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from "../aplication/aplicationSlice";
 import { AppDispatch, RootState } from "../store";
 import api from "../../api/config";
-import { deleteProducto, getAllCategorias, getAllMarcas, getAllProductos, updateProducto } from "./productosSlice";
+import { createProducto, deleteProducto, getAllCategorias, getAllLogs, getAllMarcas, getAllProductos, getAllUnidadesMedida, updateProducto } from "./productosSlice";
 import { hideNotification, showNotificationError, showNotificationSuccess } from "../notification/notificationSlice";
 
 interface UpdateProductoInterface {
@@ -14,6 +14,14 @@ interface UpdateProductoInterface {
     marcaId?: string;
     unidadMedidaId?: string;
 }
+interface CreateProductoInterface {
+    codigo: string;
+    nombre: string;
+    descripcion?: string;
+    categoriaId: string;
+    marcaId: string;
+    unidadMedidaId: string;
+}
 
 export const getAllProductosAPI = () => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
@@ -22,7 +30,6 @@ export const getAllProductosAPI = () => {
         try {
             dispatch(startLoadingAplication());
             const response: AxiosResponse = await api.get(`productos-ms/get-all-productos/${id}`);
-            // console.log(response.data);
             dispatch(getAllProductos(response.data))
             dispatch(finishLoadingAplication());
         } catch (error) {
@@ -31,9 +38,47 @@ export const getAllProductosAPI = () => {
         }
     }
 }
-export const createProductoAPI = () => {
-    return (dispatch: AppDispatch, getState: () => RootState) => {
+export const createProductoAPI = (data: CreateProductoInterface, file: File|undefined) => {
+    return async(dispatch: AppDispatch, getState: () => RootState) => {
+        const {id: sucursalId, userData} = getState().Sucursal;
+        const newProducto = new FormData();
+        newProducto.append('sucursalId', sucursalId);
+        newProducto.append('codigo', data.codigo);
+        newProducto.append('nombre', data.nombre);
+        newProducto.append('descripcion', data.descripcion as string);
+        newProducto.append('categoriaId', data.categoriaId);
+        newProducto.append('marcaId', data.marcaId);
+        newProducto.append('unidadMedidaId', data.unidadMedidaId);
 
+        if(file) newProducto.append('imagen', file);
+
+        try {
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.post('productos-ms/create-producto', 
+                newProducto,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        "X-User-Id": userData.id
+                    }
+                }
+            
+            );
+            const {data, message} = response.data;
+            dispatch(createProducto(data));
+            dispatch(showNotificationSuccess({tittle: 'PRODUCTO CREADO', description: message}));
+            setTimeout( () => dispatch(hideNotification()), 5000 );
+            dispatch(finishLoadingData());
+            
+        } catch (error) {
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                dispatch(showNotificationError({tittle: 'CREACIÓN DE PRODUCTO', description: data.message}));
+                dispatch(finishLoadingData());
+                setTimeout( () => dispatch(hideNotification()), 5000 );
+            }else console.log(error);
+        }
+        
     }
 }
 export const deleteProductoAPI = (id: string) => {
@@ -148,5 +193,51 @@ export const deleteCategoriaAPI = () => {
 export const updateCategoriaAPI = () => {
     return (dispatch: AppDispatch, getState: () => RootState) => {
 
+    }
+}
+export const getAllUnidadAPI = () => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const { id } = getState().Sucursal;
+        if (!id) return;
+        try {
+            dispatch(startLoadingAplication());
+            const response: AxiosResponse = await api.get(`productos-ms/get-all-logs/${id}`);
+            dispatch(getAllLogs(response.data))
+            dispatch(finishLoadingAplication());
+        } catch (error) {
+            console.log(error);
+            dispatch(finishLoadingAplication());
+        }
+    }
+}
+export const getAllLogsAPI = () => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const { id } = getState().Sucursal;
+        if (!id) return;
+        try {
+            dispatch(startLoadingAplication());
+            const response: AxiosResponse = await api.get(`productos-ms/get-all-logs/${id}`);
+            dispatch(getAllLogs(response.data))
+            dispatch(finishLoadingAplication());
+        } catch (error) {
+            console.log(error);
+            dispatch(finishLoadingAplication());
+        }
+    }
+}
+
+export const getAllUnidadesMedidaAPI = () => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const { id } = getState().Sucursal;
+        if (!id) return;
+        try {
+            dispatch(startLoadingAplication());
+            const response: AxiosResponse = await api.get(`productos-ms/get-all-unidades-medida/${id}`);
+            dispatch(getAllUnidadesMedida(response.data))
+            dispatch(finishLoadingAplication());
+        } catch (error) {
+            console.log(error);
+            dispatch(finishLoadingAplication());
+        }
     }
 }
