@@ -11,9 +11,11 @@ import Usuarios from "./usuarios/Usuarios";
 import Auditoria from "./auditoria/Auditoria";
 import Productos from "./productos/Productos";
 import ListaProductos from "./productos/sm-lista/ListaProductos";
+import LogsProductos from "./productos/sm-historial/LogsProductos";
+import OpcionesProductos from "./productos/sm-opciones/OpcionesProductos";
+
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import LogsProductos from "./productos/sm-historial/LogsProductos";
 
 
 export default function RoutesMain() {
@@ -30,6 +32,7 @@ export default function RoutesMain() {
           <Route path="productos" element={<Productos/>}>
             <Route index element={<Navigate to='lista' />}/>
             <Route path="lista" element={<ListaProductos/>}/>
+            <Route path="opciones" element={<OpcionesProductos/>}/>
             <Route path="logs" element={<LogsProductos/>} />
           </Route>
           <Route path="almacen" element={<Almacen/>} />

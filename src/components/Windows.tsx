@@ -22,9 +22,12 @@ export default function Windows({children, tittle, footer, closeButton}:WindowsP
             {/* BODY */}
             {children}
             {/* FOOTER */}
-            <div className="text-[10px] px-2 text-secondary border-t-[1px] border-secondary" >
-              {footer}
-            </div>
+            {footer&&
+              <div className="text-[10px] px-2 text-secondary border-t-[1px] border-secondary" >
+                {footer}
+              </div>
+            }
+            
         </div>
     </div>
   );

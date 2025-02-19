@@ -1,15 +1,16 @@
 import { useDispatch, useSelector } from "react-redux";
-import { InputSelect, InputText, InputTextarea } from "../../../../components/Input";
+import { InputFileImage, InputSelect, InputText, InputTextarea } from "../../../../components/Input";
 import Windows from "../../../../components/Windows";
 import { useForm } from "../../../../hooks";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { FaEdit } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
 import { FormEvent, useState } from "react";
-import { deleteProductoAPI, updateProductoAPI } from "../../../../redux/productos/productosThunk";
+import { deleteProductoAPI, updateProductoAPI, updateProductoImagenAPI } from "../../../../redux/productos/productosThunk";
 import { Button, ButtonColors, ButtonSubmit } from "../../../../components/Buttons";
 import { BsFillTrashFill } from "react-icons/bs";
 import { hideNotification, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
+import { IoCheckmark, IoClose } from "react-icons/io5";
 
 interface ProductoInterface {
     id: string;
@@ -43,7 +44,7 @@ interface FormUpdateProducto {
 }
 
 
-export default function SelectProductoWindow({ producto, closeButton }: ProductoSelectedWindowsPropInterface) {
+export default function UpdateProductoWindow({ producto, closeButton }: ProductoSelectedWindowsPropInterface) {
     const dateCreatedAt = new Date(producto.createdAt).toLocaleDateString("es-ES", {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute: '2-digit', second:'2-digit', hour12: false});
     const dateUpdatedAt = new Date(producto.updatedAt).toLocaleDateString("es-ES", {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute: '2-digit', second:'2-digit', hour12: false});
 
@@ -54,10 +55,16 @@ export default function SelectProductoWindow({ producto, closeButton }: Producto
     const { codigo, nombre, descripcion, categoriaId, marcaId, unidadMedidaId } = producto;
     const { data, handleInputChange, resetData } = useForm<FormUpdateProducto>({ codigo, nombre, descripcion, categoriaId, marcaId, unidadMedidaId });
     const [editMode, setEditMode] = useState(false);
+    const [editModeImagen, setEditModeImagen] = useState(false);
+    const [imagen, setImagen] = useState<File|undefined>(undefined);
 
     const updateProducto = (e: FormEvent) => {
         e.preventDefault();
         dispatch(updateProductoAPI({id: producto.id, ...data}))        
+    }
+    const updateProductoImagen = () => {
+        console.log(imagen);
+        dispatch(updateProductoImagenAPI({id: producto.id, imagenUrl: producto.imagen, imagen}))
     }
     const cancelUpdateProducto = () => {
         resetData();
@@ -83,8 +90,36 @@ export default function SelectProductoWindow({ producto, closeButton }: Producto
                         <h1 className="text-danger text-[50px] font-bold" >ELIMINADO</h1>
                     </div>
                 }
-                <div className="flex flex-col items-center border rounded-lg shadow-lg">
-                    <img src={producto.imagen} alt={producto.nombre} width='300px' />
+                <div className="flex items-center relative" >
+                    {editModeImagen?
+                        <div className="absolute top-1 right-1 flex text-white">
+                            <button 
+                                onClick={updateProductoImagen}
+                                className="bg-success bg-opacity-80 rounded-full w-5 h-5 flex justify-center items-center me-2 hover:bg-opacity-100" 
+                                type="button"
+                            >
+                                <IoCheckmark />
+                            </button>
+                            <button 
+                                onClick={() => setEditModeImagen(false)}
+                                className="bg-danger bg-opacity-80 rounded-full w-5 h-5 flex justify-center items-center hover:bg-opacity-100" 
+                                type="button"
+                            >
+                                <IoClose />
+                            </button>
+                        </div>
+                        :
+                        <div className="absolute top-1 right-1 flex text-white">
+                            <button 
+                                onClick={() => setEditModeImagen(true)}
+                                className="bg-secondary bg-opacity-80 rounded-full w-7 h-7 flex justify-center items-center hover:bg-opacity-100" 
+                                type="button"
+                            >
+                                <FaEdit/>
+                            </button>
+                        </div>
+                    }
+                    <InputFileImage name="file" imageDefault={producto.imagen} placeholder="Subir imagen..." setFileValue={setImagen} disabled={!editModeImagen} />
                 </div>
 
                 <div className="ms-3" >
@@ -148,7 +183,7 @@ export default function SelectProductoWindow({ producto, closeButton }: Producto
                                     handleInputChange={handleInputChange}
                                     value={data.unidadMedidaId}
                                     name='unidadMedidaId'
-                                    placeholder="Unidad de medida"
+                                    placeholder="U. Medida"
                                     options={listaUnidadesMedida.map(m => ({ name: m.nombre, value: m.id }))}
                                     disabled={!editMode}
                                 />

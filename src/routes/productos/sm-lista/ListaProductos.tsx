@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { useEffect, useState } from "react";
 import { InputSearch, InputSelectSearch } from "../../../components/Input";
-import SelectProductoWindow from "./windows/SelectProductoWindow";
+import UpdateProductoWindow from "./windows/UpdateProductoWindow";
 import LoadingSection from "../../../components/LoadingSection";
 import { FaPlus } from "react-icons/fa";
 import CreateProductoWindow from "./windows/CreateProductoWindow";
@@ -106,7 +106,7 @@ export default function ListaProductos() {
   return (
     <>
       {openDataDetails&&
-        <SelectProductoWindow producto={productoSelected} closeButton={() => {setOpenDataDetails(s => !s)}} />
+        <UpdateProductoWindow producto={productoSelected} closeButton={() => {setOpenDataDetails(s => !s)}} />
       }
       {openCreateProducto&&
         <CreateProductoWindow closeButton={() => {setOpenCreateProducto(s => !s)}} />

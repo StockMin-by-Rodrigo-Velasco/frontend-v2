@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaCloudUploadAlt, FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
-import logos from "../assets/logos";
+import { MdBlockFlipped } from "react-icons/md";
 
 
 interface InputProps {
@@ -17,6 +17,7 @@ interface InputProps {
 interface InputFileProps {
   setFileValue: (file:File|undefined) => void, // Funcion para obtener el archivo
   name: string,
+  imageDefault: string,
   placeholder: string,
   required?:boolean,
   disabled?:boolean,
@@ -28,7 +29,7 @@ interface InputSelectProps extends InputProps {
   optionDefault?: string
 }
 
-const InputFileImage = ({setFileValue, name, placeholder, required=false, disabled=false }:InputFileProps) => {
+const InputFileImage = ({setFileValue, name, imageDefault, placeholder, required=false, disabled=false }:InputFileProps) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageNamePreview, setImageNamePreview] = useState<string>('');
 
@@ -58,15 +59,15 @@ const InputFileImage = ({setFileValue, name, placeholder, required=false, disabl
         disabled={disabled}
       />     
       <img
-        src={imagePreview || logos.logoColor}
+        src={imagePreview || imageDefault}
         alt="Preview"
         className="object-cover rounded-lg h-[200px]"
       />
       <label 
-        className="text-white bg-secondary w-full rounded-full mt-2 flex items-center justify-center text-[14px] cursor-pointer" 
+        className={`${disabled? 'cursor-not-allowed bg-opacity-50':'cursor-pointer'} text-white bg-secondary w-full rounded-full mt-2 flex items-center justify-center text-[14px] `}
         htmlFor={name}
       > 
-        <span className="me-2 text-[18px]" ><FaCloudUploadAlt/></span>{placeholder}
+        <span className="me-2 text-[18px]">{disabled?<MdBlockFlipped/>:<FaCloudUploadAlt/>}</span>{placeholder}
       </label>
       <span className="text-secondary text-[12px]" >{imageNamePreview}</span>
     </div>
@@ -165,7 +166,7 @@ function InputSelect({handleInputChange, value, name, placeholder, required=fals
           <option key={o.value} value={o.value} >{o.name.toUpperCase()}</option>
         ))}      
       </select>
-      <label className="absolute left-0 text-secondary top-[-20px] text-[12px]"  htmlFor={name}>{placeholder}</label>
+      <label className="absolute left-0 text-secondary top-[-20px] text-[12px]" htmlFor={name}>{placeholder}</label>
     </div>
   )  
 }

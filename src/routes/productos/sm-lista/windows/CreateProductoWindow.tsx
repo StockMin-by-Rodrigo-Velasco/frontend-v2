@@ -3,32 +3,11 @@ import { InputFileImage, InputSelect, InputText, InputTextarea } from "../../../
 import Windows from "../../../../components/Windows";
 import { useForm } from "../../../../hooks";
 import { AppDispatch, RootState } from "../../../../redux/store";
-import { FaEdit } from "react-icons/fa";
-import { AiOutlineLoading } from "react-icons/ai";
 import { FormEvent, useState } from "react";
-import { createProductoAPI, deleteProductoAPI, updateProductoAPI } from "../../../../redux/productos/productosThunk";
+import { createProductoAPI } from "../../../../redux/productos/productosThunk";
 import { Button, ButtonColors, ButtonSubmit } from "../../../../components/Buttons";
-import { BsFillTrashFill } from "react-icons/bs";
-import { hideNotification, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
+import logos from "../../../../assets/logos";
 
-interface ProductoInterface {
-    id: string;
-    sucursalId: string;
-    codigo: string;
-    nombre: string;
-    descripcion: string;
-    imagen: string;
-    activo: boolean;
-    deleted: boolean;
-    categoriaId: string;
-    categoria?: string;
-    marcaId: string;
-    marca?: string;
-    unidadMedidaId: string;
-    unidadMedida?: string;
-    createdAt: number;
-    updatedAt: number;
-}
 interface ProductoSelectedWindowsPropInterface {
     closeButton: () => void
 }
@@ -62,7 +41,7 @@ export default function CreateProductoWindow({ closeButton }: ProductoSelectedWi
         <Windows tittle='nuevo producto' closeButton={closeButton} >
             <div className="p-4 flex relative">
                 <div>
-                    <InputFileImage name="file" placeholder="Subir imagen..." setFileValue={setImagen} />
+                    <InputFileImage name="file" imageDefault={logos.logoColor} placeholder="Subir imagen..." setFileValue={setImagen} />
                 </div>
 
                 <div className="ms-3" >
@@ -116,7 +95,7 @@ export default function CreateProductoWindow({ closeButton }: ProductoSelectedWi
                                     handleInputChange={handleInputChange}
                                     value={data.unidadMedidaId}
                                     name='unidadMedidaId'
-                                    placeholder="Unidad de medida"
+                                    placeholder="U. Medida"
                                     options={listaUnidadesMedida.map(um => ({ name: um.abreviatura, value: um.id }))}
                                     optionDefault="Sin U/M"
                                     required

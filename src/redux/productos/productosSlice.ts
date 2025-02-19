@@ -62,6 +62,8 @@ interface ProductoDetalladoInterface extends ProductoInterface{
 
 interface InitialStateInterface {
     idUltimoProductoEliminado: string;
+    idUltimaMarcaEliminada: string;
+    idUltimaCategoriaEliminada: string;
     listaProductos: ProductoInterface[],
     listaMarcas: MarcaInterface[],
     listaCategorias: CategoriaInterface[],
@@ -71,6 +73,8 @@ interface InitialStateInterface {
 
 const initialState: InitialStateInterface = {
     idUltimoProductoEliminado: '',
+    idUltimaMarcaEliminada: '',
+    idUltimaCategoriaEliminada: '',
     listaProductos: [],
     listaMarcas: [],
     listaCategorias: [],
@@ -82,7 +86,9 @@ const ProductosSlice = createSlice({
     initialState,
     reducers: {
         getAllProductos: (state, action: PayloadAction<ProductoDetalladoInterface[]>) => {
-            const newListaProductos:ProductoInterface[] = action.payload.map(p => ({
+            const newListaProductos:ProductoInterface[] = action.payload.map(p => {
+                // console.log(p);
+            return {
               id: p.id,
               sucursalId: p.sucursalId,
               codigo: p.codigo,
@@ -100,7 +106,8 @@ const ProductosSlice = createSlice({
               unidadMedidaId: p.unidadMedidaId,
               createdAt: p.createdAt,
               updatedAt: p.updatedAt
-            }));
+            }}
+        );
             state.listaProductos = [...newListaProductos];
         },
         createProducto: (state, action: PayloadAction<ProductoDetalladoInterface>) => {
@@ -162,9 +169,10 @@ const ProductosSlice = createSlice({
         deleteMarca: (state, action: PayloadAction<string>) => {
             const newListaMarcas = state.listaMarcas.filter(m => m.id !== action.payload);
             state.listaMarcas = [...newListaMarcas];
+            state.idUltimaMarcaEliminada = action.payload;
         },
         updateMarca: (state, action: PayloadAction<MarcaInterface>) => {
-            const updateListaMarcas = state.listaMarcas.map(m => (m.id === action.payload.id)?{...m, ...action.payload}:m);
+            const updateListaMarcas = current(state.listaMarcas).map(m => (m.id === action.payload.id)?action.payload:m);
             state.listaMarcas = [...updateListaMarcas];
         },
         getAllCategorias: (state, action: PayloadAction<CategoriaInterface[]>) => {
@@ -176,9 +184,10 @@ const ProductosSlice = createSlice({
         deleteCategoria: (state, action: PayloadAction<string>) => {
             const newListaCategorias = state.listaCategorias.filter(m => m.id !== action.payload);
             state.listaCategorias = [...newListaCategorias];
+            state.idUltimaCategoriaEliminada = action.payload;
         },
         updateCategoria: (state, action: PayloadAction<CategoriaInterface>) => {
-            const updateListaCategorias = state.listaCategorias.map(c => (c.id === action.payload.id)?{...c, ...action.payload}:c);
+            const updateListaCategorias = current(state.listaCategorias).map(c => (c.id === action.payload.id)?action.payload:c);
             state.listaCategorias = [...updateListaCategorias];
         },
         getAllLogs: (state, action: PayloadAction<LogInterface[]>) => {

@@ -6,7 +6,6 @@ import { AppDispatch, RootState } from "../../redux/store";
 
 import { FaPlus, FaRegUser } from "react-icons/fa";
 import { TbCar, TbHistory, TbLogout2 } from "react-icons/tb";
-import { IoOptions } from "react-icons/io5";
 import { BiObjectsHorizontalLeft } from "react-icons/bi";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { GrScorecard } from "react-icons/gr";
@@ -17,13 +16,14 @@ import PerfilWindow from "./windows/PerfilWindow";
 import { perfilColor, perfilImg } from "../../assets/perfil";
 import { CiCircleList } from "react-icons/ci";
 import { logoutSucursalUserAPI } from "../../redux/sucursal/sucursalThunk";
+import { LuSettings } from "react-icons/lu";
 
 const menu = [
     {
         title: 'Productos', path: '/main/productos', icon: <BiObjectsHorizontalLeft size='20px' className="me-2" />,
         subTitles: [
             { title: 'Lista', path: '/main/productos/lista', icon: <CiCircleList size='14px' /> },
-            { title: 'Configuracion', path: '/main/productos/configuracion', icon: <IoOptions size='14px' /> },
+            { title: 'Opciones', path: '/main/productos/opciones', icon: <LuSettings size='14px' /> },
             { title: 'Historial', path: '/main/productos/logs', icon: <TbHistory size='14px' /> },
         ]
     },
