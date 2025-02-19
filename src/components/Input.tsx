@@ -74,6 +74,29 @@ const InputFileImage = ({setFileValue, name, imageDefault, placeholder, required
   );
 };
 
+function InputDateSearch({handleInputChange, value, name, placeholder, required=false, disabled=false, className=''}:InputProps){
+  return(
+    <div className = {`${className} flex items-center rounded-md border-[1px] border-secondary px-2 disabled:bg-light/80 disabled:cursor-not-allowed`}>
+      <label 
+        htmlFor={name}
+        className="text-secondary me-2"
+      >
+        {placeholder}
+      </label>
+      <input 
+        className="text-secondary rounded-lg focus:outline-none bg-secondary-1"
+        type="date"
+        onChange={handleInputChange}
+        value={value}
+        name={name}
+        id={name}
+        required={required}
+        disabled={disabled}
+      />
+    </div>
+  )
+}
+
 function InputSearch({handleInputChange, value, name, placeholder, required=false, disabled=false, className=''}:InputProps){
   return(
     <div className = {`${className} flex items-center rounded-full border-[1px] border-primary px-2`}>
@@ -292,6 +315,7 @@ export {
   InputFileImage,
   InputSearch, 
   InputSelectSearch,
+  InputDateSearch,
   InputLoginPassword, 
   InputLoginText,
   InputSelect, 

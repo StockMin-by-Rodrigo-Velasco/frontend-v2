@@ -1,4 +1,5 @@
 import { BsBoxArrowInUpRight } from "react-icons/bs";
+import logos from "../assets/logos";
 
 export enum DataTableColumnTypes {
     IMG,
@@ -38,7 +39,7 @@ export default function DataTable<T,>({ data, columns, details }: DataTablePropI
                     <tr key={i} className="border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase" >
                         {columns.map((c, i) => (
                             <td key={i} className={c.type === DataTableColumnTypes.P ? "py-2 text-center" : "py-2 flex justify-center"} >
-                                {c.type === DataTableColumnTypes.IMG && <img src={f[c.key] as string} className="w-14" />}
+                                {c.type === DataTableColumnTypes.IMG && <img src={(f[c.key] as string) || logos.logoNoImage} className="w-14" />}
                                 {c.type === DataTableColumnTypes.P && <p>{f[c.key] as string}</p>}
                                 {c.type === DataTableColumnTypes.DATE && <p>{new Date((f[c.key] as number)).toLocaleDateString("es-ES", {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute: '2-digit', second:'2-digit', hour12: false})}</p>}
                             </td>

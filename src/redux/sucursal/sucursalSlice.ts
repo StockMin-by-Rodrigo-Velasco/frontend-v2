@@ -41,6 +41,7 @@ interface SucursalStateInterface{
     id: string;
     data: SucursalDataInterface;
     userData: UserDataInterface,
+    logUserData: UserInterface,
     users: UserInterface[];
     userSelected: UserLoginInterface,
     logo: string;
@@ -50,6 +51,7 @@ const initialState: SucursalStateInterface = {
     id: '',
     data: {nit:'', nombre:'', propietario:'', direccion:'', contacto: '', activo: false},
     userData: { id:'', sucursalId:'', nombre:'', apellido:'', ci:'', imagen:'', contacto:'', direccion:'', permisos:'', activo:false },
+    logUserData: {id:'', sucursalId:'', nombre:'', apellido:'', ci:'', imagen:''},
     users:[],
     userSelected: {id: '', sucursalId: ''},
     logo: '',
@@ -85,6 +87,9 @@ const SucursalSlice = createSlice({
     getSucursalUsers: (state, action: PayloadAction<UserInterface[]>) => {
         state.users = [...action.payload]
     },
+    getOneSucursalUser: (state, action: PayloadAction<UserInterface>) => {
+        state.logUserData = action.payload;
+    },
     selectSucursalUser: (state, action: PayloadAction<UserLoginInterface>) => {
         state.userSelected= action.payload;
     }
@@ -98,6 +103,7 @@ export const {
     logoutSucursalUser,
     updateSucursalUser,
     getSucursalUsers,
+    getOneSucursalUser,
     selectSucursalUser,
 } = SucursalSlice.actions
 

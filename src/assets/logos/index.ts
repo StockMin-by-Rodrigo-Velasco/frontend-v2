@@ -4,6 +4,7 @@ import logoHorizontal from './logo-horizontal.png';
 import logoVertical from './logo-vertical.png';
 import logoWhite from './logo-white.png';
 import logoColor from './logo-color.png';
+import logoNoImage from './logo-bg.png';
 
 const logos = { 
     logoHorizontalWhite,
@@ -12,6 +13,7 @@ const logos = {
     logoVertical,
     logoWhite,
     logoColor,
+    logoNoImage
 }
 
 export default logos;

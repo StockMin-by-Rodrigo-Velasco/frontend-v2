@@ -3,7 +3,7 @@ import { AppDispatch, RootState } from "../store"
 import api from "../../api/config";
 import { LoginSucursalInterface, LoginSucursalUserInterface, UpdateSucursalUserInterface } from "../../interface";
 import { hideNotification, showNotificationError, showNotificationSuccess } from "../notification/notificationSlice";
-import { getSucursalUsers, loginSucursal, loginSucursalUser, logoutSucursal, logoutSucursalUser, updateSucursalUser } from "./sucursalSlice";
+import { getOneSucursalUser, getSucursalUsers, loginSucursal, loginSucursalUser, logoutSucursal, logoutSucursalUser, updateSucursalUser } from "./sucursalSlice";
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from "../aplication/aplicationSlice";
 import Cookie from 'js-cookie';
 
@@ -119,6 +119,26 @@ export const getSucursalUsersAPI = ( sucursalId: string ) => {
                 setTimeout( () => dispatch(hideNotification()), 5000 );
             }else console.log(error);
             dispatch(startLoadingAplication());         
+        }
+    }
+}
+
+export const getOneSucursalUserAPI = ( userId: string ) => {
+    return async ( dispatch: AppDispatch) => {
+        try {
+            dispatch(startLoadingData());
+            
+            const res: AxiosResponse = await api.get(`sucursal-ms/get-one-sucursal-user/${userId}`)
+            const user = res.data;
+            dispatch(getOneSucursalUser(user));
+            dispatch(finishLoadingData());    
+        } catch (error) {
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                dispatch(showNotificationError({tittle: 'USUARIO', description: data.message}));
+                setTimeout( () => dispatch(hideNotification()), 5000 );
+            }else console.log(error);
+            dispatch(startLoadingData());         
         }
     }
 }

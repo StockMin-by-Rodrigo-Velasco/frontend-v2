@@ -8,9 +8,9 @@ import { FaPlus, FaRegUser } from "react-icons/fa";
 import { TbCar, TbHistory, TbLogout2 } from "react-icons/tb";
 import { BiObjectsHorizontalLeft } from "react-icons/bi";
 import { MdOutlineShoppingCart } from "react-icons/md";
-import { GrScorecard } from "react-icons/gr";
+// import { GrScorecard } from "react-icons/gr";
 import { HiOutlineInboxStack } from "react-icons/hi2";
-import { AiOutlineAudit } from "react-icons/ai";
+// import { AiOutlineAudit } from "react-icons/ai";
 import { useState } from 'react';
 import PerfilWindow from "./windows/PerfilWindow";
 import { perfilColor, perfilImg } from "../../assets/perfil";
@@ -33,12 +33,12 @@ const menu = [
             { title: 'Registrar Almacen', path: '/main/almacen/lista', icon: <FaPlus size='14px' /> },
         ]
     },
-    {
-        title: 'Compras', path: '/main/compras', icon: <GrScorecard size='20px' className="me-2" />,
-        subTitles: [
-            { title: 'Registrar compra', path: '/main/compras/lista', icon: <FaPlus size='14px' /> },
-        ]
-    },
+    // {
+    //     title: 'Compras', path: '/main/compras', icon: <GrScorecard size='20px' className="me-2" />,
+    //     subTitles: [
+    //         { title: 'Registrar compra', path: '/main/compras/lista', icon: <FaPlus size='14px' /> },
+    //     ]
+    // },
     {
         title: 'Ventas', path: '/main/ventas', icon: <MdOutlineShoppingCart size='20px' className="me-2" />,
         subTitles: [
@@ -52,13 +52,13 @@ const menu = [
             { title: 'Permisos', path: '/main/usuarios/lista', icon: <TbCar size='14px' /> },
         ]
     },
-    {
-        title: 'Auditoria', path: '/main/auditoria', icon: <AiOutlineAudit size='20px' className="me-2" />,
-        subTitles: [
-            { title: 'Registrar usuario', path: '/main/auditoria/lista', icon: <FaPlus size='14px' /> },
-            { title: 'Permisos', path: '/main/auditoria/permisos', icon: <TbCar size='14px' /> },
-        ]
-    }
+    // {
+    //     title: 'Auditoria', path: '/main/auditoria', icon: <AiOutlineAudit size='20px' className="me-2" />,
+    //     subTitles: [
+    //         { title: 'Registrar usuario', path: '/main/auditoria/lista', icon: <FaPlus size='14px' /> },
+    //         { title: 'Permisos', path: '/main/auditoria/permisos', icon: <TbCar size='14px' /> },
+    //     ]
+    // }
 ]
 
 export default function Navbar() {

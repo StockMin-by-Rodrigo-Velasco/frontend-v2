@@ -385,13 +385,13 @@ export const getAllUnidadAPI = () => {
         }
     }
 }
-export const getAllLogsAPI = () => {
+export const getLogsAPI = (desde: number, hasta: number) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { id } = getState().Sucursal;
-        if (!id) return;
+        const { id: sucursalId } = getState().Sucursal;
+        if (!sucursalId) return;
         try {
             dispatch(startLoadingAplication());
-            const response: AxiosResponse = await api.get(`productos-ms/get-all-logs/${id}`);
+            const response: AxiosResponse = await api.post(`productos-ms/get-logs`, {sucursalId, desde, hasta});
             dispatch(getAllLogs(response.data))
             dispatch(finishLoadingAplication());
         } catch (error) {

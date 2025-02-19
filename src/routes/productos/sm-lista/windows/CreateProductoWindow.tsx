@@ -41,7 +41,7 @@ export default function CreateProductoWindow({ closeButton }: ProductoSelectedWi
         <Windows tittle='nuevo producto' closeButton={closeButton} >
             <div className="p-4 flex relative">
                 <div>
-                    <InputFileImage name="file" imageDefault={logos.logoColor} placeholder="Subir imagen..." setFileValue={setImagen} />
+                    <InputFileImage name="file" imageDefault={logos.logoNoImage} placeholder="Subir imagen..." setFileValue={setImagen} />
                 </div>
 
                 <div className="ms-3" >
