@@ -34,7 +34,7 @@ const initDateRange: DateRange = {
   hasta: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split("T")[0],
 }
 
-export default function LogsProductos() {
+export default function HistorialProductos() {
   const { loadingApplication } = useSelector((s: RootState) => s.Aplication);
   const { listaLogs } = useSelector((s: RootState) => s.Productos);
   const dispatch = useDispatch<AppDispatch>();

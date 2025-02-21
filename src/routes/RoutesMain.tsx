@@ -4,18 +4,21 @@ import LoginSucursal from "./sucursal/LoginSucursal";
 import SucursalUsers from "./sucursal/SucursalUsers";
 import LoginSucursalUser from "./sucursal/LoginSucursalUser";
 import MainAplication from "./main/MainAplication";
-import Almacen from "./almacen/Almancen";
-import Compras from "./compras/Compras";
 import Ventas from "./ventas/Ventas";
 import Usuarios from "./usuarios/Usuarios";
-import Auditoria from "./auditoria/Auditoria";
+
 import Productos from "./productos/Productos";
 import ListaProductos from "./productos/sm-lista/ListaProductos";
-import LogsProductos from "./productos/sm-historial/LogsProductos";
 import OpcionesProductos from "./productos/sm-opciones/OpcionesProductos";
+import HistorialProductos from "./productos/sm-historial/HistorialProductos";
+
+import Almacenes from "./almacenes/Almancenes";
+import ListaAlmacenes from "./almacenes/sm-lista/ListaAlmacenes";
+import HistorialAlmacenes from "./almacenes/sm-historial/HistorialAlmacenes";
 
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import SelectedAlmacen from "./almacenes/sm-lista/SelectedAlmacen";
 
 
 export default function RoutesMain() {
@@ -29,17 +32,25 @@ export default function RoutesMain() {
           <Route path=":id" element={ <LoginSucursalUser/> } />
         </Route>
         <Route path="main" element={ userData? <MainAplication/> : <Navigate to='/login-user'/> }>
+        
           <Route path="productos" element={<Productos/>}>
-            <Route index element={<Navigate to='lista' />}/>
+            <Route index element={<Navigate to='lista'/>}/>
             <Route path="lista" element={<ListaProductos/>}/>
             <Route path="opciones" element={<OpcionesProductos/>}/>
-            <Route path="logs" element={<LogsProductos/>} />
+            <Route path="historial" element={<HistorialProductos/>} />
           </Route>
-          <Route path="almacen" element={<Almacen/>} />
-          <Route path="compras" element={<Compras/>} />
+
+          <Route path="almacenes" element={<Almacenes/>}>
+            <Route index element={<Navigate to='lista'/>}/>
+            <Route path="lista" element={<ListaAlmacenes/>}>
+              <Route path=":nombre" element={<SelectedAlmacen/>} />
+            </Route>
+            <Route path="historial" element={<HistorialAlmacenes/>} />
+          </Route>
+
+
           <Route path="ventas" element={<Ventas/>} />
           <Route path="usuarios" element={<Usuarios/>} />
-          <Route path="auditoria" element={<Auditoria/>} />
         </Route>
       </Routes>
 

@@ -3,6 +3,7 @@ import NotificationSlice from './notification/notificationSlice';
 import SucursalSlice from './sucursal/sucursalSlice';
 import AplicationSlice from './aplication/aplicationSlice';
 import ProductosSlice from './productos/productosSlice';
+import AlmacenesSlice from './almacenes/almacenesSlice';
 
 
 export const store = configureStore({
@@ -11,6 +12,7 @@ export const store = configureStore({
         Notification: NotificationSlice,
         Sucursal: SucursalSlice,
         Productos: ProductosSlice,
+        Almacenes: AlmacenesSlice,
     }
 })
 
