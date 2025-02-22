@@ -4,8 +4,8 @@ import AlmacenCard from "./components/AlmacenCart";
 import BodySection from "../../../components/BodySection";
 import { FaPlus } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import CreateAlmacenWindow from "./windows/createAlmacenWindow";
 import { Outlet, useNavigate } from "react-router";
+import CreateAlmacenWindow from "./windows/CreateAlmacenWindow";
 
 export default function ListaAlmacenes() {
   const navigate = useNavigate();
@@ -18,9 +18,7 @@ export default function ListaAlmacenes() {
   
   return ( selectedAlmacen.id?
     <>
-      <BodySection>
         <Outlet/>
-      </BodySection>
     </>
     :
     <>

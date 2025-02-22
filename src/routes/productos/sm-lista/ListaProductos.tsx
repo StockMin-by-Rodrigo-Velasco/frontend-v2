@@ -55,7 +55,7 @@ interface FilterInterface{
   marca: string;
 }
 
-const filterInitialState = {
+const filterInitialState:FilterInterface = {
   buscar: '',
   categoria: '',
   marca: '',

@@ -5,31 +5,34 @@ import Windows from "../../../../components/Windows";
 import { useForm } from "../../../../hooks";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { FormEvent } from "react";
-import { createAlmacenAPI } from "../../../../redux/almacenes/almacenThunks";
+import { updateAlmacenAPI } from "../../../../redux/almacenes/almacenThunks";
+import { AlmacenInterface } from "../../../../interface";
 
-interface CreateAlmacenWindowInterface{
+interface UpdateAlmacenWindowInterface{
     closeButton: () => void; 
+    almacen: AlmacenInterface
 }
 
-interface createForm{
+interface updateForm{
     nombre: string;
     descripcion: string;
 }
 
 
-export default function CreateAlmacenWindow({closeButton}: CreateAlmacenWindowInterface) {
+export default function UpdateAlmacenWindow({closeButton, almacen}: UpdateAlmacenWindowInterface) {
     const dispatch = useDispatch<AppDispatch>();
     const {loadingData} = useSelector((s:RootState) => s.Aplication);
-    const { data, handleInputChange } = useForm<createForm>({nombre:'', descripcion:''});
+    const { data, handleInputChange } = useForm<updateForm>({nombre: almacen.nombre, descripcion: almacen.descripcion || ''});
 
 
     const formSubmit = (e:FormEvent) => {
         e.preventDefault();
-        dispatch(createAlmacenAPI(data));
+        dispatch(updateAlmacenAPI({id: almacen.id, ...data}));
     }
 
   return (
-    <Windows tittle="Nuevo almacen" closeButton={closeButton} >
+    <Windows tittle="Modificar almacén" closeButton={closeButton} >
+        
         <form onSubmit={formSubmit} className="p-3" >
             <InputText
                 name="nombre"

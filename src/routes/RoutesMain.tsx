@@ -22,9 +22,9 @@ import SelectedAlmacen from "./almacenes/sm-lista/SelectedAlmacen";
 
 
 export default function RoutesMain() {
-  const { id, userData } = useSelector((s:RootState) => s.Sucursal)
+  const { id, userData } = useSelector((s:RootState) => s.Sucursal);
+  const { selectedAlmacen } = useSelector((s:RootState) => s.Almacenes);
 
-    
   return (
       <Routes>
         <Route index element={<LoginSucursal/> }/>
@@ -43,6 +43,7 @@ export default function RoutesMain() {
           <Route path="almacenes" element={<Almacenes/>}>
             <Route index element={<Navigate to='lista'/>}/>
             <Route path="lista" element={<ListaAlmacenes/>}>
+              {selectedAlmacen.id&& <Route index element={<Navigate to={selectedAlmacen.id}/>} /> }
               <Route path=":nombre" element={<SelectedAlmacen/>} />
             </Route>
             <Route path="historial" element={<HistorialAlmacenes/>} />

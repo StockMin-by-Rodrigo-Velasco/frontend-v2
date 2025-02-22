@@ -35,7 +35,6 @@ export default function DataTable<T,>({ data, columns, details }: DataTablePropI
             </thead>
             <tbody>
                 {data.map((f, i) => (
-
                     <tr key={i} className="border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase" >
                         {columns.map((c, i) => (
                             <td key={i} className={c.type === DataTableColumnTypes.P ? "py-2 text-center" : "py-2 flex justify-center"} >

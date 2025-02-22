@@ -5,34 +5,58 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../redux/store";
 import { selectAlmacen } from "../../../../redux/almacenes/almacenesSlice";
 import { useNavigate } from "react-router";
+import { FaEdit } from "react-icons/fa";
+import { useState } from "react";
+import UpdateAlmacenWindow from "../windows/UpdateAlmacenWindow";
 
 interface AlmacenCardPropsInterface {
     almacen: AlmacenInterface
 }
 
-
-
 export default function AlmacenCard({ almacen }: AlmacenCardPropsInterface) {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
+    const [openUpdateAlmacenWindow, setOpenUpdateAlmacenWindow] = useState(false);
     
+
+    const goToUpdateAlmacen = () => {
+        setOpenUpdateAlmacenWindow(true);
+    }
     const goToAlmacen = () => {
         dispatch(selectAlmacen(almacen));
         navigate(`/main/almacenes/lista/${almacen.id}`);
     }
     return (
-        <button 
-            onClick={goToAlmacen}
-            type="button" 
-            className="bg-info flex flex-col justify-between items-center rounded m-2 p-3 w-[250px] h-[180px] text-white transition-all duration-300 hover:w-[255px] hover:h-[185px]">
-            <h1 className="uppercase" >{almacen.nombre}</h1>
-            <span className="text-[100px]" > <HiOutlineInboxStack /> </span>
+        <>
+            {openUpdateAlmacenWindow&& <UpdateAlmacenWindow almacen={almacen} closeButton={() => {setOpenUpdateAlmacenWindow(false)}} />}
+            <div 
+                className="overflow-hidden bg-secondary flex flex-col items-center rounded m-2 w-[250px] transition-all duration-300 text-white text-[100px] hover:text-[110px]"
+            >
 
-            <div className="w-full text-start" >
-                <p className="text-[10px]" ><span>CREADO: </span>{dateLocalWhitTime(almacen.createdAt)}</p>
-                <p className="text-[10px]" ><span>ULTIMA MODIFICACIÓN: </span>{dateLocalWhitTime(almacen.createdAt)}</p>
+
+                <div className="relative flex items-center py-1 w-full text-[16px]" >
+                    <h1 className="uppercase text-center w-full" >{almacen.nombre}</h1>
+                    <button 
+                        className="absolute top-1 right-1 w-7 h-7 rounded-full flex justify-center items-center transition-all duration-200 hover:bg-white hover:text-secondary" 
+                        onClick={goToUpdateAlmacen}
+                        > 
+                        <FaEdit/> 
+                    </button>
+                </div>
+                <div className="w-[100px] h-[100px] flex relative items-center justify-center" >
+                <span className="absolute"><HiOutlineInboxStack /></span>
+                </div>
+                <div className="w-full text-start mb-2 px-3" >
+                    <p className="text-[10px]" ><span>CREADO: </span>{dateLocalWhitTime(almacen.createdAt)}</p>
+                    <p className="text-[10px]" ><span>ULTIMA MODIFICACIÓN: </span>{dateLocalWhitTime(almacen.createdAt)}</p>
+                </div>
+
+                <button
+                    onClick={goToAlmacen}
+                    className="bg-info/80 w-full hover:bg-info text-[16px]"
+                >ABRIR ALMACEN</button>
 
             </div>
-        </button>
+        </>
     );
 }

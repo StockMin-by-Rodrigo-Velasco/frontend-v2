@@ -135,7 +135,7 @@ export const updateProductoAPI = (updateData: UpdateProductoInterface) => {
         if(!sucursalId) return;
         try {
             dispatch(startLoadingData());
-            const response: AxiosResponse = await api.post('productos-ms/update-producto', 
+            const response: AxiosResponse = await api.patch('productos-ms/update-producto', 
                 {sucursalId,...updateData}, { headers: {"X-User-Id": userData.id} }
             );
             const {data, message} = response.data;
@@ -167,7 +167,7 @@ export const updateProductoImagenAPI = (data: UpdateProductoImagenInterface) => 
         
             try {
                 dispatch(startLoadingData());
-                const response: AxiosResponse = await api.post('productos-ms/update-producto-imagen', 
+                const response: AxiosResponse = await api.patch('productos-ms/update-producto-imagen', 
                     updatedProductoImagen,
                     {
                         headers: {
@@ -265,7 +265,7 @@ export const updateMarcaAPI = (updateMarcaData: UpdateMarcaInterface) => {
         if(!sucursalId) return;
         try {
             dispatch(startLoadingData());
-            const response: AxiosResponse = await api.post('productos-ms/update-marca', 
+            const response: AxiosResponse = await api.patch('productos-ms/update-marca', 
                 {sucursalId,...updateMarcaData}, { headers: {"X-User-Id": userData.id} }
             );
             const {data, message} = response.data;
@@ -352,7 +352,7 @@ export const updateCategoriaAPI = ( updateCategoriaData: UpdateCategoriaInterfac
         if(!sucursalId) return;
         try {
             dispatch(startLoadingData());
-            const response: AxiosResponse = await api.post('productos-ms/update-categoria', 
+            const response: AxiosResponse = await api.patch('productos-ms/update-categoria', 
                 {sucursalId,...updateCategoriaData}, { headers: {"X-User-Id": userData.id} }
             );
             const {data, message} = response.data;
