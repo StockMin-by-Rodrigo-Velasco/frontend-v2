@@ -1,16 +1,18 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
-import { AlmacenInterface } from "../../interface";
+import { AlmacenInterface, ProductoAlmacenDetalladoInterface } from "../../interface";
 
 
 
 
 interface InitialStateInterface {
-    listaAlmacenes: AlmacenInterface[];
     selectedAlmacen: AlmacenInterface;
+    listaAlmacenes: AlmacenInterface[];
+    listaProductosAlmacen: ProductoAlmacenDetalladoInterface[];
 }
 
 const initialState: InitialStateInterface = {
     listaAlmacenes: [],
+    listaProductosAlmacen: [],
     selectedAlmacen: { id: '', sucursalId: '', nombre: '', descripcion: '', deleted: false, createdAt: 0, updatedAt: 0 }
 }
 
@@ -35,7 +37,10 @@ const AlmacenesSlice = createSlice({
         },
         deleteAlmacen: (state, action: PayloadAction<string>) => {
             state.listaAlmacenes = state.listaAlmacenes.filter(a => a.id !== action.payload);
-        }
+        },
+        getAllProductosAlmacen: (state, action: PayloadAction<ProductoAlmacenDetalladoInterface[]>) => {
+            state.listaProductosAlmacen = action.payload
+        },
     }
 });
 
@@ -47,6 +52,8 @@ export const {
     createAlmacen,
     updateAlmacen,
     deleteAlmacen,
+
+    getAllProductosAlmacen,
 
 } = AlmacenesSlice.actions;
 export default AlmacenesSlice.reducer;

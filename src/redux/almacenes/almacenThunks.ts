@@ -1,9 +1,30 @@
 import axios, { AxiosResponse } from 'axios';
 import { AppDispatch, RootState } from '../store';
 import api from '../../api/config';
-import { createAlmacen, getAllAlmacenes, updateAlmacen } from './almacenesSlice';
+import { createAlmacen, getAllAlmacenes, getAllProductosAlmacen, updateAlmacen } from './almacenesSlice';
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from '../aplication/aplicationSlice';
 import { hideNotification, showNotificationError, showNotificationSuccess } from '../notification/notificationSlice';
+import { ProductoAlmacenDetalladoInterface, ProductoAlmacenInterface } from '../../interface';
+
+interface ProductoInterface {
+    id: string;
+    sucursalId: string;
+    codigo: string;
+    nombre: string;
+    descripcion: string;
+    imagen: string;
+    activo: boolean;
+    deleted: boolean;
+    categoriaId: string;
+    categoria?: string;
+    marcaId: string;
+    marca?:string;
+    unidadMedidaId: string;
+    unidadMedida?: string;
+    unidadMedidaAbreviada?: string;
+    createdAt: number;
+    updatedAt: number;
+}
 
 interface CreateAlmacenInterface{
     nombre?: string;
@@ -82,4 +103,44 @@ export const updateAlmacenAPI = ( updateCategoriaInterface: UpdateCategoriaInter
             }else console.log(error);
         }
     }
+}
+
+export const getAllProductosAlmacenAPI = () => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const { selectedAlmacen } = getState().Almacenes;
+        const { listaProductos } = getState().Productos;
+        const listaProductosObj = listaProductos.reduce((acc, producto) => { acc[producto.id] = producto; return acc;
+        }, {} as Record<string, ProductoInterface>);
+        // console.log(listaProductosObj);
+
+        if( !selectedAlmacen.id ) return;
+        try {
+            dispatch(startLoadingAplication());
+            const responce: AxiosResponse = await api.get(`almacenes-ms/get-all-productos-almacen/${selectedAlmacen.id}`);
+            const productosAlmacen: ProductoAlmacenInterface[] = responce.data.data;
+            const productosAlmacenDetallado: ProductoAlmacenDetalladoInterface[] = productosAlmacen.map((p:ProductoAlmacenInterface) => (
+                {
+                    id: p.id,
+                    almacenId: p.almacenId,
+                    codigo: listaProductosObj[p.id].codigo,
+                    nombre: listaProductosObj[p.id].nombre,
+                    descripcion: listaProductosObj[p.id].descripcion,
+                    imagen: listaProductosObj[p.id].imagen,
+                    categoria: listaProductosObj[p.id].categoria,
+                    marca: listaProductosObj[p.id].marca,
+                    unidadMedida: listaProductosObj[p.id].unidadMedida,
+                    unidadMedidaAbreviada: listaProductosObj[p.id].unidadMedidaAbreviada,
+                    cantidad: p.cantidad,
+                    cantidadMinima: p.cantidadMinima,
+                    createdAt: p.createdAt,
+                    updatedAt: p.updatedAt,
+                })); 
+
+            dispatch(getAllProductosAlmacen( productosAlmacenDetallado ));
+            dispatch(finishLoadingAplication());
+        } catch (error) {
+            console.log(error);
+            dispatch(finishLoadingAplication());
+        }
+    };
 }

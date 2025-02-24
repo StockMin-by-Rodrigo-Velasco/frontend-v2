@@ -1,20 +1,23 @@
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store";
 import AlmacenCard from "./components/AlmacenCart";
 import BodySection from "../../../components/BodySection";
 import { FaPlus } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router";
 import CreateAlmacenWindow from "./windows/CreateAlmacenWindow";
+import { getAllProductosAlmacenAPI } from "../../../redux/almacenes/almacenThunks";
 
 export default function ListaAlmacenes() {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
   const { listaAlmacenes, selectedAlmacen } = useSelector((s: RootState) => s.Almacenes);
   const [openCreateAlmacenWindow, setOpenCreateAlmacenWindow] = useState(false);
 
   useEffect(() => {
-    if(!selectedAlmacen.id) navigate('/main/almacenes/lista');
-  }, [])
+    if(selectedAlmacen.id) dispatch(getAllProductosAlmacenAPI());
+    else navigate('/main/almacenes/lista');
+  }, [selectedAlmacen.id])
   
   return ( selectedAlmacen.id?
     <>

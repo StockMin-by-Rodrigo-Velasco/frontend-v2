@@ -8,6 +8,8 @@ import BodySection from "../../../components/BodySection";
 import { InputSearch, InputSelectSearch } from "../../../components/Input";
 import { TbLogout2 } from "react-icons/tb";
 import { FaPlus } from "react-icons/fa";
+import DataTable, { DataTableColumnInterface, DataTableColumnTypes } from "../../../components/DataTable";
+import { ProductoAlmacenDetalladoInterface } from "../../../interface";
 
 interface FilterInterface {
   buscar: string;
@@ -24,12 +26,29 @@ export default function SelectedAlmacen() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { listaMarcas, listaCategorias } = useSelector((s: RootState) => s.Productos);
+  const { selectedAlmacen, listaProductosAlmacen } = useSelector((s: RootState) => s.Almacenes);
   const [filter, setFilter] = useState<FilterInterface>(filterInitialState);
+  const [filteredAlmacenProducto, setFilteredProducto] = useState<ProductoAlmacenDetalladoInterface[]>([]);
+
+  const columns: DataTableColumnInterface<ProductoAlmacenDetalladoInterface>[] = [
+      { name: 'IMAGEN', type: DataTableColumnTypes.IMG, key: "imagen"},
+      { name: 'CODIGO', type: DataTableColumnTypes.P , key: "codigo"},
+      { name: 'MEDIDA', type: DataTableColumnTypes.P , key: "unidadMedidaAbreviada"},
+      { name: 'NOMBRE', type: DataTableColumnTypes.P, key: "nombre" },
+      { name: 'CANTIDAD', type: DataTableColumnTypes.P, key: "cantidad" },
+      { name: 'ESTADO', type: DataTableColumnTypes.ALERT, key: "cantidadMinima" },
+    ];
 
   const logoutAlmacen = () => {
     dispatch(resetSelectAlmacen())
     navigate('/main/almacenes/lista');
   }
+
+  const getProducto = (d:ProductoAlmacenDetalladoInterface) => {
+      console.log(d);
+      // setProductoSelected(d);
+      // setOpenDataDetails(true);
+    }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { value, name } = e.target;
@@ -43,12 +62,9 @@ export default function SelectedAlmacen() {
     setFilter(newFilter);
   }
 
-
-
-
   useEffect(() => {
-
-  }, [])
+    setFilteredProducto(listaProductosAlmacen);
+  }, [listaProductosAlmacen])
   return (
     <>
       <HeaderSection>
@@ -58,6 +74,11 @@ export default function SelectedAlmacen() {
           placeholder="Buscar"
           value={filter.buscar}
         />
+
+        <div className="flex justify-center items-center bg-secondary text-white rounded-full px-3 text-[20px] ms-auto me-auto" >
+          <h1 className="ms-auto me-auto uppercase" >{selectedAlmacen.nombre}</h1>
+        </div>
+
         <InputSelectSearch
           value={filter.categoria}
           className="ms-auto"
@@ -67,6 +88,7 @@ export default function SelectedAlmacen() {
           optionDefault="Todas..."
           handleInputChange={handleChange}
         />
+
         <InputSelectSearch
           value={filter.marca}
           className="ms-3"
@@ -83,9 +105,7 @@ export default function SelectedAlmacen() {
       </HeaderSection>
 
       <BodySection>
-        <div className="bg-slate-500" >
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Reiciendis commodi quaerat accusamus? Amet maxime eius officiis, dolorum veritatis ducimus suscipit. Voluptas beatae facere amet nobis voluptate nisi earum recusandae delectus!
-        </div>
+        <DataTable<ProductoAlmacenDetalladoInterface> columns={columns} data={filteredAlmacenProducto} details={{name: 'MAS', action:getProducto}} compareAlert="cantidad" />
       </BodySection>
 
       <button

@@ -12,6 +12,7 @@ import { getAllAlmacenesAPI } from "../../redux/almacenes/almacenThunks";
 export default function Almacenes() {
   const { loadingApplication } = useSelector((s: RootState) => s.Aplication);
   const { id } = useSelector((s: RootState) => s.Sucursal);
+  // const { selectedAlmacen } = useSelector((s: RootState) => s.Almacenes);
 
   const dispatch = useDispatch<AppDispatch>();
 

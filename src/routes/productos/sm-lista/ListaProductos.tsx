@@ -9,26 +9,7 @@ import UpdateProductoWindow from "./windows/UpdateProductoWindow";
 import LoadingSection from "../../../components/LoadingSection";
 import { FaPlus } from "react-icons/fa";
 import CreateProductoWindow from "./windows/CreateProductoWindow";
-
-interface DataInterface {
-  id: string;
-  sucursalId: string;
-  codigo: string;
-  nombre: string;
-  descripcion: string;
-  imagen: string;
-  activo: boolean;
-  deleted: boolean;
-  categoriaId: string;
-  categoria?: string;
-  marcaId: string;
-  marca?:string;
-  unidadMedidaId: string;
-  unidadMedidaAbreviada?: string;
-  unidadMedida?: string;
-  createdAt: number;
-  updatedAt: number;
-}
+import { ProductoInterface } from "../../../interface";
 
 const dataInitialState = {
   id: '',
@@ -65,12 +46,12 @@ export default function ListaProductos() {
   const { listaProductos, listaMarcas, listaCategorias } = useSelector((s: RootState) => s.Productos);
   const { loadingApplication } = useSelector((s: RootState) => s.Aplication);
   const [filter, setFilter] = useState<FilterInterface>(filterInitialState);
-  const [data, setData] = useState<DataInterface[]>([]);
+  const [filteredProducto, setFilteredProducto] = useState<ProductoInterface[]>([]);
   const [openDataDetails, setOpenDataDetails] = useState(false);
   const [openCreateProducto, setOpenCreateProducto] = useState(false);
-  const [productoSelected, setProductoSelected] = useState<DataInterface>(dataInitialState);
+  const [productoSelected, setProductoSelected] = useState<ProductoInterface>(dataInitialState);
 
-  const columns: DataTableColumnInterface<DataInterface>[] = [
+  const columns: DataTableColumnInterface<ProductoInterface>[] = [
     { name: 'IMAGEN', type: DataTableColumnTypes.IMG, key: "imagen"},
     { name: 'CODIGO', type: DataTableColumnTypes.P , key: "codigo"},
     { name: 'MEDIDA', type: DataTableColumnTypes.P , key: "unidadMedidaAbreviada"},
@@ -81,7 +62,7 @@ export default function ListaProductos() {
 
 
   //* ---------------- METODOS ----------------
-  const getData = (d:DataInterface) => {
+  const getProducto = (d:ProductoInterface) => {
     setProductoSelected(d);
     setOpenDataDetails(true);
   }
@@ -94,14 +75,14 @@ export default function ListaProductos() {
       i.marca?.includes(newFilter.marca) &&
       (i.nombre.includes(newFilter.buscar) || i.codigo.includes(newFilter.buscar))
     )
-    setData(newData);
+    setFilteredProducto(newData);
     setFilter(newFilter);
   }
 
   //* ---------------- METODOS ----------------
 
   useEffect(() => {
-    setData(listaProductos);
+    setFilteredProducto(listaProductos);
   }, [listaProductos]);
   return (
     <>
@@ -140,7 +121,7 @@ export default function ListaProductos() {
         />
       </HeaderSection>
       <BodySection>
-        <DataTable<DataInterface> columns={columns} data={data} details={{name: 'MAS', action:getData}} />
+        <DataTable<ProductoInterface> columns={columns} data={filteredProducto} details={{name: 'MAS', action:getProducto}} />
       </BodySection>
 
       <button 
