@@ -10,6 +10,7 @@ import { TbLogout2 } from "react-icons/tb";
 import { FaPlus } from "react-icons/fa";
 import DataTable, { DataTableColumnInterface, DataTableColumnTypes } from "../../../components/DataTable";
 import { ProductoAlmacenDetalladoInterface } from "../../../interface";
+import CreateManyProductosAlmacen from "./windows/CreateManyProductosAlmacen";
 
 interface FilterInterface {
   buscar: string;
@@ -29,6 +30,8 @@ export default function SelectedAlmacen() {
   const { selectedAlmacen, listaProductosAlmacen } = useSelector((s: RootState) => s.Almacenes);
   const [filter, setFilter] = useState<FilterInterface>(filterInitialState);
   const [filteredAlmacenProducto, setFilteredProducto] = useState<ProductoAlmacenDetalladoInterface[]>([]);
+  const [createOptions, setCreateOptions] = useState(false);
+  const [openCreateManyProductosAlmacen, setOpenCreateManyProductosAlmacen] = useState(false);
 
   const columns: DataTableColumnInterface<ProductoAlmacenDetalladoInterface>[] = [
       { name: 'IMAGEN', type: DataTableColumnTypes.IMG, key: "imagen"},
@@ -67,6 +70,9 @@ export default function SelectedAlmacen() {
   }, [listaProductosAlmacen])
   return (
     <>
+      {openCreateManyProductosAlmacen&& <CreateManyProductosAlmacen closeButton={() => {setOpenCreateManyProductosAlmacen(false)}} />}
+
+
       <HeaderSection>
         <InputSearch
           handleInputChange={handleChange}
@@ -108,13 +114,19 @@ export default function SelectedAlmacen() {
         <DataTable<ProductoAlmacenDetalladoInterface> columns={columns} data={filteredAlmacenProducto} details={{name: 'MAS', action:getProducto}} compareAlert="cantidad" />
       </BodySection>
 
-      <button
-        // onClick={() => {setOpenCreateProducto(true)}}
-        type="button"
-        className="absolute bottom-2 right-2 flex justify-center items-center bg-primary bg-opacity-80 text-white text-[22px] hover:bg-opacity-100 w-14 h-14 rounded-full"
-      >
-        <FaPlus />
-      </button>
+      <div className='absolute bottom-2 right-2 flex flex-col items-end ' >
+        { createOptions&& <div className='flex flex-col bg-primary mb-3 rounded text-white' >
+          <span className='px-3 py-1 cursor-pointer hover:bg-white/10' onClick={() => {setOpenCreateManyProductosAlmacen(true)}} >REGISTRAR PRODUCTOS</span>
+          <span className='px-3 py-1 cursor-pointer hover:bg-white/10' onClick={() => {}} >INGRESAR PRODUCTOS</span>
+        </div>}
+        <button
+          onClick={() => {setCreateOptions(s=>!s)}}
+          type="button"
+          className={`${ createOptions&& 'rotate-[135deg]'} transition-all duration-300 flex justify-center items-center bg-primary bg-opacity-80 text-white text-[22px] hover:bg-opacity-100 w-14 h-14 rounded-full`}
+        >
+          <FaPlus />
+        </button>
+      </div>
     </>
   );
 }
