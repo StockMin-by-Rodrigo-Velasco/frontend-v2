@@ -46,7 +46,7 @@ export default function DataTable<T,>({ data, columns, details, compareAlert }: 
                                     <p>{new Date((f[c.key] as number)).toLocaleDateString("es-ES", { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}</p>}
                                 {(c.type === DataTableColumnTypes.ALERT)&&
                                 <>{compareAlert?
-                                    <>{(((typeof f[c.key]) === 'number') && ((typeof f[compareAlert]) === 'number') && ((f[c.key] as number) > 0) && ((f[compareAlert] as number) > 0)) ?
+                                    <>{(((typeof f[c.key]) === 'number') && ((typeof f[compareAlert]) === 'number') && ((f[c.key] as number) > 0) && ((f[c.key] as number) > 0)) ?
                                         <div className="w-full h-full flex justify-center items-center">
                                         {/* compareAlert = cantidad VS c.key = cantidadMin */}
                                         {((f[compareAlert] as number) > ((f[c.key] as number)*2)) && <div className="bg-success rounded h-5 w-2"></div>}

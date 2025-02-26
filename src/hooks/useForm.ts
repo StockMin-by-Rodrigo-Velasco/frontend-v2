@@ -62,6 +62,10 @@ export function useFormArray<T>( array: T[])
         setArrayData(s => [...s, ...data]);
     }
 
+    const replaceData = (data:T[]) => {
+        setArrayData([...data]);
+    }
+
     const removeData = (index : number) => {
         const newArray = arrayData.filter((_,i) => i !== index);
         setArrayData([...newArray]);
@@ -70,5 +74,5 @@ export function useFormArray<T>( array: T[])
     const resetData = () => {
         setArrayData(array);
     }
-    return {arrayData, handleInputChange, resetData, pushData, pushManyData, removeData}
+    return {arrayData, handleInputChange, resetData, replaceData, pushData, pushManyData, removeData}
 }

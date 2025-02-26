@@ -10,11 +10,24 @@ export interface AlmacenInterface {
 
 export interface ProductoAlmacenInterface {
     id: string;
+    productoId: string;
     almacenId: string;
     cantidad: number;
     cantidadMinima: number;
     createdAt: number;
     updatedAt: number;
+}
+
+export interface CreateProductoAlmacenDto {
+    productoId: string;
+    almacenId?: string;
+    cantidad?: number;
+    cantidadMinima?: number;
+}
+
+export interface CreateManyProductosAlmacenDto {
+    almacenId: string;
+    productosAlmacen: CreateProductoAlmacenDto[];
 }
 
 export interface ProductoAlmacenDetalladoInterface extends ProductoAlmacenInterface {

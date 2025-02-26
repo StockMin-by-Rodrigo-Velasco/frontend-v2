@@ -11,6 +11,7 @@ import { FaPlus } from "react-icons/fa";
 import DataTable, { DataTableColumnInterface, DataTableColumnTypes } from "../../../components/DataTable";
 import { ProductoAlmacenDetalladoInterface } from "../../../interface";
 import CreateManyProductosAlmacen from "./windows/CreateManyProductosAlmacen";
+import SelectedProductoAlmacen from "./windows/SelectedProductoAlmacen";
 
 interface FilterInterface {
   buscar: string;
@@ -23,6 +24,24 @@ const filterInitialState: FilterInterface = {
   marca: '',
 }
 
+const initialStateSelectedProducto: ProductoAlmacenDetalladoInterface = {
+  id: '',
+  productoId: '',
+  almacenId: '',
+  cantidad: 0,
+  cantidadMinima: 0,
+  codigo: '',
+  nombre: '',
+  descripcion: '',
+  imagen: '',
+  categoria: '',
+  marca: '',
+  unidadMedida: '',
+  unidadMedidaAbreviada: '',
+  createdAt: 0,
+  updatedAt: 0,
+}
+
 export default function SelectedAlmacen() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -32,37 +51,43 @@ export default function SelectedAlmacen() {
   const [filteredAlmacenProducto, setFilteredProducto] = useState<ProductoAlmacenDetalladoInterface[]>([]);
   const [createOptions, setCreateOptions] = useState(false);
   const [openCreateManyProductosAlmacen, setOpenCreateManyProductosAlmacen] = useState(false);
+  const [openSelectedProductoAlmacen, setOpenSelectedProductoAlmacen] = useState(false);
+  const [selectedProducto, setSelectedProducto] = useState<ProductoAlmacenDetalladoInterface>(initialStateSelectedProducto)
 
   const columns: DataTableColumnInterface<ProductoAlmacenDetalladoInterface>[] = [
-      { name: 'IMAGEN', type: DataTableColumnTypes.IMG, key: "imagen"},
-      { name: 'CODIGO', type: DataTableColumnTypes.P , key: "codigo"},
-      { name: 'MEDIDA', type: DataTableColumnTypes.P , key: "unidadMedidaAbreviada"},
-      { name: 'NOMBRE', type: DataTableColumnTypes.P, key: "nombre" },
-      { name: 'CANTIDAD', type: DataTableColumnTypes.P, key: "cantidad" },
-      { name: 'ESTADO', type: DataTableColumnTypes.ALERT, key: "cantidadMinima" },
-    ];
+    { name: 'IMAGEN', type: DataTableColumnTypes.IMG, key: "imagen" },
+    { name: 'CODIGO', type: DataTableColumnTypes.P, key: "codigo" },
+    { name: 'NOMBRE', type: DataTableColumnTypes.P, key: "nombre" },
+    { name: 'MEDIDA', type: DataTableColumnTypes.P, key: "unidadMedidaAbreviada" },
+    { name: 'CANTIDAD', type: DataTableColumnTypes.P, key: "cantidad" },
+    { name: 'ESTADO', type: DataTableColumnTypes.ALERT, key: "cantidadMinima" },
+  ];
 
   const logoutAlmacen = () => {
     dispatch(resetSelectAlmacen())
     navigate('/main/almacenes/lista');
   }
 
-  const getProducto = (d:ProductoAlmacenDetalladoInterface) => {
-      console.log(d);
-      // setProductoSelected(d);
-      // setOpenDataDetails(true);
-    }
+  const getProducto = (productoData: ProductoAlmacenDetalladoInterface) => {
+    setSelectedProducto(productoData);
+    setOpenSelectedProductoAlmacen(true)
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { value, name } = e.target;
     const newFilter = { ...filter, [name]: value };
-    // const newData = listaProductos.filter(i => 
-    //   i.categoria?.includes(newFilter.categoria) && 
-    //   i.marca?.includes(newFilter.marca) &&
-    //   (i.nombre.includes(newFilter.buscar) || i.codigo.includes(newFilter.buscar))
-    // )
-    // setData(newData);
+    const newData = listaProductosAlmacen.filter(i =>
+      i.categoria?.includes(newFilter.categoria) &&
+      i.marca?.includes(newFilter.marca) &&
+      (i.nombre.includes(newFilter.buscar) || i.codigo.includes(newFilter.buscar))
+    )
+    setFilteredProducto(newData);
     setFilter(newFilter);
+  }
+
+  const goToRegistrarProductos = () => {
+    setOpenCreateManyProductosAlmacen(true);
+    setCreateOptions(s => !s)
   }
 
   useEffect(() => {
@@ -70,7 +95,8 @@ export default function SelectedAlmacen() {
   }, [listaProductosAlmacen])
   return (
     <>
-      {openCreateManyProductosAlmacen&& <CreateManyProductosAlmacen closeButton={() => {setOpenCreateManyProductosAlmacen(false)}} />}
+      {openCreateManyProductosAlmacen && <CreateManyProductosAlmacen closeButton={() => { setOpenCreateManyProductosAlmacen(false) }} />}
+      {openSelectedProductoAlmacen && <SelectedProductoAlmacen producto={selectedProducto} closeButton={() => { setOpenSelectedProductoAlmacen(false) }} />}
 
 
       <HeaderSection>
@@ -111,18 +137,18 @@ export default function SelectedAlmacen() {
       </HeaderSection>
 
       <BodySection>
-        <DataTable<ProductoAlmacenDetalladoInterface> columns={columns} data={filteredAlmacenProducto} details={{name: 'MAS', action:getProducto}} compareAlert="cantidad" />
+        <DataTable<ProductoAlmacenDetalladoInterface> columns={columns} data={filteredAlmacenProducto} details={{ name: 'MAS', action: getProducto }} compareAlert="cantidad" />
       </BodySection>
 
       <div className='absolute bottom-2 right-2 flex flex-col items-end ' >
-        { createOptions&& <div className='flex flex-col bg-primary mb-3 rounded text-white' >
-          <span className='px-3 py-1 cursor-pointer hover:bg-white/10' onClick={() => {setOpenCreateManyProductosAlmacen(true)}} >REGISTRAR PRODUCTOS</span>
-          <span className='px-3 py-1 cursor-pointer hover:bg-white/10' onClick={() => {}} >INGRESAR PRODUCTOS</span>
+        {createOptions && <div className='flex flex-col bg-primary mb-3 rounded text-white' >
+          <span className='px-3 py-1 cursor-pointer hover:bg-white/10' onClick={goToRegistrarProductos} >REGISTRAR PRODUCTOS</span>
+          <span className='px-3 py-1 cursor-pointer hover:bg-white/10' onClick={() => { }} >INGRESAR PRODUCTOS</span>
         </div>}
         <button
-          onClick={() => {setCreateOptions(s=>!s)}}
+          onClick={() => { setCreateOptions(s => !s) }}
           type="button"
-          className={`${ createOptions&& 'rotate-[135deg]'} transition-all duration-300 flex justify-center items-center bg-primary bg-opacity-80 text-white text-[22px] hover:bg-opacity-100 w-14 h-14 rounded-full`}
+          className={`${createOptions && 'rotate-[135deg]'} transition-all duration-300 flex justify-center items-center bg-primary bg-opacity-80 text-white text-[22px] hover:bg-opacity-100 w-14 h-14 rounded-full`}
         >
           <FaPlus />
         </button>

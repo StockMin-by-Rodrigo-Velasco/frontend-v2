@@ -14,6 +14,14 @@ interface InputProps {
   className?:string
 }
 
+interface InputBlockProps {
+  name: string,
+  placeholder: string,
+  value: string,
+  className?:string
+  uppercase?: boolean
+}
+
 interface InputFileProps {
   setFileValue: (file:File|undefined) => void, // Funcion para obtener el archivo
   name: string,
@@ -170,6 +178,53 @@ function InputText({ handleInputChange, value, name, placeholder, required=false
   )
 }
 
+function InputNumber({ handleInputChange, value, name, placeholder, required=false, disabled=false, className='' }:InputProps){
+  return(
+
+    <div className = {`${className} relative mt-6`} >
+      <input 
+        className = {`ps-1 w-full focus:outline-none rounded-t border-b-2 border-primary focus:border-info peer disabled:bg-light/80 disabled:cursor-not-allowed disabled:text-black/70`}
+        type="number" 
+        onChange={ handleInputChange }
+        name={name}
+        id={name}
+        value={value}
+        required={required}
+        disabled={disabled}
+      />
+      <label
+        className={ value === '' ?
+          "absolute text-secondary left-0 top-0  transition-all peer-focus:text-secondary peer-focus:top-[-20px] peer-focus:text-[12px] cursor-text"
+          :
+          "absolute left-0 text-secondary top-[-20px] text-[12px]"
+        }
+        htmlFor={name}> {placeholder}
+      </label>
+    </div>
+  )
+}
+
+function InputTextBlock({ value, name, placeholder, className='', uppercase }:InputBlockProps){
+  return(
+
+    <div className = {`${className} relative mt-6`} >
+      <input 
+        className = {`${uppercase&& 'uppercase'} ps-1 w-full rounded-t border-b-2 border-secondary disabled:bg-secondary-1/30 disabled:text-black/70`}
+        type="text" 
+        onChange={ () => {} }
+        name={name}
+        id={name}
+        value={value}
+        disabled
+      />
+      <label
+        className="absolute left-0 text-secondary top-[-20px] text-[12px]"
+        htmlFor={name}> {placeholder}
+      </label>
+    </div>
+  )
+}
+
 function InputSelect({handleInputChange, value, name, placeholder, required=false, disabled=false, className='', options, optionDefault}:InputSelectProps) {
   return(
     <div className = {`${className} relative mt-6`} >
@@ -213,6 +268,26 @@ function InputTextarea({ handleInputChange, value, name, placeholder, required=f
           :
           "absolute left-0 text-secondary top-[-20px] text-[12px]"
         }
+        htmlFor={name}> {placeholder}
+      </label>
+    </div>
+  )
+}
+
+function InputTextareaBlock({ value, name, placeholder, className='' }:InputBlockProps){
+  return(
+
+    <div className = {`${className} relative mt-6`} >
+      <textarea 
+        className = {`p-1 w-full  rounded-t border-b-2 border-secondary disabled:bg-secondary-1/30 disabled:text-black/70`}
+        onChange={() => {}}
+        name={name} 
+        id={name}
+        value={value}
+        disabled
+      ></textarea>
+      <label
+        className= "absolute left-0 text-secondary top-[-20px] text-[12px]"
         htmlFor={name}> {placeholder}
       </label>
     </div>
@@ -318,8 +393,11 @@ export {
   InputDateSearch,
   InputLoginPassword, 
   InputLoginText,
+  InputTextBlock,
   InputSelect, 
   InputTextarea,
+  InputTextareaBlock,
   InputText, 
+  InputNumber,
   InputPassword, 
 }

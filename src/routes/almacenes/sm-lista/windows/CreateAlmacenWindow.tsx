@@ -7,7 +7,7 @@ import { AppDispatch, RootState } from "../../../../redux/store";
 import { FormEvent } from "react";
 import { createAlmacenAPI } from "../../../../redux/almacenes/almacenThunks";
 
-interface CreateAlmacenWindowInterface{
+interface CreateAlmacenWindowProp{
     closeButton: () => void; 
 }
 
@@ -17,7 +17,7 @@ interface createForm{
 }
 
 
-export default function CreateAlmacenWindow({closeButton}: CreateAlmacenWindowInterface) {
+export default function CreateAlmacenWindow({closeButton}: CreateAlmacenWindowProp) {
     const dispatch = useDispatch<AppDispatch>();
     const {loadingData} = useSelector((s:RootState) => s.Aplication);
     const { data, handleInputChange } = useForm<createForm>({nombre:'', descripcion:''});

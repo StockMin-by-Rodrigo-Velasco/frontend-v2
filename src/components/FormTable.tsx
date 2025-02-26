@@ -11,6 +11,7 @@ export enum FormTableColumnTypes {
 }
 
 export interface FormTableColumn<T> {
+    width?: string;
     name: string,
     type: FormTableColumnTypes;
     key: keyof T;
@@ -20,21 +21,21 @@ interface FormTableProp<T> {
     arrayData: T[],
     columns: FormTableColumn<T>[];
     handleInputChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
-    removeData?: { name: string, action: (index: number) => void };
+    removeData?: { name: string, action: (index: number) => void, width?: string };
     getData?: (data: T[]) => void;
-
+    tableFixed?: boolean;
 }
 
-export default function FormTable<T>({ arrayData, columns, handleInputChange, removeData }: FormTableProp<T>) {
+export default function FormTable<T>({ arrayData, columns, handleInputChange, removeData, tableFixed}: FormTableProp<T>) {
     return (
-        <table className="table-auto text-left w-full border-secondary rounded overflow-hidden ">
+        <table className={`${tableFixed? 'table-fixed':'table-auto'} text-left w-full border-secondary rounded overflow-hidden`}>
             <thead className="bg-secondary text-white sticky top-0" >
                 <tr>
                     {columns.map(c => (
-                        <th key={c.name} className="uppercase text-center px-2">{c.name}</th>
+                        <th key={c.name} className={`${c.width? c.width:''} uppercase text-center px-2`}>{c.name}</th>
                     ))}
                     {removeData?.name &&
-                        <th className="uppercase text-center px-2">{removeData.name}</th>
+                        <th className={`${removeData.width? removeData.width:''} uppercase text-center px-2`}>{removeData.name}</th>
                     }
                 </tr>
             </thead>

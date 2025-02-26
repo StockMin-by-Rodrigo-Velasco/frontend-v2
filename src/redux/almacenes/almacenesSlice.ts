@@ -1,5 +1,5 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
-import { AlmacenInterface, ProductoAlmacenDetalladoInterface } from "../../interface";
+import { AlmacenInterface, ProductoAlmacenDetalladoInterface, ProductoAlmacenInterface } from "../../interface";
 
 
 
@@ -41,6 +41,15 @@ const AlmacenesSlice = createSlice({
         getAllProductosAlmacen: (state, action: PayloadAction<ProductoAlmacenDetalladoInterface[]>) => {
             state.listaProductosAlmacen = action.payload
         },
+        createManyProductosAlmacen: (state, action: PayloadAction<ProductoAlmacenDetalladoInterface[]>) => {
+            state.listaProductosAlmacen = [ ...action.payload, ...current(state.listaProductosAlmacen) ];
+        },
+        updateProductoAlmacen: (state, action: PayloadAction<ProductoAlmacenInterface>) => {
+            const newListaProductosAlmacen:ProductoAlmacenDetalladoInterface[] = current(state.listaProductosAlmacen)
+            .map(p => p.id === action.payload.id? {...p, cantidadMinima: action.payload.cantidadMinima, updatedAt: action.payload.updatedAt} : p);
+
+            state.listaProductosAlmacen = [...newListaProductosAlmacen];
+        }
     }
 });
 
@@ -54,6 +63,8 @@ export const {
     deleteAlmacen,
 
     getAllProductosAlmacen,
+    createManyProductosAlmacen,
+    updateProductoAlmacen
 
 } = AlmacenesSlice.actions;
 export default AlmacenesSlice.reducer;
