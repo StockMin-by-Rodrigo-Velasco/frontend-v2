@@ -18,7 +18,7 @@ interface SelectedProductoAlmacenProp {
 
 
 
-export default function SelectedProductoAlmacen({ producto, closeButton }: SelectedProductoAlmacenProp) {
+export default function SelectedProductoAlmacenWindow({ producto, closeButton }: SelectedProductoAlmacenProp) {
 
     const dispatch = useDispatch<AppDispatch>();
     const {loadingData} = useSelector((s:RootState) => s.Aplication);

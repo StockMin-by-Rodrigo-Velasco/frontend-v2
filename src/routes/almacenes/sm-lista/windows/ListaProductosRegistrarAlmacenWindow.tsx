@@ -52,7 +52,7 @@ const columns: FormTableColumn<ProductosOutAlmacen>[] = [
     { name: 'SELECCIONAR', type: FormTableColumnTypes.CHECK, key: "selected" },
 ];
 
-export default function ListaProductosOutAlmacen({ closeButton, productos, setProductos, arrayData, replaceData }: ListaProductosOutAlmacenProp) {
+export default function ListaProductosRegistrarAlmacenWindow({ closeButton, productos, setProductos, arrayData, replaceData }: ListaProductosOutAlmacenProp) {
     // const { selectedAlmacen } = useSelector((s: RootState) => s.Almacenes);
 
     const filterProductos = (e: React.ChangeEvent<HTMLInputElement>) => {

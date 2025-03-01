@@ -10,8 +10,9 @@ import { TbLogout2 } from "react-icons/tb";
 import { FaPlus } from "react-icons/fa";
 import DataTable, { DataTableColumnInterface, DataTableColumnTypes } from "../../../components/DataTable";
 import { ProductoAlmacenDetalladoInterface } from "../../../interface";
-import CreateManyProductosAlmacen from "./windows/CreateManyProductosAlmacen";
-import SelectedProductoAlmacen from "./windows/SelectedProductoAlmacen";
+import RegistarProductosAlmacenWindow from "./windows/RegistrarProductosAlmacenWindow";
+import SelectedProductoAlmacenWindow from "./windows/SelectedProductoAlmacenWindow";
+import IngresarProductosAlmacenWindow from "./windows/IngresarProductosAlmacenWindow";
 
 interface FilterInterface {
   buscar: string;
@@ -50,7 +51,8 @@ export default function SelectedAlmacen() {
   const [filter, setFilter] = useState<FilterInterface>(filterInitialState);
   const [filteredAlmacenProducto, setFilteredProducto] = useState<ProductoAlmacenDetalladoInterface[]>([]);
   const [createOptions, setCreateOptions] = useState(false);
-  const [openCreateManyProductosAlmacen, setOpenCreateManyProductosAlmacen] = useState(false);
+  const [openRegistrarProductosAlmacen, setOpenRegistrarProductosAlmacen] = useState(false);
+  const [openIngresarProductosAlmacen, setOpenIngresarProductosAlmacen] = useState(false);
   const [openSelectedProductoAlmacen, setOpenSelectedProductoAlmacen] = useState(false);
   const [selectedProducto, setSelectedProducto] = useState<ProductoAlmacenDetalladoInterface>(initialStateSelectedProducto)
 
@@ -86,7 +88,12 @@ export default function SelectedAlmacen() {
   }
 
   const goToRegistrarProductos = () => {
-    setOpenCreateManyProductosAlmacen(true);
+    setOpenRegistrarProductosAlmacen(true);
+    setCreateOptions(s => !s)
+  }
+
+  const goToIngresarProductos = () => {
+    setOpenIngresarProductosAlmacen(true);
     setCreateOptions(s => !s)
   }
 
@@ -95,8 +102,10 @@ export default function SelectedAlmacen() {
   }, [listaProductosAlmacen])
   return (
     <>
-      {openCreateManyProductosAlmacen && <CreateManyProductosAlmacen closeButton={() => { setOpenCreateManyProductosAlmacen(false) }} />}
-      {openSelectedProductoAlmacen && <SelectedProductoAlmacen producto={selectedProducto} closeButton={() => { setOpenSelectedProductoAlmacen(false) }} />}
+      {openRegistrarProductosAlmacen && <RegistarProductosAlmacenWindow closeButton={() => { setOpenRegistrarProductosAlmacen(false) }} />}
+      {openIngresarProductosAlmacen && <IngresarProductosAlmacenWindow closeButton={() => setOpenIngresarProductosAlmacen(false)} />}
+
+      {openSelectedProductoAlmacen && <SelectedProductoAlmacenWindow producto={selectedProducto} closeButton={() => { setOpenSelectedProductoAlmacen(false) }} />}
 
 
       <HeaderSection>
@@ -143,7 +152,7 @@ export default function SelectedAlmacen() {
       <div className='absolute bottom-2 right-2 flex flex-col items-end ' >
         {createOptions && <div className='flex flex-col bg-primary mb-3 rounded text-white' >
           <span className='px-3 py-1 cursor-pointer hover:bg-white/10' onClick={goToRegistrarProductos} >REGISTRAR PRODUCTOS</span>
-          <span className='px-3 py-1 cursor-pointer hover:bg-white/10' onClick={() => { }} >INGRESAR PRODUCTOS</span>
+          <span className='px-3 py-1 cursor-pointer hover:bg-white/10' onClick={goToIngresarProductos} >INGRESAR PRODUCTOS</span>
         </div>}
         <button
           onClick={() => { setCreateOptions(s => !s) }}

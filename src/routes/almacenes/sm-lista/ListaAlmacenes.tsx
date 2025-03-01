@@ -5,7 +5,7 @@ import BodySection from "../../../components/BodySection";
 import { FaPlus } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router";
-import CreateAlmacenWindow from "./windows/CreateAlmacenWindow";
+import NuevoAlmacenWindow from "./windows/NuevoAlmacenWindow";
 import { getAllProductosAlmacenAPI } from "../../../redux/almacenes/almacenThunks";
 
 export default function ListaAlmacenes() {
@@ -25,7 +25,7 @@ export default function ListaAlmacenes() {
     </>
     :
     <>
-      {openCreateAlmacenWindow&& <CreateAlmacenWindow closeButton={() => {setOpenCreateAlmacenWindow(false)}}/>}
+      {openCreateAlmacenWindow&& <NuevoAlmacenWindow closeButton={() => {setOpenCreateAlmacenWindow(false)}}/>}
 
       <BodySection>
         <h1 className="text-[30px] text-secondary border-b-2 border-secondary mb-5" >ALMACENES</h1>

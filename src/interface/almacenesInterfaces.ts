@@ -2,7 +2,7 @@ export interface AlmacenInterface {
     id: string;
     sucursalId: string;
     nombre: string;
-    descripcion: string | null,
+    descripcion?: string,
     deleted: boolean;
     createdAt: number;
     updatedAt: number;
@@ -18,6 +18,37 @@ export interface ProductoAlmacenInterface {
     updatedAt: number;
 }
 
+export interface ProductoAlmacenDetalladoInterface extends ProductoAlmacenInterface {
+    codigo: string;
+    nombre: string;
+    descripcion: string;
+    imagen: string;
+    categoria?: string;
+    marca?:string;
+    unidadMedida?: string;
+    unidadMedidaAbreviada?: string;
+}
+
+export interface IngresoProductosAlmacenInterface {
+    id: string;
+    cantidad: number;
+    ingresoAlmacenId: string;
+    productoAlmacenId: string;
+    ProductoAlmacen: ProductoAlmacenInterface[];
+}
+export interface IngresoAlmacenInterface {
+    id: string;
+    usuarioId: string;
+    almacenId: string;
+    detalle: string;
+    createdAt: number;
+    IngresoProductosAlmacen: IngresoProductosAlmacenInterface[];
+}
+
+
+
+// --------------------- DTOs ------------------------
+
 export interface CreateProductoAlmacenDto {
     productoId: string;
     almacenId?: string;
@@ -30,13 +61,17 @@ export interface CreateManyProductosAlmacenDto {
     productosAlmacen: CreateProductoAlmacenDto[];
 }
 
-export interface ProductoAlmacenDetalladoInterface extends ProductoAlmacenInterface {
-    codigo: string;
-    nombre: string;
-    descripcion: string;
-    imagen: string;
-    categoria?: string;
-    marca?:string;
-    unidadMedida?: string;
-    unidadMedidaAbreviada?: string;
+export interface CreateIngresoProductoAlmacenDto {
+    productoAlmacenId: string;
+    cantidad: number;
 }
+
+export interface CreateIngresoProductosAlmacenDto {
+    usuarioId: string;
+    almacenId: string;
+    detalle?: string;
+    ingresoProductosAlmacen: CreateIngresoProductoAlmacenDto[]
+}
+
+// --------------------- Response ------------------------
+

@@ -17,7 +17,7 @@ interface createForm{
 }
 
 
-export default function CreateAlmacenWindow({closeButton}: CreateAlmacenWindowProp) {
+export default function NuevoAlmacenWindow({closeButton}: CreateAlmacenWindowProp) {
     const dispatch = useDispatch<AppDispatch>();
     const {loadingData} = useSelector((s:RootState) => s.Aplication);
     const { data, handleInputChange } = useForm<createForm>({nombre:'', descripcion:''});

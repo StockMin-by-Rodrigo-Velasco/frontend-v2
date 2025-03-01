@@ -44,11 +44,21 @@ const AlmacenesSlice = createSlice({
         createManyProductosAlmacen: (state, action: PayloadAction<ProductoAlmacenDetalladoInterface[]>) => {
             state.listaProductosAlmacen = [ ...action.payload, ...current(state.listaProductosAlmacen) ];
         },
+        createProductoAlmacen: (state, action: PayloadAction<ProductoAlmacenDetalladoInterface>) => {
+            state.listaProductosAlmacen = [ action.payload, ...current(state.listaProductosAlmacen) ];
+        },
         updateProductoAlmacen: (state, action: PayloadAction<ProductoAlmacenInterface>) => {
             const newListaProductosAlmacen:ProductoAlmacenDetalladoInterface[] = current(state.listaProductosAlmacen)
             .map(p => p.id === action.payload.id? {...p, cantidadMinima: action.payload.cantidadMinima, updatedAt: action.payload.updatedAt} : p);
 
             state.listaProductosAlmacen = [...newListaProductosAlmacen];
+        },
+        updateManyProductosAlmacen: (state, action: PayloadAction<ProductoAlmacenInterface[]>) => {
+            //! ACTUALIZAR LAS CANTIDADES REMPLAZANDO CADA PRODUCTO CON LAS REPUESTA DEL API
+            // const newListaProductosAlmacen:ProductoAlmacenDetalladoInterface[] = current(state.listaProductosAlmacen)
+            // .map(p => p.id === action.payload.id? {...p, cantidadMinima: action.payload.cantidadMinima, updatedAt: action.payload.updatedAt} : p);
+
+            // state.listaProductosAlmacen = [...newListaProductosAlmacen];
         }
     }
 });
@@ -64,6 +74,7 @@ export const {
 
     getAllProductosAlmacen,
     createManyProductosAlmacen,
+    createProductoAlmacen,
     updateProductoAlmacen
 
 } = AlmacenesSlice.actions;

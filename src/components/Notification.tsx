@@ -60,14 +60,16 @@ function Notification() {
             </div>
 
             {/* BODY */}
-            <div className="flex m-2" >
-                {type === NotificationTypes.ERROR && <MdErrorOutline color="#FF4141" className="h-[50px] w-[50px] mr-3 "/>}
-                {type === NotificationTypes.LOADING && <AiOutlineLoading color="#909090" className="animate-spin h-[50px] w-[50px] mr-3"/>}
-                {type === NotificationTypes.SUCCESS && <FaRegCheckCircle color="#3FC476" className="h-[50px] w-[50px] mr-3 "/>}
-                {type === NotificationTypes.INFO && <IoInformationCircleOutline color="#21C2DA" className="h-[50px] w-[50px] mr-3 "/>}
-                {type === NotificationTypes.WARNING && <TiWarningOutline color="#FEB43D" className="h-[50px] w-[50px] mr-3 "/>}
-                {type === NotificationTypes.NONE && <IoInformationCircleOutline color="#21C2DA" className="h-[50px] w-[50px] mr-3 "/>}
-                <p className="flex items-center text-[13px] ms-2" >
+            <div className="flex m-2">
+                <div className="text-[50px] flex justify-center items-center " >
+                    {type === NotificationTypes.ERROR && <MdErrorOutline color="#FF4141"/>}
+                    {type === NotificationTypes.LOADING && <AiOutlineLoading color="#909090" className="animate-spin"/>}
+                    {type === NotificationTypes.SUCCESS && <FaRegCheckCircle color="#3FC476"/>}
+                    {type === NotificationTypes.INFO && <IoInformationCircleOutline color="#21C2DA"/>}
+                    {type === NotificationTypes.WARNING && <TiWarningOutline color="#FEB43D"/>}
+                    {type === NotificationTypes.NONE && <IoInformationCircleOutline color="#21C2DA"/>}
+                </div>
+                <p className="flex items-center text-[12px] ms-2" >
                     {description}
                 </p>
             </div>

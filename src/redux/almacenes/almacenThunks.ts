@@ -1,10 +1,10 @@
 import axios, { AxiosResponse } from 'axios';
 import { AppDispatch, RootState } from '../store';
 import api from '../../api/config';
-import { createAlmacen, createManyProductosAlmacen, getAllAlmacenes, getAllProductosAlmacen, updateAlmacen, updateProductoAlmacen } from './almacenesSlice';
+import { createAlmacen, createManyProductosAlmacen, createProductoAlmacen, getAllAlmacenes, getAllProductosAlmacen, updateAlmacen, updateProductoAlmacen } from './almacenesSlice';
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from '../aplication/aplicationSlice';
-import { hideNotification, showNotificationError, showNotificationSuccess } from '../notification/notificationSlice';
-import { CreateManyProductosAlmacenDto, ProductoAlmacenDetalladoInterface, ProductoAlmacenInterface } from '../../interface';
+import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from '../notification/notificationSlice';
+import { CreateIngresoProductosAlmacenDto, CreateManyProductosAlmacenDto, CreateProductoAlmacenDto, IngresoAlmacenInterface, ProductoAlmacenDetalladoInterface, ProductoAlmacenInterface } from '../../interface';
 
 interface ProductoInterface {
     id: string;
@@ -147,6 +147,52 @@ export const getAllProductosAlmacenAPI = () => {
     };
 }
 
+export const createProductoAlmacenAPI = (createProductoAlmacenDto: CreateProductoAlmacenDto) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const { userData } = getState().Sucursal;
+        const { listaProductos } = getState().Productos;
+
+        const listaProductosObj = listaProductos.reduce((acc, producto) => 
+            { acc[producto.id] = producto; return acc; }, {} as Record<string, ProductoInterface>);
+
+        if(!userData) return;
+        try {
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.post('almacenes-ms/create-producto-almacen', createProductoAlmacenDto, {headers: {"X-User-Id": userData.id}});
+            const { data, message } = response.data;
+            const newProductoAlmacenDetallado: ProductoAlmacenDetalladoInterface = {
+                    id: data.id,
+                    productoId: data.productoId,
+                    almacenId: data.almacenId,
+                    codigo: listaProductosObj[data.productoId].codigo,
+                    nombre: listaProductosObj[data.productoId].nombre,
+                    descripcion: listaProductosObj[data.productoId].descripcion,
+                    imagen: listaProductosObj[data.productoId].imagen,
+                    categoria: listaProductosObj[data.productoId].categoria,
+                    marca: listaProductosObj[data.productoId].marca,
+                    unidadMedida: listaProductosObj[data.productoId].unidadMedida,
+                    unidadMedidaAbreviada: listaProductosObj[data.productoId].unidadMedidaAbreviada,
+                    cantidad: data.cantidad,
+                    cantidadMinima: data.cantidadMinima,
+                    createdAt: data.createdAt,
+                    updatedAt: data.updatedAt,
+                }; 
+            dispatch( createProductoAlmacen(newProductoAlmacenDetallado) );
+
+            dispatch(showNotificationSuccess({tittle: 'NUEVO PRODUCTO', description: message}));
+            setTimeout( () => dispatch(hideNotification()), 5000 );
+            dispatch(finishLoadingData());
+        } catch (error) {
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                dispatch(showNotificationError({tittle: 'NUEVO PRODUCTO', description: data.message}));
+                dispatch(finishLoadingData());
+                setTimeout( () => dispatch(hideNotification()), 5000 );
+            }else console.log(error);
+        }
+    }
+}
+
 export const createManyProductosAlmacenAPI = (createManyProductosAlmacenDto: CreateManyProductosAlmacenDto) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { userData } = getState().Sucursal;
@@ -163,6 +209,7 @@ export const createManyProductosAlmacenAPI = (createManyProductosAlmacenDto: Cre
             const newProductosAlmacenDetallado: ProductoAlmacenDetalladoInterface[] = data.map((p:ProductoAlmacenInterface) => (
                 {
                     id: p.id,
+                    productoId: p.productoId,
                     almacenId: p.almacenId,
                     codigo: listaProductosObj[p.productoId].codigo,
                     nombre: listaProductosObj[p.productoId].nombre,
@@ -217,6 +264,44 @@ export const updateProductoAlmacenAPI = (updateProducto: { id:string, cantidadMi
                 setTimeout( () => dispatch(hideNotification()), 5000 );
             }else console.log(error);
         }
+    }
+}
 
+export const createIngresoProductosAlmacenAPI = (createIngresoProductosAlmacenDto:CreateIngresoProductosAlmacenDto) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const { userData } = getState().Sucursal;
+        if(!userData.id) {
+            dispatch(showNotificationWarning({tittle: 'INGRESO DE PRODUCTOS', description: 'No se detecto al usuario responsable del ingreso, por favor, vuelve a iniciar sesión.'}));
+            setTimeout( () => dispatch(hideNotification()), 5000 );
+            return;
+        }
+        if(createIngresoProductosAlmacenDto.ingresoProductosAlmacen.length <= 0) {
+            dispatch(showNotificationWarning({tittle: 'INGRESO DE PRODUCTOS', description: 'Es necesario agregar al menos un producto como ingreso.'}));
+            setTimeout( () => dispatch(hideNotification()), 5000 );
+            return;
+        }     
+
+        try {
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.post('almacenes-ms/create-ingreso-productos-almacen', createIngresoProductosAlmacenDto, {
+                headers: {"X-User-Id": userData.id}});
+            const { data, message }:{data: IngresoAlmacenInterface, message: string} = response.data;
+            const {IngresoProductosAlmacen} = data;
+
+            const productosAlmacenActualizados = IngresoProductosAlmacen.map(p => p.ProductoAlmacen);
+
+            console.log(productosAlmacenActualizados);
+
+            dispatch(showNotificationSuccess({tittle: 'INGRESO DE PRODUCTOS', description: message}));
+            setTimeout( () => dispatch(hideNotification()), 5000 );
+            dispatch(finishLoadingData());
+        } catch (error) {
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                dispatch(showNotificationError({tittle: 'INGRESO DE PRODUCTOS', description: data.message}));
+                dispatch(finishLoadingData());
+                setTimeout( () => dispatch(hideNotification()), 5000 );
+            }else console.log(error);
+        }
     }
 }
