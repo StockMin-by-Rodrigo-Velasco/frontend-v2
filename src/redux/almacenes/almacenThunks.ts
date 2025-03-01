@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { AppDispatch, RootState } from '../store';
 import api from '../../api/config';
-import { createAlmacen, createManyProductosAlmacen, createProductoAlmacen, getAllAlmacenes, getAllProductosAlmacen, updateAlmacen, updateProductoAlmacen } from './almacenesSlice';
+import { createAlmacen, createManyProductosAlmacen, createProductoAlmacen, getAllAlmacenes, getAllProductosAlmacen, updateAlmacen, updateManyProductosAlmacen, updateProductoAlmacen } from './almacenesSlice';
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from '../aplication/aplicationSlice';
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from '../notification/notificationSlice';
 import { CreateIngresoProductosAlmacenDto, CreateManyProductosAlmacenDto, CreateProductoAlmacenDto, IngresoAlmacenInterface, ProductoAlmacenDetalladoInterface, ProductoAlmacenInterface } from '../../interface';
@@ -199,7 +199,7 @@ export const createManyProductosAlmacenAPI = (createManyProductosAlmacenDto: Cre
         const { listaProductos } = getState().Productos;
 
         const listaProductosObj = listaProductos.reduce((acc, producto) => 
-            { acc[producto.id] = producto; return acc; }, {} as Record<string, ProductoInterface>);
+        { acc[producto.id] = producto; return acc; }, {} as Record<string, ProductoInterface>);
 
         if(!userData) return;
         try {
@@ -287,10 +287,9 @@ export const createIngresoProductosAlmacenAPI = (createIngresoProductosAlmacenDt
                 headers: {"X-User-Id": userData.id}});
             const { data, message }:{data: IngresoAlmacenInterface, message: string} = response.data;
             const {IngresoProductosAlmacen} = data;
+            const productosAlmacenActualizados: ProductoAlmacenInterface[] = IngresoProductosAlmacen.map(({ProductoAlmacen}) => ProductoAlmacen);
 
-            const productosAlmacenActualizados = IngresoProductosAlmacen.map(p => p.ProductoAlmacen);
-
-            console.log(productosAlmacenActualizados);
+            dispatch(updateManyProductosAlmacen(productosAlmacenActualizados));
 
             dispatch(showNotificationSuccess({tittle: 'INGRESO DE PRODUCTOS', description: message}));
             setTimeout( () => dispatch(hideNotification()), 5000 );

@@ -2,7 +2,14 @@ import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
 import { AlmacenInterface, ProductoAlmacenDetalladoInterface, ProductoAlmacenInterface } from "../../interface";
 
 
-
+export interface ProductoAlmacenWithOutIdInterface {
+    productoId: string;
+    almacenId: string;
+    cantidad: number;
+    cantidadMinima: number;
+    createdAt: number;
+    updatedAt: number;
+}
 
 interface InitialStateInterface {
     selectedAlmacen: AlmacenInterface;
@@ -54,11 +61,13 @@ const AlmacenesSlice = createSlice({
             state.listaProductosAlmacen = [...newListaProductosAlmacen];
         },
         updateManyProductosAlmacen: (state, action: PayloadAction<ProductoAlmacenInterface[]>) => {
-            //! ACTUALIZAR LAS CANTIDADES REMPLAZANDO CADA PRODUCTO CON LAS REPUESTA DEL API
-            // const newListaProductosAlmacen:ProductoAlmacenDetalladoInterface[] = current(state.listaProductosAlmacen)
-            // .map(p => p.id === action.payload.id? {...p, cantidadMinima: action.payload.cantidadMinima, updatedAt: action.payload.updatedAt} : p);
+            const productosAlmacen = action.payload.reduce((acc, {id, ...res}) => 
+                { acc[id] = res; return acc; }, {} as Record<string, ProductoAlmacenWithOutIdInterface>);
+           
+            const newListaProductosAlmacen:ProductoAlmacenDetalladoInterface[] = current(state.listaProductosAlmacen)
+            .map(p => (p.id in productosAlmacen)? {...p, ...productosAlmacen[p.id]} : p);
 
-            // state.listaProductosAlmacen = [...newListaProductosAlmacen];
+            state.listaProductosAlmacen = [...newListaProductosAlmacen];
         }
     }
 });
@@ -75,7 +84,8 @@ export const {
     getAllProductosAlmacen,
     createManyProductosAlmacen,
     createProductoAlmacen,
-    updateProductoAlmacen
+    updateProductoAlmacen,
+    updateManyProductosAlmacen,
 
 } = AlmacenesSlice.actions;
 export default AlmacenesSlice.reducer;

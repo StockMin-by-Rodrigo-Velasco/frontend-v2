@@ -34,7 +34,7 @@ export interface IngresoProductosAlmacenInterface {
     cantidad: number;
     ingresoAlmacenId: string;
     productoAlmacenId: string;
-    ProductoAlmacen: ProductoAlmacenInterface[];
+    ProductoAlmacen: ProductoAlmacenInterface;
 }
 export interface IngresoAlmacenInterface {
     id: string;
