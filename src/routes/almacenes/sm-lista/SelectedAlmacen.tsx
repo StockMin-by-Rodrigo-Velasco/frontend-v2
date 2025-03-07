@@ -6,13 +6,14 @@ import HeaderSection from "../../../components/HeaderSection";
 import { resetSelectAlmacen } from "../../../redux/almacenes/almacenesSlice";
 import BodySection from "../../../components/BodySection";
 import { InputSearch, InputSelectSearch } from "../../../components/Input";
-import { TbLogout2 } from "react-icons/tb";
+import { TbLogout2, TbReportAnalytics } from "react-icons/tb";
 import { FaPlus } from "react-icons/fa";
 import DataTable, { DataTableColumnInterface, DataTableColumnTypes } from "../../../components/DataTable";
 import { ProductoAlmacenDetalladoInterface } from "../../../interface";
 import RegistarProductosAlmacenWindow from "./windows/RegistrarProductosAlmacenWindow";
 import SelectedProductoAlmacenWindow from "./windows/SelectedProductoAlmacenWindow";
 import IngresarProductosAlmacenWindow from "./windows/IngresarProductosAlmacenWindow";
+import HistorialIngresosAlmacenWindow from "./windows/HistorialIngresosAlmacenWindow";
 
 interface FilterInterface {
   buscar: string;
@@ -51,9 +52,12 @@ export default function SelectedAlmacen() {
   const [filter, setFilter] = useState<FilterInterface>(filterInitialState);
   const [filteredAlmacenProducto, setFilteredProducto] = useState<ProductoAlmacenDetalladoInterface[]>([]);
   const [createOptions, setCreateOptions] = useState(false);
+
   const [openRegistrarProductosAlmacen, setOpenRegistrarProductosAlmacen] = useState(false);
   const [openIngresarProductosAlmacen, setOpenIngresarProductosAlmacen] = useState(false);
   const [openSelectedProductoAlmacen, setOpenSelectedProductoAlmacen] = useState(false);
+  const [openHistorialIngresosAlmacen, setOpenHistorialIngresosAlmacen] = useState(false);
+
   const [selectedProducto, setSelectedProducto] = useState<ProductoAlmacenDetalladoInterface>(initialStateSelectedProducto)
 
   const columns: DataTableColumnInterface<ProductoAlmacenDetalladoInterface>[] = [
@@ -102,9 +106,9 @@ export default function SelectedAlmacen() {
   }, [listaProductosAlmacen])
   return (
     <>
-      {openRegistrarProductosAlmacen && <RegistarProductosAlmacenWindow closeButton={() => { setOpenRegistrarProductosAlmacen(false) }} />}
-      {openIngresarProductosAlmacen && <IngresarProductosAlmacenWindow closeButton={() => setOpenIngresarProductosAlmacen(false)} />}
-
+      {openRegistrarProductosAlmacen && <RegistarProductosAlmacenWindow closeButton={() => { setOpenRegistrarProductosAlmacen(false)}} />}
+      {openIngresarProductosAlmacen && <IngresarProductosAlmacenWindow closeButton={() => setOpenIngresarProductosAlmacen(false)}/>}
+      {openHistorialIngresosAlmacen && <HistorialIngresosAlmacenWindow closeButton={() => setOpenHistorialIngresosAlmacen(false)}/> }
       {openSelectedProductoAlmacen && <SelectedProductoAlmacenWindow producto={selectedProducto} closeButton={() => { setOpenSelectedProductoAlmacen(false) }} />}
 
 
@@ -116,8 +120,16 @@ export default function SelectedAlmacen() {
           value={filter.buscar}
         />
 
-        <div className="flex justify-center items-center bg-secondary text-white rounded-full px-3 text-[20px] ms-auto me-auto" >
-          <h1 className="ms-auto me-auto uppercase" >{selectedAlmacen.nombre}</h1>
+        <div 
+          className="w-[140px] flex justify-center items-center border relative overflow-hidden border-primary text-primary rounded-lg ms-auto me-auto transition-all duration-300 cursor-pointer hover:w-[200px]"
+          onClick={() => {setOpenHistorialIngresosAlmacen(true)}}
+          >
+          <span className="uppercase flex" >{selectedAlmacen.nombre} <span className="ms-2 text-[20px]" ><TbReportAnalytics/></span> </span>
+          
+          <span className="opacity-0 w-[200px] flex justify-center items-center text-white absolute top-0 bottom-0 transition-all duration-300 bg-primary text-[10px] hover:text-[14px] hover:opacity-100"> 
+            Historial de ingresos 
+            <span className="ms-2 text-[20px]"><TbReportAnalytics/></span>
+          </span>
         </div>
 
         <InputSelectSearch

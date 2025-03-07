@@ -1,5 +1,5 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
-import { AlmacenInterface, ProductoAlmacenDetalladoInterface, ProductoAlmacenInterface } from "../../interface";
+import { AlmacenInterface, IngresoAlmacenInterface, ProductoAlmacenDetalladoInterface, ProductoAlmacenInterface } from "../../interface";
 
 
 export interface ProductoAlmacenWithOutIdInterface {
@@ -13,12 +13,14 @@ export interface ProductoAlmacenWithOutIdInterface {
 
 interface InitialStateInterface {
     selectedAlmacen: AlmacenInterface;
+    historialIngresosAlmacen: IngresoAlmacenInterface[];
     listaAlmacenes: AlmacenInterface[];
     listaProductosAlmacen: ProductoAlmacenDetalladoInterface[];
 }
 
 const initialState: InitialStateInterface = {
     listaAlmacenes: [],
+    historialIngresosAlmacen: [],
     listaProductosAlmacen: [],
     selectedAlmacen: { id: '', sucursalId: '', nombre: '', descripcion: '', deleted: false, createdAt: 0, updatedAt: 0 }
 }
@@ -66,9 +68,15 @@ const AlmacenesSlice = createSlice({
            
             const newListaProductosAlmacen:ProductoAlmacenDetalladoInterface[] = current(state.listaProductosAlmacen)
             .map(p => (p.id in productosAlmacen)? {...p, ...productosAlmacen[p.id]} : p);
-
             state.listaProductosAlmacen = [...newListaProductosAlmacen];
+        },
+        getAllIngresosProductosAlmacen: (state, action: PayloadAction<IngresoAlmacenInterface[]>) => {
+            state.historialIngresosAlmacen = action.payload;
+        },
+        clearIngresosProductosAlmacen: (state) => {
+            state.historialIngresosAlmacen = [];
         }
+
     }
 });
 
@@ -86,6 +94,9 @@ export const {
     createProductoAlmacen,
     updateProductoAlmacen,
     updateManyProductosAlmacen,
+
+    getAllIngresosProductosAlmacen,
+    clearIngresosProductosAlmacen
 
 } = AlmacenesSlice.actions;
 export default AlmacenesSlice.reducer;

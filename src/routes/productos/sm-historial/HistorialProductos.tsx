@@ -56,13 +56,7 @@ export default function HistorialProductos() {
     const hastaStr = new Date(dateRange.hasta);
     hastaStr.setHours(hastaStr.getHours() + 28); // Ajustamos a la hora de Bolivia
     const hastaNum = hastaStr.getTime();
-
-    // const fechaDesde = new Date(desdeNum).toLocaleDateString("es-ES", {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute: '2-digit', second:'2-digit', hour12: false});
-    // const fechaHasta = new Date(hastaNum).toLocaleDateString("es-ES", {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute: '2-digit', second:'2-digit', hour12: false});
-    // console.log('desde',fechaDesde);
-    // console.log('hasta',fechaHasta);
-    // console.log( desdeNum, hastaNum );
-
+    
     dispatch(getLogsAPI(desdeNum, hastaNum));
   }
 

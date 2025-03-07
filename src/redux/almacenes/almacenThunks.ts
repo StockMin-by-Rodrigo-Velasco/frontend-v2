@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { AppDispatch, RootState } from '../store';
 import api from '../../api/config';
-import { createAlmacen, createManyProductosAlmacen, createProductoAlmacen, getAllAlmacenes, getAllProductosAlmacen, updateAlmacen, updateManyProductosAlmacen, updateProductoAlmacen } from './almacenesSlice';
+import { createAlmacen, createManyProductosAlmacen, createProductoAlmacen, getAllAlmacenes, getAllIngresosProductosAlmacen, getAllProductosAlmacen, updateAlmacen, updateManyProductosAlmacen, updateProductoAlmacen } from './almacenesSlice';
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from '../aplication/aplicationSlice';
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from '../notification/notificationSlice';
 import { CreateIngresoProductosAlmacenDto, CreateManyProductosAlmacenDto, CreateProductoAlmacenDto, IngresoAlmacenInterface, ProductoAlmacenDetalladoInterface, ProductoAlmacenInterface } from '../../interface';
@@ -253,13 +253,39 @@ export const updateProductoAlmacenAPI = (updateProducto: { id:string, cantidadMi
 
             dispatch(updateProductoAlmacen(data));
 
-            dispatch(showNotificationSuccess({tittle: 'NUEVOS PRODUCTOS', description: message}));
+            dispatch(showNotificationSuccess({tittle: 'ACTUALIZACIÓN DE PRODUCTOS', description: message}));
             setTimeout( () => dispatch(hideNotification()), 5000 );
             dispatch(finishLoadingData());
         } catch (error) {
             if( axios.isAxiosError(error) && error.response ){
                 const {data} = error.response;
-                dispatch(showNotificationError({tittle: 'NUEVOS PRODUCTOS', description: data.message}));
+                dispatch(showNotificationError({tittle: 'ACTUALIZACIÓN DE PRODUCTOS', description: data.message}));
+                dispatch(finishLoadingData());
+                setTimeout( () => dispatch(hideNotification()), 5000 );
+            }else console.log(error);
+        }
+    }
+}
+
+export const getAllIngresosProductosAlmacenAPI = (desde: number, hasta:number) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const { selectedAlmacen } = getState().Almacenes;
+        const { id: almacenId } = selectedAlmacen;
+        if(!almacenId) {
+            dispatch(showNotificationWarning({tittle: 'HISTORIAL DE INGRESOS', description: 'No se detecto al usuario responsable del ingreso, por favor, vuelve a iniciar sesión.'}));
+            setTimeout( () => dispatch(hideNotification()), 5000 );
+            return;
+        }
+        dispatch(startLoadingData());
+        try {
+            const response: AxiosResponse = await api.post(`almacenes-ms/get-all-ingresos-productos-almacen`, {almacenId, desde, hasta});
+            const data:IngresoAlmacenInterface[] = response.data.data;
+            dispatch(getAllIngresosProductosAlmacen(data));   
+            dispatch(finishLoadingData());         
+        } catch (error) {
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                dispatch(showNotificationError({tittle: 'HISTORIAL DE INGRESOS', description: data.message}));
                 dispatch(finishLoadingData());
                 setTimeout( () => dispatch(hideNotification()), 5000 );
             }else console.log(error);
