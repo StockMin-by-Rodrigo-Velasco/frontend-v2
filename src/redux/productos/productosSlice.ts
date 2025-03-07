@@ -131,11 +131,11 @@ const ProductosSlice = createSlice({
             const updateListaCategorias = current(state.listaCategorias).map(c => (c.id === action.payload.id)?action.payload:c);
             state.listaCategorias = [...updateListaCategorias];
         },
-        getAllLogs: (state, action: PayloadAction<LogInterface[]>) => {
-            state.listaLogs = [...action.payload];
-        },
         getAllUnidadesMedida: (state, action: PayloadAction<UnidadMedidaInterface[]>) => {
             state.listaUnidadesMedida = [...action.payload];
+        },
+        getLogsProductos: (state, action: PayloadAction<LogInterface[]>) => {
+            state.listaLogs = [...action.payload];
         },
     }
 });
@@ -156,7 +156,7 @@ export const {
     deleteCategoria,
     updateCategoria,
 
-    getAllLogs,
+    getLogsProductos,
 
     getAllUnidadesMedida,
 

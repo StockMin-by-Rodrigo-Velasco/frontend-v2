@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from "../aplication/aplicationSlice";
 import { AppDispatch, RootState } from "../store";
 import api from "../../api/config";
-import { createCategoria, createMarca, createProducto, deleteCategoria, deleteMarca, deleteProducto, getAllCategorias, getAllLogs, getAllMarcas, getAllProductos, getAllUnidadesMedida, updateCategoria, updateMarca, updateProducto } from "./productosSlice";
+import { createCategoria, createMarca, createProducto, deleteCategoria, deleteMarca, deleteProducto, getAllCategorias, getLogsProductos, getAllMarcas, getAllProductos, getAllUnidadesMedida, updateCategoria, updateMarca, updateProducto } from "./productosSlice";
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from "../notification/notificationSlice";
 
 interface UpdateProductoInterface {
@@ -377,7 +377,7 @@ export const getAllUnidadAPI = () => {
         try {
             dispatch(startLoadingAplication());
             const response: AxiosResponse = await api.get(`productos-ms/get-all-logs/${id}`);
-            dispatch(getAllLogs(response.data))
+            dispatch(getLogsProductos(response.data))
             dispatch(finishLoadingAplication());
         } catch (error) {
             console.log(error);
@@ -385,14 +385,14 @@ export const getAllUnidadAPI = () => {
         }
     }
 }
-export const getLogsAPI = (desde: number, hasta: number) => {
+export const getLogsProductosAPI = (desde: number, hasta: number) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: sucursalId } = getState().Sucursal;
         if (!sucursalId) return;
         try {
             dispatch(startLoadingAplication());
             const response: AxiosResponse = await api.post(`productos-ms/get-logs`, {sucursalId, desde, hasta});
-            dispatch(getAllLogs(response.data))
+            dispatch(getLogsProductos(response.data))
             dispatch(finishLoadingAplication());
         } catch (error) {
             console.log(error);

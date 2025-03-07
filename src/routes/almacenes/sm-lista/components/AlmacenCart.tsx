@@ -35,7 +35,9 @@ export default function AlmacenCard({ almacen }: AlmacenCardPropsInterface) {
 
 
                 <div className="relative flex items-center py-1 w-full text-[16px]" >
-                    <h1 className="uppercase text-center w-full" >{almacen.nombre}</h1>
+                    <div className="text-center w-full flex flex-col" >{almacen.nombre.toLocaleUpperCase()} 
+                        <span className="text-[10px] opacity-50" >ID: { almacen.id }</span> 
+                    </div>
                     <button 
                         className="absolute top-1 right-1 w-7 h-7 rounded-full flex justify-center items-center transition-all duration-200 hover:bg-white hover:text-secondary" 
                         onClick={goToUpdateAlmacen}

@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { AppDispatch, RootState } from '../store';
 import api from '../../api/config';
-import { createAlmacen, createManyProductosAlmacen, createProductoAlmacen, getAllAlmacenes, getAllIngresosProductosAlmacen, getAllProductosAlmacen, updateAlmacen, updateManyProductosAlmacen, updateProductoAlmacen } from './almacenesSlice';
+import { createAlmacen, createManyProductosAlmacen, createProductoAlmacen, getAllAlmacenes, getAllIngresosProductosAlmacen, getAllProductosAlmacen, getLogsAlmacenes, updateAlmacen, updateManyProductosAlmacen, updateProductoAlmacen } from './almacenesSlice';
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from '../aplication/aplicationSlice';
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from '../notification/notificationSlice';
 import { CreateIngresoProductosAlmacenDto, CreateManyProductosAlmacenDto, CreateProductoAlmacenDto, IngresoAlmacenInterface, ProductoAlmacenDetalladoInterface, ProductoAlmacenInterface } from '../../interface';
@@ -149,7 +149,7 @@ export const getAllProductosAlmacenAPI = () => {
 
 export const createProductoAlmacenAPI = (createProductoAlmacenDto: CreateProductoAlmacenDto) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { userData } = getState().Sucursal;
+        const { id:sucursalId, userData } = getState().Sucursal;
         const { listaProductos } = getState().Productos;
 
         const listaProductosObj = listaProductos.reduce((acc, producto) => 
@@ -158,7 +158,9 @@ export const createProductoAlmacenAPI = (createProductoAlmacenDto: CreateProduct
         if(!userData) return;
         try {
             dispatch(startLoadingData());
-            const response: AxiosResponse = await api.post('almacenes-ms/create-producto-almacen', createProductoAlmacenDto, {headers: {"X-User-Id": userData.id}});
+            const response: AxiosResponse = await api.post('almacenes-ms/create-producto-almacen', createProductoAlmacenDto, 
+                {headers: {"X-User-Id": userData.id, "X-Sucursal-Id": sucursalId}}
+            );
             const { data, message } = response.data;
             const newProductoAlmacenDetallado: ProductoAlmacenDetalladoInterface = {
                     id: data.id,
@@ -195,7 +197,7 @@ export const createProductoAlmacenAPI = (createProductoAlmacenDto: CreateProduct
 
 export const createManyProductosAlmacenAPI = (createManyProductosAlmacenDto: CreateManyProductosAlmacenDto) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { userData } = getState().Sucursal;
+        const { id:sucursalId, userData } = getState().Sucursal;
         const { listaProductos } = getState().Productos;
 
         const listaProductosObj = listaProductos.reduce((acc, producto) => 
@@ -204,7 +206,9 @@ export const createManyProductosAlmacenAPI = (createManyProductosAlmacenDto: Cre
         if(!userData) return;
         try {
             dispatch(startLoadingData());
-            const response: AxiosResponse = await api.post('almacenes-ms/create-many-productos-almacen', createManyProductosAlmacenDto, {headers: {"X-User-Id": userData.id}});
+            const response: AxiosResponse = await api.post('almacenes-ms/create-many-productos-almacen', createManyProductosAlmacenDto, {
+                headers: {"X-User-Id": userData.id, "X-Sucursal-Id": sucursalId}
+            });
             const { data, message } = response.data;
             const newProductosAlmacenDetallado: ProductoAlmacenDetalladoInterface[] = data.map((p:ProductoAlmacenInterface) => (
                 {
@@ -243,12 +247,14 @@ export const createManyProductosAlmacenAPI = (createManyProductosAlmacenDto: Cre
 
 export const updateProductoAlmacenAPI = (updateProducto: { id:string, cantidadMinima:number }) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { userData } = getState().Sucursal;
+        const {id: sucursalId, userData } = getState().Sucursal;
 
         if(!userData) return;
         try {
             dispatch(startLoadingData());
-            const response: AxiosResponse = await api.patch('almacenes-ms/update-producto-almacen', updateProducto, {headers: {"X-User-Id": userData.id}});
+            const response: AxiosResponse = await api.patch('almacenes-ms/update-producto-almacen', updateProducto, {
+                headers: {"X-User-Id": userData.id, "X-Sucursal-Id": sucursalId}
+            });
             const { data, message } = response.data;
 
             dispatch(updateProductoAlmacen(data));
@@ -295,7 +301,7 @@ export const getAllIngresosProductosAlmacenAPI = (desde: number, hasta:number) =
 
 export const createIngresoProductosAlmacenAPI = (createIngresoProductosAlmacenDto:CreateIngresoProductosAlmacenDto) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { userData } = getState().Sucursal;
+        const { id:sucursalId, userData } = getState().Sucursal;
         if(!userData.id) {
             dispatch(showNotificationWarning({tittle: 'INGRESO DE PRODUCTOS', description: 'No se detecto al usuario responsable del ingreso, por favor, vuelve a iniciar sesión.'}));
             setTimeout( () => dispatch(hideNotification()), 5000 );
@@ -310,7 +316,7 @@ export const createIngresoProductosAlmacenAPI = (createIngresoProductosAlmacenDt
         try {
             dispatch(startLoadingData());
             const response: AxiosResponse = await api.post('almacenes-ms/create-ingreso-productos-almacen', createIngresoProductosAlmacenDto, {
-                headers: {"X-User-Id": userData.id}});
+                headers: {"X-User-Id": userData.id, "X-Sucursal-Id": sucursalId}});
             const { data, message }:{data: IngresoAlmacenInterface, message: string} = response.data;
             const {IngresoProductosAlmacen} = data;
             const productosAlmacenActualizados: ProductoAlmacenInterface[] = IngresoProductosAlmacen.map(({ProductoAlmacen}) => ProductoAlmacen);
@@ -327,6 +333,22 @@ export const createIngresoProductosAlmacenAPI = (createIngresoProductosAlmacenDt
                 dispatch(finishLoadingData());
                 setTimeout( () => dispatch(hideNotification()), 5000 );
             }else console.log(error);
+        }
+    }
+}
+
+export const getLogsAlmacenesAPI = (desde: number, hasta: number) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const { id: sucursalId } = getState().Sucursal;
+        if (!sucursalId) return;
+        try {
+            dispatch(startLoadingAplication());
+            const response: AxiosResponse = await api.post(`almacenes-ms/get-logs`, {sucursalId, desde, hasta});
+            dispatch(getLogsAlmacenes(response.data))
+            dispatch(finishLoadingAplication());
+        } catch (error) {
+            console.log(error);
+            dispatch(finishLoadingAplication());
         }
     }
 }

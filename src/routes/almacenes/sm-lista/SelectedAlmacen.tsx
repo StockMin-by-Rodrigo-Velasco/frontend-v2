@@ -121,7 +121,7 @@ export default function SelectedAlmacen() {
         />
 
         <div 
-          className="w-[140px] flex justify-center items-center border relative overflow-hidden border-primary text-primary rounded-lg ms-auto me-auto transition-all duration-300 cursor-pointer hover:w-[200px]"
+          className="w-[200px] flex justify-center items-center border relative overflow-hidden border-primary text-primary rounded-lg ms-auto me-auto transition-all duration-300 cursor-pointer"
           onClick={() => {setOpenHistorialIngresosAlmacen(true)}}
           >
           <span className="uppercase flex" >{selectedAlmacen.nombre} <span className="ms-2 text-[20px]" ><TbReportAnalytics/></span> </span>

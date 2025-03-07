@@ -1,5 +1,5 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
-import { AlmacenInterface, IngresoAlmacenInterface, ProductoAlmacenDetalladoInterface, ProductoAlmacenInterface } from "../../interface";
+import { AlmacenInterface, IngresoAlmacenInterface, LogInterface, ProductoAlmacenDetalladoInterface, ProductoAlmacenInterface } from "../../interface";
 
 
 export interface ProductoAlmacenWithOutIdInterface {
@@ -16,13 +16,15 @@ interface InitialStateInterface {
     historialIngresosAlmacen: IngresoAlmacenInterface[];
     listaAlmacenes: AlmacenInterface[];
     listaProductosAlmacen: ProductoAlmacenDetalladoInterface[];
+    listaLogs: LogInterface[],
 }
 
 const initialState: InitialStateInterface = {
     listaAlmacenes: [],
     historialIngresosAlmacen: [],
     listaProductosAlmacen: [],
-    selectedAlmacen: { id: '', sucursalId: '', nombre: '', descripcion: '', deleted: false, createdAt: 0, updatedAt: 0 }
+    selectedAlmacen: { id: '', sucursalId: '', nombre: '', descripcion: '', deleted: false, createdAt: 0, updatedAt: 0 },
+    listaLogs:[]
 }
 
 const AlmacenesSlice = createSlice({
@@ -75,7 +77,10 @@ const AlmacenesSlice = createSlice({
         },
         clearIngresosProductosAlmacen: (state) => {
             state.historialIngresosAlmacen = [];
-        }
+        },
+        getLogsAlmacenes: (state, action: PayloadAction<LogInterface[]>) => {
+                    state.listaLogs = [...action.payload];
+                },
 
     }
 });
@@ -96,7 +101,9 @@ export const {
     updateManyProductosAlmacen,
 
     getAllIngresosProductosAlmacen,
-    clearIngresosProductosAlmacen
+    clearIngresosProductosAlmacen,
+
+    getLogsAlmacenes
 
 } = AlmacenesSlice.actions;
 export default AlmacenesSlice.reducer;
