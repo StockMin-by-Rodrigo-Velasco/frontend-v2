@@ -29,48 +29,9 @@ const ProductosSlice = createSlice({
     initialState,
     reducers: {
         getAllProductos: (state, action: PayloadAction<Producto[]>) => {
-        //     const newListaProductos:Producto[] = action.payload.map(p => {
-        //         // console.log(p);
-        //     return {
-        //       id: p.id,
-        //       sucursalId: p.sucursalId,
-        //       codigo: p.codigo,
-        //       nombre: p.nombre,
-        //       deleted: p.deleted,
-        //       descripcion: p.descripcion,
-        //       imagen: p.imagen,
-        //       marca: p.Marca.nombre,
-        //       marcaId: p.marcaId,
-        //       categoria: p.Categoria.nombre,
-        //       categoriaId: p.categoriaId,
-        //       unidadMedida: p.UnidadMedida.nombre,
-        //       unidadMedidaAbreviada: p.UnidadMedida.abreviatura,
-        //       unidadMedidaId: p.unidadMedidaId,
-        //       createdAt: p.createdAt,
-        //       updatedAt: p.updatedAt
-        //     }}
-        // );
             state.listaProductos = [...action.payload];
         },
         createProducto: (state, action: PayloadAction<Producto>) => {
-            // const newProducto:Producto = {
-            //     id: action.payload.id,
-            //     sucursalId: action.payload.sucursalId,
-            //     codigo: action.payload.codigo,
-            //     nombre: action.payload.nombre,
-            //     deleted: action.payload.deleted,
-            //     descripcion: action.payload.descripcion,
-            //     imagen: action.payload.imagen,
-            //     marca: action.payload.Marca.nombre,
-            //     marcaId: action.payload.marcaId,
-            //     categoria: action.payload.Categoria.nombre,
-            //     categoriaId: action.payload.categoriaId,
-            //     unidadMedida: action.payload.UnidadMedida.nombre,
-            //     unidadMedidaAbreviada: action.payload.UnidadMedida.abreviatura,
-            //     unidadMedidaId: action.payload.unidadMedidaId,
-            //     createdAt: action.payload.createdAt,
-            //     updatedAt: action.payload.updatedAt
-            //   };
             state.listaProductos = [action.payload, ...state.listaProductos]
         },
         deleteProducto: (state, action: PayloadAction<string>) => {
@@ -79,24 +40,6 @@ const ProductosSlice = createSlice({
             state.idUltimoProductoEliminado = action.payload;
         },
         updateProducto: (state, action: PayloadAction<Producto>) => {
-            // const updatedProducto:Producto = {
-            //     id: action.payload.id,
-            //     sucursalId: action.payload.sucursalId,
-            //     codigo: action.payload.codigo,
-            //     nombre: action.payload.nombre,
-            //     deleted: action.payload.deleted,
-            //     descripcion: action.payload.descripcion,
-            //     imagen: action.payload.imagen,
-            //     marca: action.payload.Marca.nombre,
-            //     marcaId: action.payload.marcaId,
-            //     categoria: action.payload.Categoria.nombre,
-            //     categoriaId: action.payload.categoriaId,
-            //     unidadMedida: action.payload.UnidadMedida.nombre,
-            //     unidadMedidaAbreviada: action.payload.UnidadMedida.abreviatura,
-            //     unidadMedidaId: action.payload.unidadMedidaId,
-            //     createdAt: action.payload.createdAt,
-            //     updatedAt: action.payload.updatedAt
-            //   };
             const updateListaProductos = current(state.listaProductos).map(p => (p.id === action.payload.id)?action.payload:p);
             state.listaProductos = [...updateListaProductos];
         },

@@ -19,6 +19,8 @@ import HistorialAlmacenes from "./almacenes/sm-historial/HistorialAlmacenes";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import SelectedAlmacen from "./almacenes/sm-lista/SelectedAlmacen";
+import ClientesVentas from "./ventas/sm-clientes/ClientesVentas";
+import HistorialVentas from "./ventas/sm-historial/HistorialVentas";
 
 
 export default function RoutesMain() {
@@ -50,7 +52,10 @@ export default function RoutesMain() {
           </Route>
 
 
-          <Route path="ventas" element={<Ventas/>} />
+          <Route path="ventas" element={<Ventas/>}>
+            <Route path="clientes" element={<ClientesVentas/>}/>
+            <Route path="historial" element={<HistorialVentas/>} />
+          </Route>
           <Route path="usuarios" element={<Usuarios/>} />
         </Route>
       </Routes>

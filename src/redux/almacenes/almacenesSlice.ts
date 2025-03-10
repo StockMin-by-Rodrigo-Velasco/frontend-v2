@@ -7,8 +7,8 @@ export interface ProductoAlmacenWithOutIdInterface {
     almacenId: string;
     cantidad: number;
     cantidadMinima: number;
-    createdAt: number;
-    updatedAt: number;
+    createdAt: string;
+    updatedAt: string;
 }
 
 interface InitialStateInterface {
@@ -23,8 +23,8 @@ const initialState: InitialStateInterface = {
     listaAlmacenes: [],
     historialIngresosAlmacen: [],
     listaProductosAlmacen: [],
-    selectedAlmacen: { id: '', sucursalId: '', nombre: '', descripcion: '', deleted: false, createdAt: 0, updatedAt: 0 },
-    listaLogs:[]
+    selectedAlmacen: { id: '', sucursalId: '', nombre: '', descripcion: '', deleted: false, createdAt: '', updatedAt: '' },
+    listaLogs: []
 }
 
 const AlmacenesSlice = createSlice({
@@ -41,10 +41,10 @@ const AlmacenesSlice = createSlice({
             state.selectedAlmacen = initialState.selectedAlmacen;
         },
         createAlmacen: (state, action: PayloadAction<Almacen>) => {
-            state.listaAlmacenes = [action.payload,...state.listaAlmacenes]
+            state.listaAlmacenes = [action.payload, ...state.listaAlmacenes]
         },
         updateAlmacen: (state, action: PayloadAction<Almacen>) => {
-            state.listaAlmacenes = current(state.listaAlmacenes).map(a => (a.id === action.payload.id)? action.payload : a);
+            state.listaAlmacenes = current(state.listaAlmacenes).map(a => (a.id === action.payload.id) ? action.payload : a);
         },
         deleteAlmacen: (state, action: PayloadAction<string>) => {
             state.listaAlmacenes = state.listaAlmacenes.filter(a => a.id !== action.payload);
@@ -53,23 +53,22 @@ const AlmacenesSlice = createSlice({
             state.listaProductosAlmacen = action.payload
         },
         createManyProductosAlmacen: (state, action: PayloadAction<ProductoAlmacenDetallado[]>) => {
-            state.listaProductosAlmacen = [ ...action.payload, ...current(state.listaProductosAlmacen) ];
+            state.listaProductosAlmacen = [...action.payload, ...current(state.listaProductosAlmacen)];
         },
         createProductoAlmacen: (state, action: PayloadAction<ProductoAlmacenDetallado>) => {
-            state.listaProductosAlmacen = [ action.payload, ...current(state.listaProductosAlmacen) ];
+            state.listaProductosAlmacen = [action.payload, ...current(state.listaProductosAlmacen)];
         },
         updateProductoAlmacen: (state, action: PayloadAction<ProductoAlmacen>) => {
-            const newListaProductosAlmacen:ProductoAlmacenDetallado[] = current(state.listaProductosAlmacen)
-            .map(p => p.id === action.payload.id? {...p, cantidadMinima: action.payload.cantidadMinima, updatedAt: action.payload.updatedAt} : p);
+            const newListaProductosAlmacen: ProductoAlmacenDetallado[] = current(state.listaProductosAlmacen)
+                .map(p => p.id === action.payload.id ? { ...p, cantidadMinima: action.payload.cantidadMinima, updatedAt: action.payload.updatedAt } : p);
 
             state.listaProductosAlmacen = [...newListaProductosAlmacen];
         },
         updateManyProductosAlmacen: (state, action: PayloadAction<ProductoAlmacen[]>) => {
-            const productosAlmacen = action.payload.reduce((acc, {id, ...res}) => 
-                { acc[id] = res; return acc; }, {} as Record<string, ProductoAlmacenWithOutIdInterface>);
-           
-            const newListaProductosAlmacen:ProductoAlmacenDetallado[] = current(state.listaProductosAlmacen)
-            .map(p => (p.id in productosAlmacen)? {...p, ...productosAlmacen[p.id]} : p);
+            const productosAlmacen = action.payload.reduce((acc, { id, ...res }) => { acc[id] = res; return acc; }, {} as Record<string, ProductoAlmacenWithOutIdInterface>);
+
+            const newListaProductosAlmacen: ProductoAlmacenDetallado[] = current(state.listaProductosAlmacen)
+                .map(p => (p.id in productosAlmacen) ? { ...p, ...productosAlmacen[p.id] } : p);
             state.listaProductosAlmacen = [...newListaProductosAlmacen];
         },
         getAllIngresosProductosAlmacen: (state, action: PayloadAction<IngresoAlmacen[]>) => {
@@ -79,8 +78,8 @@ const AlmacenesSlice = createSlice({
             state.historialIngresosAlmacen = [];
         },
         getLogsAlmacenes: (state, action: PayloadAction<Log[]>) => {
-                    state.listaLogs = [...action.payload];
-                },
+            state.listaLogs = [...action.payload];
+        },
 
     }
 });

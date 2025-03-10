@@ -40,8 +40,8 @@ const initialStateSelectedProducto: ProductoAlmacenDetallado = {
   marca: '',
   unidadMedida: '',
   unidadMedidaAbreviada: '',
-  createdAt: 0,
-  updatedAt: 0,
+  createdAt: '',
+  updatedAt: '',
 }
 
 export default function SelectedAlmacen() {

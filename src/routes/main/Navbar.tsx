@@ -37,6 +37,8 @@ const menu = [
         title: 'Ventas', path: '/main/ventas', icon: <MdOutlineShoppingCart size='20px' className="me-2" />,
         subTitles: [
             { title: 'Registrar venta', path: '/main/ventas/lista', icon: <FaPlus size='14px' /> },
+            { title: 'Clientes', path: '/main/ventas/clientes', icon: <FaRegUser size='14px' /> },
+            { title: 'Historial', path: '/main/ventas/historial', icon: <TbHistory size='14px' /> },
         ]
     },
     {
