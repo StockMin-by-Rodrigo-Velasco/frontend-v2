@@ -5,7 +5,7 @@ import { AppDispatch, RootState } from "../../../../redux/store";
 import { getAllIngresosProductosAlmacenAPI } from '../../../../redux/almacenes/almacenThunks';
 import { BsBoxArrowInUpRight } from "react-icons/bs";
 import { dateLocalWhitTime } from "../../../../helpers";
-import { IngresoAlmacenInterface } from "../../../../interface";
+import { IngresoAlmacen } from "../../../../interface";
 import { useForm } from "../../../../hooks";
 import { InputDateSearch } from "../../../../components/Input";
 import { IoSearch } from "react-icons/io5";
@@ -28,13 +28,13 @@ const initDateRange: DateRange = {
   hasta: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split("T")[0],
 }
 
-const initialStateIngresoAlmacen: IngresoAlmacenInterface = {
+const initialStateIngresoAlmacen: IngresoAlmacen = {
   id:'',
   almacenId:'',
   detalle: '',
   usuarioId: '',
   IngresoProductosAlmacen: [],
-  createdAt:0
+  createdAt:''
 }
 
 
@@ -44,13 +44,13 @@ export default function HistorialIngresosAlmacenWindow({ closeButton }: Historia
   const { historialIngresosAlmacen } = useSelector((s: RootState) => s.Almacenes);
 
   const [openViewIngresoProductoAlmacenWindow, setOpenViewIngresoProductoAlmacenWindow] = useState(false);
-  const [ingresosData, setIngresosData] = useState<IngresoAlmacenInterface>(initialStateIngresoAlmacen)
+  const [ingresosData, setIngresosData] = useState<IngresoAlmacen>(initialStateIngresoAlmacen)
 
   const dispatch = useDispatch<AppDispatch>();
 
   const { data: dateRange, handleInputChange } = useForm<DateRange>(initDateRange);
 
-  const getIngreso = (data: IngresoAlmacenInterface) => {
+  const getIngreso = (data: IngresoAlmacen) => {
     // console.log(data);
     setIngresosData(data);
     setOpenViewIngresoProductoAlmacenWindow(true);
@@ -59,13 +59,13 @@ export default function HistorialIngresosAlmacenWindow({ closeButton }: Historia
   const filterIngresos = () => {
     const desdeStr = new Date(dateRange.desde);
     desdeStr.setHours(desdeStr.getHours() + 4); // Ajustamos a la hora de Bolivia
-    const desdeNum = desdeStr.getTime();
+    const desde = desdeStr.getTime().toString();
 
     const hastaStr = new Date(dateRange.hasta);
     hastaStr.setHours(hastaStr.getHours() + 28); // Ajustamos a la hora de Bolivia
-    const hastaNum = hastaStr.getTime();
+    const hasta = hastaStr.getTime().toString();
 
-    dispatch(getAllIngresosProductosAlmacenAPI(desdeNum, hastaNum));
+    dispatch(getAllIngresosProductosAlmacenAPI(desde, hasta));
   }
 
   useEffect(() => {

@@ -1,5 +1,5 @@
 import { HiOutlineInboxStack } from "react-icons/hi2";
-import { AlmacenInterface } from "../../../../interface";
+import { Almacen } from "../../../../interface";
 import { dateLocalWhitTime } from "../../../../helpers";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../redux/store";
@@ -10,7 +10,7 @@ import { useState } from "react";
 import UpdateAlmacenWindow from "../windows/UpdateAlmacenWindow";
 
 interface AlmacenCardPropsInterface {
-    almacen: AlmacenInterface
+    almacen: Almacen
 }
 
 export default function AlmacenCard({ almacen }: AlmacenCardPropsInterface) {

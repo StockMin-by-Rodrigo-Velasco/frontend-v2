@@ -1,40 +1,59 @@
 import { useSelector } from "react-redux";
 import Windows from "../../../../components/Windows";
-import { IngresoAlmacenInterface, Producto } from "../../../../interface";
+import { IngresoAlmacen, IngresoProductosAlmacen, Producto, User } from "../../../../interface";
 import { RootState } from "../../../../redux/store";
 import { dateLocal } from "../../../../helpers";
 import { useEffect, useState } from "react";
 import DataTable, { DataTableColumnInterface, DataTableColumnTypes } from "../../../../components/DataTable";
 
 
-interface Productos {
-  productoId: string;
-  productoAlmacenId: string;
+// interface Productos {
+//   productoId: string;
+//   productoAlmacenId: string;
+//   codigo: string;
+//   nombre: string;
+//   cantidad: number;
+//   cantidadMinima: number;
+
+//   categoriaId: string;
+//   categoria?: string;
+
+//   marcaId: string;
+//   marca?: string;
+
+//   unidadMedidaId: string;
+//   unidadMedidaAbreviada?: string;
+
+//   show: boolean;
+// }
+
+// interface User {
+//   sucursalId: string;
+//   nombre: string;
+//   apellido: string;
+//   ci: string;
+// }
+
+interface ProductoForDataTable extends IngresoProductosAlmacen {
   codigo: string;
   nombre: string;
+  imagen: string;
+  
   cantidad: number;
-  cantidadMinima: number;
 
   categoriaId: string;
-  categoria?: string;
+  categoria: string;
 
   marcaId: string;
-  marca?: string;
-
+  marca: string;
+  
   unidadMedidaId: string;
   unidadMedidaAbreviada?: string;
 
   show: boolean;
 }
 
-interface User {
-  sucursalId: string;
-  nombre: string;
-  apellido: string;
-  ci: string;
-}
-
-const columns: DataTableColumnInterface<Productos>[] = [
+const columns: DataTableColumnInterface<ProductoForDataTable>[] = [
   { name: 'CODIGO', type: DataTableColumnTypes.P, key: "codigo" },
   { name: 'NOMBRE', type: DataTableColumnTypes.P, key: "nombre" },
   { name: 'MEDIDA', type: DataTableColumnTypes.P, key: "unidadMedidaAbreviada" },
@@ -44,37 +63,41 @@ const columns: DataTableColumnInterface<Productos>[] = [
 
 interface ViewIngresoProductoAlmacenWindowProp {
   closeButton: () => void;
-  data: IngresoAlmacenInterface
+  data: IngresoAlmacen
 }
 
 export default function ViewIngresoProductoAlmacenWindow({ closeButton, data }: ViewIngresoProductoAlmacenWindowProp) {
   const { logo, users } = useSelector((s: RootState) => s.Sucursal);
   const { listaProductos } = useSelector((s: RootState) => s.Productos);
 
-  const [ingresoProductos, setIngresoProductos] = useState<Productos[]>([]);
-  const [userData, setUserData] = useState<User>({ sucursalId: '', nombre: '', apellido: '', ci: '' });
+  const [ingresoProductos, setIngresoProductos] = useState<ProductoForDataTable[]>([]);
+  const [userData, setUserData] = useState<User>({ id:'',sucursalId:'', nombre:'', apellido:'', ci:'', imagen:'' });
 
   useEffect(() => {
     const productosSucursal = listaProductos.reduce((acc, producto) => { acc[producto.id] = producto; return acc; }, {} as Record<string, Producto>);
 
-    const newUserData: User = users.find(u => u.id === data.usuarioId) || { sucursalId: '', nombre: '', apellido: '', ci: '' };
+    const newUserData: User = users.find(u => u.id === data.usuarioId) || { id:'',sucursalId:'', nombre:'', apellido:'', ci:'', imagen:'' };
 
-    const newIngresoProductos: Productos[] = data.IngresoProductosAlmacen
+    const newIngresoProductos: ProductoForDataTable[] = data.IngresoProductosAlmacen
       .map(p =>
       ({
+        id: p.id,
+        ingresoAlmacenId: p.ingresoAlmacenId,
+        ProductoAlmacen: p.ProductoAlmacen,
         productoId: p.ProductoAlmacen.productoId,
         productoAlmacenId: p.productoAlmacenId,
+        cantidad: p.cantidad,
+        cantidadMinima: p.ProductoAlmacen.cantidadMinima,
+
         codigo: productosSucursal[p.ProductoAlmacen.productoId].codigo,
         nombre: productosSucursal[p.ProductoAlmacen.productoId].nombre,
         imagen: productosSucursal[p.ProductoAlmacen.productoId].imagen,
-        cantidad: p.cantidad,
-        cantidadMinima: p.ProductoAlmacen.cantidadMinima,
         categoriaId: productosSucursal[p.ProductoAlmacen.productoId].categoriaId,
-        categoria: productosSucursal[p.ProductoAlmacen.productoId].categoria,
+        categoria: productosSucursal[p.ProductoAlmacen.productoId].Categoria.nombre,
         marcaId: productosSucursal[p.ProductoAlmacen.productoId].marcaId,
-        marca: productosSucursal[p.ProductoAlmacen.productoId].marca,
+        marca: productosSucursal[p.ProductoAlmacen.productoId].Marca.nombre,
         unidadMedidaId: productosSucursal[p.ProductoAlmacen.productoId].unidadMedidaId,
-        unidadMedidaAbreviada: productosSucursal[p.ProductoAlmacen.productoId].unidadMedidaAbreviada,
+        unidadMedidaAbreviada: productosSucursal[p.ProductoAlmacen.productoId].UnidadMedida.abreviatura,
         show: true
       }));
     setIngresoProductos(newIngresoProductos);
@@ -98,7 +121,7 @@ export default function ViewIngresoProductoAlmacenWindow({ closeButton, data }: 
         </div>
 
 
-        <DataTable<Productos> columns={columns} data={ingresoProductos} />
+        <DataTable<ProductoForDataTable> columns={columns} data={ingresoProductos} />
       </div>
 
     </Windows>

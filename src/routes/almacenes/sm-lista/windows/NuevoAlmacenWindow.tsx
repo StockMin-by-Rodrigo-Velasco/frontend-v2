@@ -20,12 +20,13 @@ interface createForm{
 export default function NuevoAlmacenWindow({closeButton}: CreateAlmacenWindowProp) {
     const dispatch = useDispatch<AppDispatch>();
     const {loadingData} = useSelector((s:RootState) => s.Aplication);
+    const {id:sucursalId} = useSelector((s:RootState) => s.Sucursal);
     const { data, handleInputChange } = useForm<createForm>({nombre:'', descripcion:''});
 
 
     const formSubmit = (e:FormEvent) => {
         e.preventDefault();
-        dispatch(createAlmacenAPI(data));
+        dispatch(createAlmacenAPI({ sucursalId,...data}));
     }
 
   return (

@@ -22,3 +22,12 @@ export interface UpdateSucursalUserInterface{
     password?: string;
     rePassword?: string;
 }
+
+export interface User {
+  id: string;
+  nombre: string;
+  apellido: string;
+  ci: string;
+  imagen: string;
+  sucursalId: string;
+}

@@ -4,7 +4,7 @@ import { InputNumber, InputTextareaBlock, InputTextBlock } from "../../../../com
 import Windows from "../../../../components/Windows"
 import { dateLocalWhitTime } from "../../../../helpers";
 import { useForm } from "../../../../hooks";
-import { ProductoAlmacenDetalladoInterface } from "../../../../interface";
+import { ProductoAlmacenDetallado } from "../../../../interface";
 import { FaEdit } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,7 +12,7 @@ import { AppDispatch, RootState } from "../../../../redux/store";
 import { updateProductoAlmacenAPI } from "../../../../redux/almacenes/almacenThunks";
 
 interface SelectedProductoAlmacenProp {
-    producto: ProductoAlmacenDetalladoInterface;
+    producto: ProductoAlmacenDetallado;
     closeButton: () => void;
 }
 

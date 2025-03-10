@@ -6,11 +6,11 @@ import { useForm } from "../../../../hooks";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { FormEvent } from "react";
 import { updateAlmacenAPI } from "../../../../redux/almacenes/almacenThunks";
-import { AlmacenInterface } from "../../../../interface";
+import { Almacen } from "../../../../interface";
 
 interface UpdateAlmacenWindowInterface{
     closeButton: () => void; 
-    almacen: AlmacenInterface
+    almacen: Almacen
 }
 
 interface updateForm{
@@ -22,12 +22,13 @@ interface updateForm{
 export default function UpdateAlmacenWindow({closeButton, almacen}: UpdateAlmacenWindowInterface) {
     const dispatch = useDispatch<AppDispatch>();
     const {loadingData} = useSelector((s:RootState) => s.Aplication);
+    const {id:sucursalId} = useSelector((s:RootState) => s.Sucursal);
     const { data, handleInputChange } = useForm<updateForm>({nombre: almacen.nombre, descripcion: almacen.descripcion || ''});
 
 
     const formSubmit = (e:FormEvent) => {
         e.preventDefault();
-        dispatch(updateAlmacenAPI({id: almacen.id, ...data}));
+        dispatch(updateAlmacenAPI({sucursalId, almacenId:almacen.id, ...data}));
     }
 
   return (

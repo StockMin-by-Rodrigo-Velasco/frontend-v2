@@ -1,5 +1,5 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
-import { LogInterface, Categoria, Marca, Producto, UnidadMedida, UnidadMedidaSucursal } from "../../interface";
+import { Log, Categoria, Marca, Producto, UnidadMedida, UnidadMedidaSucursal } from "../../interface";
 
 interface InitialStateInterface {
     idUltimoProductoEliminado: string;
@@ -10,7 +10,7 @@ interface InitialStateInterface {
     listaCategorias: Categoria[],
     listaUnidadesMedida: UnidadMedida[],
     listaUnidadesMedidaSucursal: UnidadMedidaSucursal[],
-    listaLogs: LogInterface[],
+    listaLogs: Log[],
 }
 
 const initialState: InitialStateInterface = {
@@ -143,7 +143,7 @@ const ProductosSlice = createSlice({
                 state.listaUnidadesMedidaSucursal = [action.payload, ...state.listaUnidadesMedidaSucursal]
             }
         },
-        getLogsProductos: (state, action: PayloadAction<LogInterface[]>) => {
+        getLogsProductos: (state, action: PayloadAction<Log[]>) => {
             state.listaLogs = [...action.payload];
         },
     }

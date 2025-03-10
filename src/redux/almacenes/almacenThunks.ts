@@ -4,37 +4,26 @@ import api from '../../api/config';
 import { createAlmacen, createManyProductosAlmacen, createProductoAlmacen, getAllAlmacenes, getAllIngresosProductosAlmacen, getAllProductosAlmacen, getLogsAlmacenes, updateAlmacen, updateManyProductosAlmacen, updateProductoAlmacen } from './almacenesSlice';
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from '../aplication/aplicationSlice';
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from '../notification/notificationSlice';
-import { CreateIngresoProductosAlmacenDto, CreateManyProductosAlmacenDto, CreateProductoAlmacenDto, IngresoAlmacenInterface, ProductoAlmacenDetalladoInterface, ProductoAlmacenInterface } from '../../interface';
+import { CreateIngresoAlmacenDto, CreateManyProductosAlmacenDto, CreateProductoAlmacenDto, IngresoAlmacen, ProductoAlmacenDetallado, ProductoAlmacen, CreateAlmacenDto, Almacen, UpdateAlmacenDto, Producto } from '../../interface';
 
-interface ProductoInterface {
-    id: string;
-    sucursalId: string;
-    codigo: string;
-    nombre: string;
-    descripcion: string;
-    imagen: string;
-    activo: boolean;
-    deleted: boolean;
-    categoriaId: string;
-    categoria?: string;
-    marcaId: string;
-    marca?:string;
-    unidadMedidaId: string;
-    unidadMedida?: string;
-    unidadMedidaAbreviada?: string;
-    createdAt: number;
-    updatedAt: number;
-}
-
-interface CreateAlmacenInterface{
-    nombre?: string;
-    descripcion?: string;
-}
-
-interface UpdateAlmacenInterface extends CreateAlmacenInterface {
-    id: string;
-}
-
+// interface Producto {
+//     id: string;
+//     sucursalId: string;
+//     codigo: string;
+//     nombre: string;
+//     descripcion: string;
+//     imagen: string;
+//     deleted: boolean;
+//     categoriaId: string;
+//     categoria?: string;
+//     marcaId: string;
+//     marca?:string;
+//     unidadMedidaId: string;
+//     unidadMedida?: string;
+//     unidadMedidaAbreviada?: string;
+//     createdAt: number;
+//     updatedAt: number;
+// }
 
 export const getAllAlmacenesAPI = () => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
@@ -53,16 +42,16 @@ export const getAllAlmacenesAPI = () => {
     };
 }
 
-export const createAlmacenAPI = ( CreateAlmacen: CreateAlmacenInterface ) => {
+export const createAlmacenAPI = ( createAlmacenDto: CreateAlmacenDto ) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: sucursalId, userData } = getState().Sucursal;
         if( !sucursalId ) return;
         try {
             dispatch(startLoadingData());
             const response: AxiosResponse = await api.post('almacenes-ms/create-almacen', 
-                {sucursalId, ...CreateAlmacen},{headers: {"X-User-Id": userData.id}}
+                createAlmacenDto, {headers: {"X-User-Id": userData.id}}
             );
-            const { data, message } = response.data;
+            const { data, message }: {data:Almacen, message:string} = response.data;
             dispatch(createAlmacen(data));
 
             dispatch(showNotificationSuccess({tittle: 'CREACIÓN DE ALMACÉN', description: message}));
@@ -79,14 +68,14 @@ export const createAlmacenAPI = ( CreateAlmacen: CreateAlmacenInterface ) => {
     }
 }
 
-export const updateAlmacenAPI = ( updateCategoriaInterface: UpdateAlmacenInterface ) => {
+export const updateAlmacenAPI = ( updateCategoriaDto: UpdateAlmacenDto ) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: sucursalId, userData } = getState().Sucursal;
         if( !sucursalId ) return;
         try {
             dispatch(startLoadingData());
             const response: AxiosResponse = await api.patch('almacenes-ms/update-almacen', 
-                {sucursalId, ...updateCategoriaInterface},{headers: {"X-User-Id": userData.id}}
+                updateCategoriaDto, {headers: {"X-User-Id": userData.id}}
             );
             const { data, message } = response.data;
             dispatch(updateAlmacen(data));
@@ -109,17 +98,16 @@ export const getAllProductosAlmacenAPI = () => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { selectedAlmacen } = getState().Almacenes;
         const { listaProductos } = getState().Productos;
-        const listaProductosObj = listaProductos.reduce((acc, producto) => { acc[producto.id] = producto; return acc;
-        }, {} as Record<string, ProductoInterface>);
-        // console.log(listaProductosObj);
+
+        const listaProductosObj = listaProductos.reduce((acc, p) => {acc[p.id] = p; return acc}, {} as Record<string, Producto>)
 
         if( !selectedAlmacen.id ) return;
         try {
             dispatch(startLoadingAplication());
             const responce: AxiosResponse = await api.get(`almacenes-ms/get-all-productos-almacen/${selectedAlmacen.id}`);
-            const productosAlmacen: ProductoAlmacenInterface[] = responce.data.data;
+            const productosAlmacen: ProductoAlmacen[] = responce.data.data;
 
-            const productosAlmacenDetallado: ProductoAlmacenDetalladoInterface[] = productosAlmacen.map((p:ProductoAlmacenInterface) => (
+            const productosAlmacenDetallado: ProductoAlmacenDetallado[] = productosAlmacen.map((p:ProductoAlmacen) => (
                 {
                     id: p.id,
                     productoId: p.productoId,
@@ -128,10 +116,10 @@ export const getAllProductosAlmacenAPI = () => {
                     nombre: listaProductosObj[p.productoId].nombre,
                     descripcion: listaProductosObj[p.productoId].descripcion,
                     imagen: listaProductosObj[p.productoId].imagen,
-                    categoria: listaProductosObj[p.productoId].categoria,
-                    marca: listaProductosObj[p.productoId].marca,
-                    unidadMedida: listaProductosObj[p.productoId].unidadMedida,
-                    unidadMedidaAbreviada: listaProductosObj[p.productoId].unidadMedidaAbreviada,
+                    categoria: listaProductosObj[p.productoId].Categoria.nombre,
+                    marca: listaProductosObj[p.productoId].Marca.nombre,
+                    unidadMedida: listaProductosObj[p.productoId].UnidadMedida.nombre,
+                    unidadMedidaAbreviada: listaProductosObj[p.productoId].UnidadMedida.abreviatura,
                     cantidad: p.cantidad,
                     cantidadMinima: p.cantidadMinima,
                     createdAt: p.createdAt,
@@ -154,7 +142,7 @@ export const createProductoAlmacenAPI = (createProductoAlmacenDto: CreateProduct
         const { listaProductos } = getState().Productos;
 
         const listaProductosObj = listaProductos.reduce((acc, producto) => 
-            { acc[producto.id] = producto; return acc; }, {} as Record<string, ProductoInterface>);
+            { acc[producto.id] = producto; return acc; }, {} as Record<string, Producto>);
 
         if(!userData) return;
         try {
@@ -163,7 +151,7 @@ export const createProductoAlmacenAPI = (createProductoAlmacenDto: CreateProduct
                 {headers: {"X-User-Id": userData.id, "X-Sucursal-Id": sucursalId}}
             );
             const { data, message } = response.data;
-            const newProductoAlmacenDetallado: ProductoAlmacenDetalladoInterface = {
+            const newProductoAlmacenDetallado: ProductoAlmacenDetallado = {
                     id: data.id,
                     productoId: data.productoId,
                     almacenId: data.almacenId,
@@ -171,10 +159,10 @@ export const createProductoAlmacenAPI = (createProductoAlmacenDto: CreateProduct
                     nombre: listaProductosObj[data.productoId].nombre,
                     descripcion: listaProductosObj[data.productoId].descripcion,
                     imagen: listaProductosObj[data.productoId].imagen,
-                    categoria: listaProductosObj[data.productoId].categoria,
-                    marca: listaProductosObj[data.productoId].marca,
-                    unidadMedida: listaProductosObj[data.productoId].unidadMedida,
-                    unidadMedidaAbreviada: listaProductosObj[data.productoId].unidadMedidaAbreviada,
+                    categoria: listaProductosObj[data.productoId].Categoria.nombre,
+                    marca: listaProductosObj[data.productoId].Marca.nombre,
+                    unidadMedida: listaProductosObj[data.productoId].UnidadMedida.nombre,
+                    unidadMedidaAbreviada: listaProductosObj[data.productoId].UnidadMedida.abreviatura,
                     cantidad: data.cantidad,
                     cantidadMinima: data.cantidadMinima,
                     createdAt: data.createdAt,
@@ -199,20 +187,19 @@ export const createProductoAlmacenAPI = (createProductoAlmacenDto: CreateProduct
 export const createManyProductosAlmacenAPI = (createManyProductosAlmacenDto: CreateManyProductosAlmacenDto) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id:sucursalId, userData } = getState().Sucursal;
-        const { selectedAlmacen } = getState().Almacenes;
         const { listaProductos } = getState().Productos;
 
         const listaProductosObj = listaProductos.reduce((acc, producto) => 
-        { acc[producto.id] = producto; return acc; }, {} as Record<string, ProductoInterface>);
+        { acc[producto.id] = producto; return acc; }, {} as Record<string, Producto>);
 
         if(!userData) return;
         try {
             dispatch(startLoadingData());
-            const response: AxiosResponse = await api.post('almacenes-ms/create-many-productos-almacen', {almacenNombre: selectedAlmacen.nombre ,...createManyProductosAlmacenDto}, {
+            const response: AxiosResponse = await api.post('almacenes-ms/create-many-productos-almacen', createManyProductosAlmacenDto, {
                 headers: {"X-User-Id": userData.id, "X-Sucursal-Id": sucursalId}
             });
             const { data, message } = response.data;
-            const newProductosAlmacenDetallado: ProductoAlmacenDetalladoInterface[] = data.map((p:ProductoAlmacenInterface) => (
+            const newProductosAlmacenDetallado: ProductoAlmacenDetallado[] = data.map((p:ProductoAlmacen) => (
                 {
                     id: p.id,
                     productoId: p.productoId,
@@ -221,10 +208,10 @@ export const createManyProductosAlmacenAPI = (createManyProductosAlmacenDto: Cre
                     nombre: listaProductosObj[p.productoId].nombre,
                     descripcion: listaProductosObj[p.productoId].descripcion,
                     imagen: listaProductosObj[p.productoId].imagen,
-                    categoria: listaProductosObj[p.productoId].categoria,
-                    marca: listaProductosObj[p.productoId].marca,
-                    unidadMedida: listaProductosObj[p.productoId].unidadMedida,
-                    unidadMedidaAbreviada: listaProductosObj[p.productoId].unidadMedidaAbreviada,
+                    categoria: listaProductosObj[p.productoId].Categoria.nombre,
+                    marca: listaProductosObj[p.productoId].Marca.nombre,
+                    unidadMedida: listaProductosObj[p.productoId].UnidadMedida.nombre,
+                    unidadMedidaAbreviada: listaProductosObj[p.productoId].UnidadMedida.abreviatura,
                     cantidad: p.cantidad,
                     cantidadMinima: p.cantidadMinima,
                     createdAt: p.createdAt,
@@ -276,7 +263,7 @@ export const updateProductoAlmacenAPI = (updateProducto: {almacenProductoNombre:
     }
 }
 
-export const getAllIngresosProductosAlmacenAPI = (desde: number, hasta:number) => {
+export const getAllIngresosProductosAlmacenAPI = (desde: string, hasta:string) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { selectedAlmacen } = getState().Almacenes;
         const { id: almacenId } = selectedAlmacen;
@@ -288,7 +275,7 @@ export const getAllIngresosProductosAlmacenAPI = (desde: number, hasta:number) =
         dispatch(startLoadingData());
         try {
             const response: AxiosResponse = await api.post(`almacenes-ms/get-all-ingresos-productos-almacen`, {almacenId, desde, hasta});
-            const data:IngresoAlmacenInterface[] = response.data.data;
+            const data:IngresoAlmacen[] = response.data.data;
             dispatch(getAllIngresosProductosAlmacen(data));   
             dispatch(finishLoadingData());         
         } catch (error) {
@@ -302,7 +289,7 @@ export const getAllIngresosProductosAlmacenAPI = (desde: number, hasta:number) =
     }
 }
 
-export const createIngresoProductosAlmacenAPI = (createIngresoProductosAlmacenDto:CreateIngresoProductosAlmacenDto) => {
+export const createIngresoProductosAlmacenAPI = (createIngresoProductosAlmacenDto:CreateIngresoAlmacenDto) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id:sucursalId, userData } = getState().Sucursal;
         if(!userData.id) {
@@ -320,9 +307,9 @@ export const createIngresoProductosAlmacenAPI = (createIngresoProductosAlmacenDt
             dispatch(startLoadingData());
             const response: AxiosResponse = await api.post('almacenes-ms/create-ingreso-productos-almacen', createIngresoProductosAlmacenDto, {
                 headers: {"X-User-Id": userData.id, "X-Sucursal-Id": sucursalId}});
-            const { data, message }:{data: IngresoAlmacenInterface, message: string} = response.data;
+            const { data, message }:{data: IngresoAlmacen, message: string} = response.data;
             const {IngresoProductosAlmacen} = data;
-            const productosAlmacenActualizados: ProductoAlmacenInterface[] = IngresoProductosAlmacen.map(({ProductoAlmacen}) => ProductoAlmacen);
+            const productosAlmacenActualizados: ProductoAlmacen[] = IngresoProductosAlmacen.map(({ProductoAlmacen}) => ProductoAlmacen);
 
             dispatch(updateManyProductosAlmacen(productosAlmacenActualizados));
 
@@ -340,7 +327,7 @@ export const createIngresoProductosAlmacenAPI = (createIngresoProductosAlmacenDt
     }
 }
 
-export const getLogsAlmacenesAPI = (desde: number, hasta: number) => {
+export const getLogsAlmacenesAPI = (desde: string, hasta: string) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: sucursalId } = getState().Sucursal;
         if (!sucursalId) return;

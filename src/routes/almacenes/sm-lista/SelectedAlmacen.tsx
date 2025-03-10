@@ -9,7 +9,7 @@ import { InputSearch, InputSelectSearch } from "../../../components/Input";
 import { TbLogout2, TbReportAnalytics } from "react-icons/tb";
 import { FaPlus } from "react-icons/fa";
 import DataTable, { DataTableColumnInterface, DataTableColumnTypes } from "../../../components/DataTable";
-import { ProductoAlmacenDetalladoInterface } from "../../../interface";
+import { ProductoAlmacenDetallado } from "../../../interface";
 import RegistarProductosAlmacenWindow from "./windows/RegistrarProductosAlmacenWindow";
 import SelectedProductoAlmacenWindow from "./windows/SelectedProductoAlmacenWindow";
 import IngresarProductosAlmacenWindow from "./windows/IngresarProductosAlmacenWindow";
@@ -26,7 +26,7 @@ const filterInitialState: FilterInterface = {
   marca: '',
 }
 
-const initialStateSelectedProducto: ProductoAlmacenDetalladoInterface = {
+const initialStateSelectedProducto: ProductoAlmacenDetallado = {
   id: '',
   productoId: '',
   almacenId: '',
@@ -50,7 +50,7 @@ export default function SelectedAlmacen() {
   const { listaMarcas, listaCategorias } = useSelector((s: RootState) => s.Productos);
   const { selectedAlmacen, listaProductosAlmacen } = useSelector((s: RootState) => s.Almacenes);
   const [filter, setFilter] = useState<FilterInterface>(filterInitialState);
-  const [filteredAlmacenProducto, setFilteredProducto] = useState<ProductoAlmacenDetalladoInterface[]>([]);
+  const [filteredAlmacenProducto, setFilteredProducto] = useState<ProductoAlmacenDetallado[]>([]);
   const [createOptions, setCreateOptions] = useState(false);
 
   const [openRegistrarProductosAlmacen, setOpenRegistrarProductosAlmacen] = useState(false);
@@ -58,9 +58,9 @@ export default function SelectedAlmacen() {
   const [openSelectedProductoAlmacen, setOpenSelectedProductoAlmacen] = useState(false);
   const [openHistorialIngresosAlmacen, setOpenHistorialIngresosAlmacen] = useState(false);
 
-  const [selectedProducto, setSelectedProducto] = useState<ProductoAlmacenDetalladoInterface>(initialStateSelectedProducto)
+  const [selectedProducto, setSelectedProducto] = useState<ProductoAlmacenDetallado>(initialStateSelectedProducto)
 
-  const columns: DataTableColumnInterface<ProductoAlmacenDetalladoInterface>[] = [
+  const columns: DataTableColumnInterface<ProductoAlmacenDetallado>[] = [
     { name: 'IMAGEN', type: DataTableColumnTypes.IMG, key: "imagen" },
     { name: 'CODIGO', type: DataTableColumnTypes.P, key: "codigo" },
     { name: 'NOMBRE', type: DataTableColumnTypes.P, key: "nombre" },
@@ -74,7 +74,7 @@ export default function SelectedAlmacen() {
     navigate('/main/almacenes/lista');
   }
 
-  const getProducto = (productoData: ProductoAlmacenDetalladoInterface) => {
+  const getProducto = (productoData: ProductoAlmacenDetallado) => {
     setSelectedProducto(productoData);
     setOpenSelectedProductoAlmacen(true)
   }
@@ -158,7 +158,7 @@ export default function SelectedAlmacen() {
       </HeaderSection>
 
       <BodySection>
-        <DataTable<ProductoAlmacenDetalladoInterface> columns={columns} data={filteredAlmacenProducto} details={{ name: 'MAS', action: getProducto }} compareAlert="cantidad" />
+        <DataTable<ProductoAlmacenDetallado> columns={columns} data={filteredAlmacenProducto} details={{ name: 'MAS', action: getProducto }} compareAlert="cantidad" />
       </BodySection>
 
       <div className='absolute bottom-2 right-2 flex flex-col items-end ' >

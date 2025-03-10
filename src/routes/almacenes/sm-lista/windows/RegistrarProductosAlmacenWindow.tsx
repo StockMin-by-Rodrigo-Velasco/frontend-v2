@@ -73,7 +73,7 @@ export default function RegistarProductosAlmacenWindow({ closeButton }: CreateMa
         cantidadMinima: isNaN(cantidadMinimaInt)? 0: cantidadMinimaInt
       }}
     );
-    dispatch( createManyProductosAlmacenAPI({ almacenId: selectedAlmacen.id, productosAlmacen }) );
+    dispatch( createManyProductosAlmacenAPI({almacenNombre: selectedAlmacen.nombre, almacenId: selectedAlmacen.id, productosAlmacen }) );
   }
 
   useEffect(() => {
@@ -86,12 +86,12 @@ export default function RegistarProductosAlmacenWindow({ closeButton }: CreateMa
         codigo: p.codigo,
         nombre: p.nombre,
         imagen: p.imagen,
-        categoriaId: p.categoriaId,
-        categoria: p.categoria,
+        categoriaId: p.Categoria.id,
+        categoria: p.Categoria.nombre,
         marcaId: p.marcaId,
-        marca: p.marca,
+        marca: p.Marca.nombre,
         unidadMedidaId: p.unidadMedidaId,
-        unidadMedidaAbreviada: p.unidadMedidaAbreviada,
+        unidadMedidaAbreviada: p.UnidadMedida.abreviatura,
         registered: idsRegistered.has(p.id),
         selected: idsSelected.has(p.id),
         show: true

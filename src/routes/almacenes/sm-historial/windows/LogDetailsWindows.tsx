@@ -5,18 +5,11 @@ import { AppDispatch, RootState } from "../../../../redux/store";
 import { getOneSucursalUserAPI } from "../../../../redux/sucursal/sucursalThunk";
 import { perfilColor, perfilImg } from "../../../../assets/perfil";
 import { AiOutlineLoading } from "react-icons/ai";
+import { Log } from "../../../../interface";
 
-interface LogInterface {
-    id: string;
-    sucursalId: string;
-    userId: string;
-    titulo: string;
-    descripcion: string;
-    createdAt: number;
-}
 
 interface LogDetailWindowsPropInterface {
-    log: LogInterface
+    log: Log
     closeButton: () => void,
 }
 
