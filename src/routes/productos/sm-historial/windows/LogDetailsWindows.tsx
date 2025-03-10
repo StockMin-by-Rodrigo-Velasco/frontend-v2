@@ -5,6 +5,7 @@ import { AppDispatch, RootState } from "../../../../redux/store";
 import { getOneSucursalUserAPI } from "../../../../redux/sucursal/sucursalThunk";
 import { perfilColor, perfilImg } from "../../../../assets/perfil";
 import { AiOutlineLoading } from "react-icons/ai";
+import { dateLocalWhitTime } from "../../../../helpers";
 
 interface LogInterface {
     id: string;
@@ -74,7 +75,7 @@ export default function LogDetailsWindows({ log, closeButton }: LogDetailWindows
                     </div>
                     <div className="bg-secondary-1 rounded overflow-hidden mb-2 flex flex-col" > 
                         <span className="bg-secondary px-2 text-white text-[14px]" >Fecha:</span> 
-                        <span className="uppercase px-2" >{new Date(log.createdAt).toLocaleDateString("es-ES", {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute: '2-digit', second:'2-digit', hour12: false})}</span>
+                        <span className="uppercase px-2" >{dateLocalWhitTime(log.createdAt)}</span>
                     </div>
                 </div>
 

@@ -11,27 +11,16 @@ import { Button, ButtonColors, ButtonSubmit } from "../../../../components/Butto
 import { BsFillTrashFill } from "react-icons/bs";
 import { hideNotification, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
 import { IoCheckmark, IoClose } from "react-icons/io5";
+import { Producto } from "../../../../interface";
+import logos from "../../../../assets/logos";
 
-interface ProductoInterface {
-    id: string;
-    sucursalId: string;
-    codigo: string;
-    nombre: string;
-    descripcion: string;
-    imagen: string;
-    activo: boolean;
-    deleted: boolean;
-    categoriaId: string;
-    categoria?: string;
-    marcaId: string;
-    marca?: string;
-    unidadMedidaId: string;
-    unidadMedida?: string;
-    createdAt: number;
-    updatedAt: number;
+interface ProductoForDataTable extends Producto {
+  unidadMedida: string;
+  marca: string;
+  categoria: string;
 }
 interface ProductoSelectedWindowsPropInterface {
-    producto: ProductoInterface,
+    producto: ProductoForDataTable,
     closeButton: () => void
 }
 interface FormUpdateProducto {
@@ -63,7 +52,6 @@ export default function UpdateProductoWindow({ producto, closeButton }: Producto
         dispatch(updateProductoAPI({id: producto.id, ...data}))        
     }
     const updateProductoImagen = () => {
-        console.log(imagen);
         dispatch(updateProductoImagenAPI({id: producto.id, imagenUrl: producto.imagen, imagen}))
     }
     const cancelUpdateProducto = () => {
@@ -119,7 +107,7 @@ export default function UpdateProductoWindow({ producto, closeButton }: Producto
                             </button>
                         </div>
                     }
-                    <InputFileImage name="file" imageDefault={producto.imagen} placeholder="Subir imagen..." setFileValue={setImagen} disabled={!editModeImagen} />
+                    <InputFileImage name="file" imageDefault={producto.imagen === ''? logos.logoNoImage:producto.imagen} placeholder="Subir imagen..." setFileValue={setImagen} disabled={!editModeImagen} />
                 </div>
 
                 <div className="ms-3" >

@@ -1,24 +1,23 @@
-export interface ProductoInterface {
+export interface Producto {
     id: string;
     sucursalId: string;
     codigo: string;
     nombre: string;
     descripcion: string;
     imagen: string;
-    activo: boolean;
     deleted: boolean;
+    createdAt: string;
+    updatedAt: string;
     categoriaId: string;
-    categoria?: string;
     marcaId: string;
-    marca?:string;
     unidadMedidaId: string;
-    unidadMedida?: string;
-    unidadMedidaAbreviada?: string;
-    createdAt: number;
-    updatedAt: number;
+
+    Marca: Marca;
+    Categoria: Categoria;
+    UnidadMedida: UnidadMedida;
 }
 
-export interface MarcaInterface {
+export interface Marca {
     id: string;
     sucursalId: string;
     nombre: string;
@@ -26,7 +25,7 @@ export interface MarcaInterface {
     deleted: boolean;
 }
 
-export interface CategoriaInterface {
+export interface Categoria {
     id: string;
     sucursalId: string;
     nombre: string;
@@ -34,17 +33,18 @@ export interface CategoriaInterface {
     deleted: boolean;
 }
 
-export interface UnidadMedidaInterface {
+export interface UnidadMedida {
     id: string;
-    sucursalId: string;
     nombre: string;
     abreviatura: string;
     detalle: string;
-    favorito: boolean;
 }
 
-export interface ProductoDetalladoInterface extends ProductoInterface{
-    Categoria: CategoriaInterface;
-    Marca: MarcaInterface;
-    UnidadMedida: UnidadMedidaInterface;
+
+export interface UnidadMedidaSucursal {
+    id: string;
+    sucursalId: string;
+    unidadMedidaId: string;
+    deleted: boolean;
+    UnidadMedida: UnidadMedida;
 }

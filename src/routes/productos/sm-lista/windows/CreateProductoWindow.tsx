@@ -24,7 +24,7 @@ interface FormProducto {
 export default function CreateProductoWindow({ closeButton }: ProductoSelectedWindowsPropInterface) {
 
     const { loadingData } = useSelector((s: RootState) => s.Aplication);
-    const { listaCategorias, listaMarcas, listaUnidadesMedida } = useSelector((s: RootState) => s.Productos);
+    const { listaCategorias, listaMarcas, listaUnidadesMedidaSucursal } = useSelector((s: RootState) => s.Productos);
     const dispatch = useDispatch<AppDispatch>();
     const { data, handleInputChange, resetData } = useForm<FormProducto>({ codigo:'', nombre:'', descripcion:'', categoriaId:'', marcaId:'', unidadMedidaId:''});
     const [imagen, setImagen] = useState<File|undefined>(undefined);
@@ -96,7 +96,7 @@ export default function CreateProductoWindow({ closeButton }: ProductoSelectedWi
                                     value={data.unidadMedidaId}
                                     name='unidadMedidaId'
                                     placeholder="U. Medida"
-                                    options={listaUnidadesMedida.map(um => ({ name: um.abreviatura, value: um.id }))}
+                                    options={listaUnidadesMedidaSucursal.map(um => ({ name: um.UnidadMedida.nombre, value: um.unidadMedidaId }))}
                                     optionDefault="Sin U/M"
                                     required
                                 />

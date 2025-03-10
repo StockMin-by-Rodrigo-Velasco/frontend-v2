@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet } from "react-router";
 import { AppDispatch, RootState } from "../../redux/store";
-import { getAllCategoriasAPI, getAllMarcasAPI, getAllProductosAPI, getAllUnidadesMedidaAPI } from "../../redux/productos/productosThunk";
+import { getAllCategoriasAPI, getAllMarcasAPI, getAllProductosAPI, getAllUnidadesMedidaAPI, getAllUnidadesMedidaSucursalAPI } from '../../redux/productos/productosThunk';
 
 export default function Productos() {
   const dispatch = useDispatch<AppDispatch>();
@@ -13,7 +13,8 @@ export default function Productos() {
     dispatch( getAllProductosAPI());
     dispatch( getAllMarcasAPI());
     dispatch( getAllCategoriasAPI());
-    dispatch( getAllUnidadesMedidaAPI() );
+    dispatch( getAllUnidadesMedidaAPI());
+    dispatch( getAllUnidadesMedidaSucursalAPI());
   }, [id])
   
   return (

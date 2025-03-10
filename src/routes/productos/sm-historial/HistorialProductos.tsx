@@ -51,13 +51,13 @@ export default function HistorialProductos() {
   const filterLogs = () => {
     const desdeStr = new Date(dateRange.desde);
     desdeStr.setHours(desdeStr.getHours() + 4); // Ajustamos a la hora de Bolivia
-    const desdeNum = desdeStr.getTime();
+    const desde = desdeStr.getTime().toString();
 
     const hastaStr = new Date(dateRange.hasta);
     hastaStr.setHours(hastaStr.getHours() + 28); // Ajustamos a la hora de Bolivia
-    const hastaNum = hastaStr.getTime();
+    const hasta = hastaStr.getTime().toString();
     
-    dispatch(getLogsProductosAPI(desdeNum, hastaNum));
+    dispatch(getLogsProductosAPI(desde, hasta));
   }
 
   useEffect(() => {

@@ -150,6 +150,7 @@ export const getAllProductosAlmacenAPI = () => {
 export const createProductoAlmacenAPI = (createProductoAlmacenDto: CreateProductoAlmacenDto) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id:sucursalId, userData } = getState().Sucursal;
+        const {selectedAlmacen} = getState().Almacenes
         const { listaProductos } = getState().Productos;
 
         const listaProductosObj = listaProductos.reduce((acc, producto) => 
@@ -158,7 +159,7 @@ export const createProductoAlmacenAPI = (createProductoAlmacenDto: CreateProduct
         if(!userData) return;
         try {
             dispatch(startLoadingData());
-            const response: AxiosResponse = await api.post('almacenes-ms/create-producto-almacen', createProductoAlmacenDto, 
+            const response: AxiosResponse = await api.post('almacenes-ms/create-producto-almacen', {almacenNombre: selectedAlmacen.nombre ,...createProductoAlmacenDto}, 
                 {headers: {"X-User-Id": userData.id, "X-Sucursal-Id": sucursalId}}
             );
             const { data, message } = response.data;
@@ -198,6 +199,7 @@ export const createProductoAlmacenAPI = (createProductoAlmacenDto: CreateProduct
 export const createManyProductosAlmacenAPI = (createManyProductosAlmacenDto: CreateManyProductosAlmacenDto) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id:sucursalId, userData } = getState().Sucursal;
+        const { selectedAlmacen } = getState().Almacenes;
         const { listaProductos } = getState().Productos;
 
         const listaProductosObj = listaProductos.reduce((acc, producto) => 
@@ -206,7 +208,7 @@ export const createManyProductosAlmacenAPI = (createManyProductosAlmacenDto: Cre
         if(!userData) return;
         try {
             dispatch(startLoadingData());
-            const response: AxiosResponse = await api.post('almacenes-ms/create-many-productos-almacen', createManyProductosAlmacenDto, {
+            const response: AxiosResponse = await api.post('almacenes-ms/create-many-productos-almacen', {almacenNombre: selectedAlmacen.nombre ,...createManyProductosAlmacenDto}, {
                 headers: {"X-User-Id": userData.id, "X-Sucursal-Id": sucursalId}
             });
             const { data, message } = response.data;
@@ -245,14 +247,15 @@ export const createManyProductosAlmacenAPI = (createManyProductosAlmacenDto: Cre
     }
 }
 
-export const updateProductoAlmacenAPI = (updateProducto: { id:string, cantidadMinima:number }) => {
+export const updateProductoAlmacenAPI = (updateProducto: {almacenProductoNombre: string, id:string, cantidadMinima:number }) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const {id: sucursalId, userData } = getState().Sucursal;
+        const {selectedAlmacen} = getState().Almacenes;
 
         if(!userData) return;
         try {
             dispatch(startLoadingData());
-            const response: AxiosResponse = await api.patch('almacenes-ms/update-producto-almacen', updateProducto, {
+            const response: AxiosResponse = await api.patch('almacenes-ms/update-producto-almacen', {almacenNombre: selectedAlmacen.nombre,...updateProducto}, {
                 headers: {"X-User-Id": userData.id, "X-Sucursal-Id": sucursalId}
             });
             const { data, message } = response.data;

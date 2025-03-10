@@ -9,26 +9,38 @@ import UpdateProductoWindow from "./windows/UpdateProductoWindow";
 import LoadingSection from "../../../components/LoadingSection";
 import { FaPlus } from "react-icons/fa";
 import CreateProductoWindow from "./windows/CreateProductoWindow";
-import { ProductoInterface } from "../../../interface";
+import { Producto } from "../../../interface";
 
-const dataInitialState = {
+
+interface ProductoForDataTable extends Producto {
+  unidadMedida: string;
+  marca: string;
+  categoria: string;
+}
+
+const dataInitialState: ProductoForDataTable = {
   id: '',
   sucursalId: '',
   codigo: '',
   nombre: '',
   descripcion: '',
   imagen: '',
-  activo: true,
   deleted: false,
+  createdAt: '',
+  updatedAt: '',
   categoriaId: '',
-  categoria: '',
   marcaId: '',
-  marca:'',
   unidadMedidaId: '',
+
+  Marca: {id:'', sucursalId:'', nombre:'', origen:'', deleted:false},
+  Categoria: {id:'', sucursalId:'', nombre:'', detalle:'', deleted:false},
+  UnidadMedida: {id:'', nombre:'', abreviatura:'', detalle:''},  
+
   unidadMedida: '',
-  createdAt: 0,
-  updatedAt: 0,
+  marca:'',
+  categoria: '',
 }
+
 
 interface FilterInterface{
   buscar: string;
@@ -46,15 +58,15 @@ export default function ListaProductos() {
   const { listaProductos, listaMarcas, listaCategorias } = useSelector((s: RootState) => s.Productos);
   const { loadingApplication } = useSelector((s: RootState) => s.Aplication);
   const [filter, setFilter] = useState<FilterInterface>(filterInitialState);
-  const [filteredProducto, setFilteredProducto] = useState<ProductoInterface[]>([]);
+  const [filteredProducto, setFilteredProducto] = useState<ProductoForDataTable[]>([]);
   const [openDataDetails, setOpenDataDetails] = useState(false);
   const [openCreateProducto, setOpenCreateProducto] = useState(false);
-  const [productoSelected, setProductoSelected] = useState<ProductoInterface>(dataInitialState);
+  const [productoSelected, setProductoSelected] = useState<ProductoForDataTable>(dataInitialState);
 
-  const columns: DataTableColumnInterface<ProductoInterface>[] = [
+  const columns: DataTableColumnInterface<ProductoForDataTable>[] = [
     { name: 'IMAGEN', type: DataTableColumnTypes.IMG, key: "imagen"},
     { name: 'CODIGO', type: DataTableColumnTypes.P , key: "codigo"},
-    { name: 'MEDIDA', type: DataTableColumnTypes.P , key: "unidadMedidaAbreviada"},
+    { name: 'U/M', type: DataTableColumnTypes.P , key: "unidadMedida"},
     { name: 'NOMBRE', type: DataTableColumnTypes.P, key: "nombre" },
     { name: 'MARCA', type: DataTableColumnTypes.P, key: "marca" },
     { name: 'CATEGORIA', type: DataTableColumnTypes.P, key: "categoria" },
@@ -62,7 +74,7 @@ export default function ListaProductos() {
 
 
   //* ---------------- METODOS ----------------
-  const getProducto = (d:ProductoInterface) => {
+  const getProducto = (d:ProductoForDataTable) => {
     setProductoSelected(d);
     setOpenDataDetails(true);
   }
@@ -71,18 +83,31 @@ export default function ListaProductos() {
     const { value, name } = e.target;
     const newFilter = {...filter, [name]: value};
     const newData = listaProductos.filter(i => 
-      i.categoria?.includes(newFilter.categoria) && 
-      i.marca?.includes(newFilter.marca) &&
+      i.Categoria.nombre?.includes(newFilter.categoria) && 
+      i.Marca.nombre?.includes(newFilter.marca) &&
       (i.nombre.includes(newFilter.buscar) || i.codigo.includes(newFilter.buscar))
-    )
-    setFilteredProducto(newData);
+    );
+
+    const newListaProductos:ProductoForDataTable[] = newData.map(p => ({
+      ...p, 
+      unidadMedida: p.UnidadMedida.nombre,
+      marca: p.Marca.nombre,
+      categoria: p.Categoria.nombre
+    }))
+    setFilteredProducto([...newListaProductos]);
     setFilter(newFilter);
   }
 
   //* ---------------- METODOS ----------------
 
   useEffect(() => {
-    setFilteredProducto(listaProductos);
+    const newListaProductos:ProductoForDataTable[] = listaProductos.map(p => ({
+      ...p, 
+      unidadMedida: p.UnidadMedida.nombre,
+      marca: p.Marca.nombre,
+      categoria: p.Categoria.nombre
+    }))
+    setFilteredProducto([...newListaProductos]);
   }, [listaProductos]);
   return (
     <>
@@ -121,7 +146,7 @@ export default function ListaProductos() {
         />
       </HeaderSection>
       <BodySection>
-        <DataTable<ProductoInterface> columns={columns} data={filteredProducto} details={{name: 'MAS', action:getProducto}} />
+        <DataTable<ProductoForDataTable> columns={columns} data={filteredProducto} details={{name: 'MAS', action:getProducto}} />
       </BodySection>
 
       <button 

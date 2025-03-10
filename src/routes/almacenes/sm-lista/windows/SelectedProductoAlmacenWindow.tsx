@@ -27,7 +27,7 @@ export default function SelectedProductoAlmacenWindow({ producto, closeButton }:
 
     const updateProducto = () => {
         const cantidadMinima = isNaN(parseInt(data.cantidadMinima))? 0: parseInt(data.cantidadMinima);
-        dispatch( updateProductoAlmacenAPI({id: producto.id, cantidadMinima}) );
+        dispatch( updateProductoAlmacenAPI({almacenProductoNombre:producto.nombre, id: producto.id, cantidadMinima}) );
     }
 
     const cancelUpdateProducto = () => {

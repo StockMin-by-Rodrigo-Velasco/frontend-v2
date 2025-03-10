@@ -2,8 +2,9 @@ import axios, { AxiosResponse } from "axios";
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from "../aplication/aplicationSlice";
 import { AppDispatch, RootState } from "../store";
 import api from "../../api/config";
-import { createCategoria, createMarca, createProducto, deleteCategoria, deleteMarca, deleteProducto, getAllCategorias, getLogsProductos, getAllMarcas, getAllProductos, getAllUnidadesMedida, updateCategoria, updateMarca, updateProducto } from "./productosSlice";
+import { createCategoria, createMarca, createProducto, deleteCategoria, deleteMarca, deleteProducto, getAllCategorias, getLogsProductos, getAllMarcas, getAllProductos, getAllUnidadesMedida, updateCategoria, updateMarca, updateProducto, getAllUnidadesMedidaSucursal, handleUnidadMedida } from "./productosSlice";
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from "../notification/notificationSlice";
+import { UnidadMedidaSucursal } from "../../interface";
 
 interface UpdateProductoInterface {
     id: string;
@@ -385,7 +386,7 @@ export const getAllUnidadAPI = () => {
         }
     }
 }
-export const getLogsProductosAPI = (desde: number, hasta: number) => {
+export const getLogsProductosAPI = (desde: string, hasta: string) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: sucursalId } = getState().Sucursal;
         if (!sucursalId) return;
@@ -407,12 +408,52 @@ export const getAllUnidadesMedidaAPI = () => {
         if (!id) return;
         try {
             dispatch(startLoadingAplication());
-            const response: AxiosResponse = await api.get(`productos-ms/get-all-unidades-medida/${id}`);
+            const response: AxiosResponse = await api.get(`productos-ms/get-all-unidades-medida`);
             dispatch(getAllUnidadesMedida(response.data))
             dispatch(finishLoadingAplication());
         } catch (error) {
             console.log(error);
             dispatch(finishLoadingAplication());
+        }
+    }
+}
+
+export const getAllUnidadesMedidaSucursalAPI = () => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const { id: sucursalId } = getState().Sucursal;
+        if (!sucursalId) return;
+        try {
+            dispatch(startLoadingAplication());
+            const response: AxiosResponse = await api.get(`productos-ms/get-all-unidades-medida-sucursal/${sucursalId}`);
+            dispatch(getAllUnidadesMedidaSucursal(response.data))
+            dispatch(finishLoadingAplication());
+        } catch (error) {
+            console.log(error);
+            dispatch(finishLoadingAplication());
+        }
+    }
+}
+
+export const handleUnidadMedidaAPI = (unidadMedidaId: string) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const { id: sucursalId } = getState().Sucursal;
+        if (!sucursalId) return;
+        try {
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.post(`productos-ms/handle-unidad-medida`, {sucursalId, unidadMedidaId});
+            const {message, data}: {message:string, data: UnidadMedidaSucursal} = response.data;
+            dispatch(handleUnidadMedida(data));
+
+            dispatch(showNotificationSuccess({tittle: 'ACTUALIZACIÓN DE UNIDADES DE MEDIDA', description: message}));
+            setTimeout( () => dispatch(hideNotification()), 5000 );
+            dispatch(finishLoadingData());
+        } catch (error) {
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                dispatch(showNotificationError({tittle: 'ACTUALIZACIÓN DE UNIDADES DE MEDIDA', description: data.message}));
+                dispatch(finishLoadingData());
+                setTimeout( () => dispatch(hideNotification()), 5000 );
+            }else console.log(error);
         }
     }
 }

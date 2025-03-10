@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import Windows from "../../../../components/Windows";
-import { IngresoAlmacenInterface, ProductoInterface } from "../../../../interface";
+import { IngresoAlmacenInterface, Producto } from "../../../../interface";
 import { RootState } from "../../../../redux/store";
 import { dateLocal } from "../../../../helpers";
 import { useEffect, useState } from "react";
@@ -55,7 +55,7 @@ export default function ViewIngresoProductoAlmacenWindow({ closeButton, data }: 
   const [userData, setUserData] = useState<User>({ sucursalId: '', nombre: '', apellido: '', ci: '' });
 
   useEffect(() => {
-    const productosSucursal = listaProductos.reduce((acc, producto) => { acc[producto.id] = producto; return acc; }, {} as Record<string, ProductoInterface>);
+    const productosSucursal = listaProductos.reduce((acc, producto) => { acc[producto.id] = producto; return acc; }, {} as Record<string, Producto>);
 
     const newUserData: User = users.find(u => u.id === data.usuarioId) || { sucursalId: '', nombre: '', apellido: '', ci: '' };
 
