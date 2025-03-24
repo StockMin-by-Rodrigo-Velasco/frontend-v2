@@ -57,6 +57,7 @@ const filterInitialState:FilterInterface = {
 export default function ListaProductos() {
   const { listaProductos, listaMarcas, listaCategorias } = useSelector((s: RootState) => s.Productos);
   const { loadingApplication } = useSelector((s: RootState) => s.Aplication);
+  
   const [filter, setFilter] = useState<FilterInterface>(filterInitialState);
   const [filteredProducto, setFilteredProducto] = useState<ProductoForDataTable[]>([]);
   const [openDataDetails, setOpenDataDetails] = useState(false);

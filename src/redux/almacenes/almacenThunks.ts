@@ -234,7 +234,7 @@ export const createManyProductosAlmacenAPI = (createManyProductosAlmacenDto: Cre
     }
 }
 
-export const updateProductoAlmacenAPI = (updateProducto: {almacenProductoNombre: string, id:string, cantidadMinima:number }) => {
+export const updateProductoAlmacenAPI = (updateProducto: {almacenProductoNombre: string, productoAlmacenId:string, cantidadMinima:number }) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const {id: sucursalId, userData } = getState().Sucursal;
         const {selectedAlmacen} = getState().Almacenes;

@@ -49,13 +49,12 @@ export default function HistorialVentas() {
 
     const hastaStr = new Date(dateRange.hasta);
     hastaStr.setHours(hastaStr.getHours() + 28); // Ajustamos a la hora de Bolivia
-    const hasta = hastaStr.getTime().toString();
-    
+    const hasta = hastaStr.getTime().toString();   
     dispatch(getLogsVentasAPI(desde, hasta));
   }
 
   useEffect(() => {
-    filterLogs()
+    filterLogs();
   }, [])
 
   return (
@@ -84,12 +83,6 @@ export default function HistorialVentas() {
             className="me-2 w-7 h-7 bg-primary bg-opacity-80 text-white flex justify-center items-center rounded-full hover:bg-opacity-100"
           ><IoSearch/></button>
         </div>
-
-        {/* <button
-          onClick={refreshLogs}
-          type="button"
-          className=" ms-auto me-2 w-7 h-7 text-primary flex justify-center items-center rounded-full hover:bg-secondary-1"
-        ><HiRefresh /></button> */}
       </HeaderSection>
       <BodySection>
         <DataTable<Log> columns={columns} data={listaLogs} details={{ name: 'MAS', action: getLog }} />

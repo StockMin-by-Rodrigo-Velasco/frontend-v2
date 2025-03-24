@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
 
 
-import { FaPlus, FaRegUser } from "react-icons/fa";
-import { TbCar, TbHistory, TbLogout2 } from "react-icons/tb";
+import { FaRegUser } from "react-icons/fa";
+import { TbHistory, TbLogout2 } from "react-icons/tb";
 import { BiObjectsHorizontalLeft } from "react-icons/bi";
 import { MdOutlineShoppingCart } from "react-icons/md";
 // import { GrScorecard } from "react-icons/gr";
@@ -16,6 +16,8 @@ import { perfilColor, perfilImg } from "../../assets/perfil";
 import { CiBoxes, CiCircleList } from "react-icons/ci";
 import { logoutSucursalUserAPI } from "../../redux/sucursal/sucursalThunk";
 import { LuSettings, LuWarehouse } from "react-icons/lu";
+import { AiOutlineShop } from "react-icons/ai";
+import { FiUsers } from "react-icons/fi";
 
 const menu = [
     {
@@ -36,16 +38,16 @@ const menu = [
     {
         title: 'Ventas', path: '/main/ventas', icon: <MdOutlineShoppingCart size='20px' className="me-2" />,
         subTitles: [
-            { title: 'Registrar venta', path: '/main/ventas/lista', icon: <FaPlus size='14px' /> },
+            { title: 'Tienda', path: '/main/ventas/tienda', icon: <AiOutlineShop size='14px' /> },
             { title: 'Clientes', path: '/main/ventas/clientes', icon: <FaRegUser size='14px' /> },
+            { title: 'Opciones', path: '/main/ventas/opciones', icon: <LuSettings size='14px' /> },
             { title: 'Historial', path: '/main/ventas/historial', icon: <TbHistory size='14px' /> },
         ]
     },
     {
         title: 'Usuarios', path: '/main/usuarios', icon: <FaRegUser size='20px' className="me-2" />,
         subTitles: [
-            { title: 'Registrar usuario', path: '/main/productos/lista', icon: <FaPlus size='14px' /> },
-            { title: 'Permisos', path: '/main/usuarios/lista', icon: <TbCar size='14px' /> },
+            { title: 'Lista de usuarios', path: '/main/usuarios/lista', icon: <FiUsers size='14px' /> }
         ]
     },
 ]

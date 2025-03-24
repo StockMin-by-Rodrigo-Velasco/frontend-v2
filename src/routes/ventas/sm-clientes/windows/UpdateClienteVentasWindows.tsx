@@ -44,7 +44,7 @@ export default function UpdateClienteVentasWindows({ closeButton, cliente }: Upd
 
     return (
 
-        <Windows tittle='Registrar nuevo cliente' closeButton={closeButton}>
+        <Windows tittle='Datos de cliente' closeButton={closeButton}>
             <form className="px-5 py-3 relative w-[400px]" onSubmit={submitCreateCliente} >
 
                 <div className="mb-8 flex items-center justify-center border-b-[1px] border-secondary text-secondary">

@@ -1,14 +1,24 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
-import { ClienteVenta, Log } from "../../interface";
+import { ClienteVenta, Log, OpcionesVenta, PrecioVenta, TipoMonedaVenta } from "../../interface";
 
 
 interface VentasInitialState {
+    idUltimoTipoMonedaVentaEliminado: string,
+    idUltimoPrecioVentaEliminado: string,
+    opcionesVenta: OpcionesVenta | null,
     listaClientes: ClienteVenta[];
+    listaTipoMonedaVenta: TipoMonedaVenta[];
+    listaPrecioVenta: PrecioVenta[];
     listaLogs: Log[];
 }
 
 const initialState: VentasInitialState = {
+    idUltimoTipoMonedaVentaEliminado:'',
+    idUltimoPrecioVentaEliminado: '',
+    opcionesVenta: null,
     listaClientes: [],
+    listaTipoMonedaVenta: [],
+    listaPrecioVenta: [],
     listaLogs:[]
 }
 
@@ -27,9 +37,49 @@ const VentasSlice = createSlice({
             state.listaClientes = [...updateListaClientes];
         },
 
+        getAllTipoMonedaVenta: (state, action: PayloadAction<TipoMonedaVenta[]>) => {
+            state.listaTipoMonedaVenta = action.payload;
+        },
+        createTipoMonedaVenta: (state, action: PayloadAction<TipoMonedaVenta>) => {
+            state.listaTipoMonedaVenta = [action.payload, ...state.listaTipoMonedaVenta];
+        },
+        updateTipoMonedaVenta: (state, action: PayloadAction<TipoMonedaVenta>) => {
+            const updateListaTipoMoneda = current(state.listaTipoMonedaVenta).map(tm => (tm.id === action.payload.id) ? action.payload : tm);
+            state.listaTipoMonedaVenta = [...updateListaTipoMoneda];
+        },
+        deleteTipoMonedaVenta: (state, action: PayloadAction<string>) => {
+            const newListaTipoMoneda = state.listaTipoMonedaVenta.filter(tm => tm.id !== action.payload);
+            state.listaTipoMonedaVenta = [...newListaTipoMoneda];
+            state.idUltimoTipoMonedaVentaEliminado = action.payload;
+        },
+        resetIdUltimoTipoMonedaVentaEliminado: (state) => {
+            state.idUltimoTipoMonedaVentaEliminado = '';
+        },
 
+        getAllPrecioVenta: (state, action: PayloadAction<PrecioVenta[]>) => {
+            state.listaPrecioVenta = action.payload;
+        },
+        createPrecioVenta: (state, action: PayloadAction<PrecioVenta>) => {
+            state.listaPrecioVenta = [action.payload, ...state.listaPrecioVenta];
+        },
+        updatePrecioVenta: (state, action: PayloadAction<PrecioVenta>) => {
+            const updateListaPrecio = current(state.listaPrecioVenta).map(tm => (tm.id === action.payload.id) ? action.payload : tm);
+            state.listaPrecioVenta = [...updateListaPrecio];
+        },
+        deletePrecioVenta: (state, action: PayloadAction<string>) => {
+            const newListaPrecio = state.listaPrecioVenta.filter(tm => tm.id !== action.payload);
+            state.listaPrecioVenta = [...newListaPrecio];
+            state.idUltimoPrecioVentaEliminado = action.payload;
+        },
+        resetIdUltimoPrecioVentaEliminado: (state) => {
+            state.idUltimoPrecioVentaEliminado = '';
+        },
 
-        getLogsAlmacenes: (state, action: PayloadAction<Log[]>) => {
+        getOpcionesVenta: (state, action: PayloadAction<OpcionesVenta>) => {
+            state.opcionesVenta = action.payload;
+        },
+        
+        getLogsVentas: (state, action: PayloadAction<Log[]>) => {
             state.listaLogs = [...action.payload];
         },
     }
@@ -40,7 +90,21 @@ export const {
     createClienteVenta,
     updateClienteVenta,
 
-    getLogsAlmacenes
+    getAllTipoMonedaVenta,
+    createTipoMonedaVenta,
+    updateTipoMonedaVenta,
+    deleteTipoMonedaVenta,
+    resetIdUltimoTipoMonedaVentaEliminado,
+
+    getAllPrecioVenta,
+    createPrecioVenta,
+    updatePrecioVenta,
+    deletePrecioVenta,
+    resetIdUltimoPrecioVentaEliminado,
+
+    getOpcionesVenta,
+    
+    getLogsVentas,
 
 } = VentasSlice.actions
 

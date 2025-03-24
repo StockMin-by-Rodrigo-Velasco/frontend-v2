@@ -5,7 +5,7 @@ import SucursalUsers from "./sucursal/SucursalUsers";
 import LoginSucursalUser from "./sucursal/LoginSucursalUser";
 import MainAplication from "./main/MainAplication";
 import Ventas from "./ventas/Ventas";
-import Usuarios from "./usuarios/Usuarios";
+import ListaUsuarios from "./usuarios/lista-sm/ListaUsuarios";
 
 import Productos from "./productos/Productos";
 import ListaProductos from "./productos/sm-lista/ListaProductos";
@@ -21,6 +21,9 @@ import { RootState } from "../redux/store";
 import SelectedAlmacen from "./almacenes/sm-lista/SelectedAlmacen";
 import ClientesVentas from "./ventas/sm-clientes/ClientesVentas";
 import HistorialVentas from "./ventas/sm-historial/HistorialVentas";
+import OpcionesVentas from "./ventas/sm-opciones/OpcionesVentas";
+import TiendaVentas from "./ventas/sm-tienda/TeindaVentas";
+import Usuarios from "./usuarios/Usuarios";
 
 
 export default function RoutesMain() {
@@ -53,10 +56,16 @@ export default function RoutesMain() {
 
 
           <Route path="ventas" element={<Ventas/>}>
+            <Route index element={<Navigate to='tienda'/>}/>
+            <Route path="tienda" element={<TiendaVentas/>}/>
             <Route path="clientes" element={<ClientesVentas/>}/>
+            <Route path="opciones" element={<OpcionesVentas/>}/>
             <Route path="historial" element={<HistorialVentas/>} />
           </Route>
-          <Route path="usuarios" element={<Usuarios/>} />
+          <Route path="usuarios" element={<Usuarios/>}>
+            <Route index element={<Navigate to='lista'/>}/>
+            <Route path="lista" element={<ListaUsuarios/>}/>
+          </Route>
         </Route>
       </Routes>
 

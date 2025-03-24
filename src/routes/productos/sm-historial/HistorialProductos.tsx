@@ -10,16 +10,9 @@ import { InputDateSearch } from "../../../components/Input";
 import { useForm } from "../../../hooks";
 import { IoSearch } from "react-icons/io5";
 import LogDetailsWindows from "./windows/LogDetailsWindows";
+import { Log } from "../../../interface";
 
-interface LogInterface {
-  id: string;
-  sucursalId: string;
-  userId: string;
-  titulo: string;
-  descripcion: string;
-  createdAt: number;
-}
-const columns: DataTableColumnInterface<LogInterface>[] = [
+const columns: DataTableColumnInterface<Log>[] = [
   { name: 'ACCIÓN', type: DataTableColumnTypes.P, key: "titulo" },
   { name: 'FECHA', type: DataTableColumnTypes.DATE, key: "createdAt" },
 ];
@@ -38,12 +31,12 @@ export default function HistorialProductos() {
   const { loadingApplication } = useSelector((s: RootState) => s.Aplication);
   const { listaLogs } = useSelector((s: RootState) => s.Productos);
   const dispatch = useDispatch<AppDispatch>();
-  const [logDetails, setLogDetails] = useState<LogInterface>({id:'', sucursalId:'', titulo:'', descripcion:'', createdAt:0, userId:''});
+  const [logDetails, setLogDetails] = useState<Log>({id:'', sucursalId:'', titulo:'', descripcion:'', createdAt:'', userId:''});
   const [logDetailsWindows, setlogDetailsWindows] = useState(false);
 
   const { data: dateRange, handleInputChange} = useForm<DateRange>(initDateRange);
 
-  const getLog = (log: LogInterface) => {
+  const getLog = (log: Log) => {
     setlogDetailsWindows(true);
     setLogDetails(log);
   }
@@ -98,7 +91,7 @@ export default function HistorialProductos() {
         ><HiRefresh /></button> */}
       </HeaderSection>
       <BodySection>
-        <DataTable<LogInterface> columns={columns} data={listaLogs} details={{ name: 'MAS', action: getLog }} />
+        <DataTable<Log> columns={columns} data={listaLogs} details={{ name: 'MAS', action: getLog }} />
       </BodySection>
     </>
   );
