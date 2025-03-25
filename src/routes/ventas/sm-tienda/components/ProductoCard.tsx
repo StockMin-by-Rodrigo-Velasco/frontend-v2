@@ -1,16 +1,18 @@
 import { FaCheckCircle } from "react-icons/fa";
 import logos from "../../../../assets/logos";
-import { Producto } from "../../../../interface";
+import { ProductoTienda } from "../../../../interface";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../redux/store";
 
 
 interface ProductoCardProp{
-    producto: Producto
+    producto: ProductoTienda
 }
 
 
 export default function ProductoCard({producto}: ProductoCardProp) {
-
+    // const {} = useSelector((s:RootState) => s.Ventas);
     const [check, setCheck] = useState(false);
 
 
@@ -34,7 +36,7 @@ export default function ProductoCard({producto}: ProductoCardProp) {
 
         <div className=" flex items-center flex-col h-[100px] bg-secondary text-white cursor-pointer">
             <div className="uppercase text-center p-2" >{producto.nombre}</div>
-            <div className="bg-success w-full mt-auto flex justify-center text-black" > 1250 Bs. </div>
+            <div className="bg-success w-full mt-auto flex justify-center text-black" > {producto.precio} Bs. </div>
         </div>
     </div>
   );

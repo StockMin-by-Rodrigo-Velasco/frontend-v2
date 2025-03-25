@@ -1,13 +1,17 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import HeaderSection from "../../../components/HeaderSection";
-import { RootState } from "../../../redux/store";
-import { useState } from "react";
-import { Producto } from "../../../interface";
-import { InputSearch, InputSelectSearch } from "../../../components/Input";
+import { AppDispatch, RootState } from "../../../redux/store";
+import { useEffect, useState } from "react";
+import { CreateOpcionesVentaDto, Producto } from "../../../interface";
+import { InputSearch, InputSelect, InputSelectSearch } from "../../../components/Input";
 import BodySection from "../../../components/BodySection";
 import ProductoCard from "./components/ProductoCard";
 import ProformaVenta from "./windows/ProformaVentaWindows";
 import { FaBasketShopping } from "react-icons/fa6";
+import { LuSettings } from "react-icons/lu";
+import { getOpcionesVenta } from "../../../redux/ventas/ventasSlice";
+import { getAllProductosVentaAPI } from "../../../redux/ventas/ventasThunk";
+import { AiOutlineLoading } from "react-icons/ai";
 
 
 interface ProductoForDataTable extends Producto {
@@ -51,11 +55,23 @@ const filterInitialState: FilterInterface = {
 }
 
 export default function TiendaVentas() {
-
+    const { loadingData } = useSelector((s: RootState) => s.Aplication);
+    const { id:sucursalId } = useSelector((s: RootState) => s.Sucursal);
+    const { opcionesVenta, listaPrecioVenta, listaProductosTienda } = useSelector((s: RootState) => s.Ventas);
+    const { listaAlmacenes } = useSelector((s: RootState) => s.Almacenes);
     const { listaProductos, listaMarcas, listaCategorias } = useSelector((s: RootState) => s.Productos);
-    const { loadingApplication } = useSelector((s: RootState) => s.Aplication);
 
+    const dispatch = useDispatch<AppDispatch>();
+    
     const [openProformaVenta, setOpenProformaVenta] = useState(false);
+    const [openSettings, setOpenSettings] = useState(false);
+
+
+    const [filterOpciones, setFilterOpciones] = useState<CreateOpcionesVentaDto>({ 
+        almacenId: opcionesVenta?.almacenId || '', 
+        precioVentaId: opcionesVenta?.precioVentaId || '',
+        sucursalId
+    });
 
     const [filter, setFilter] = useState<FilterInterface>(filterInitialState);
     const [filteredProducto, setFilteredProducto] = useState<ProductoForDataTable[]>([]);
@@ -79,8 +95,33 @@ export default function TiendaVentas() {
         setFilter(newFilter);
     }
 
+    const handleOpcionChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        const { value, name } = e.target;
+        const newFilterOpciones:CreateOpcionesVentaDto = {...filterOpciones, [name]: value}
+        setFilterOpciones({...newFilterOpciones});
+
+        const newPrecioVenta = listaPrecioVenta.find(pv => pv.id === newFilterOpciones.precioVentaId);
+
+        if(newPrecioVenta) dispatch(getOpcionesVenta({ 
+            id: opcionesVenta?.id || '' , 
+            ...newFilterOpciones,
+            PrecioVenta: newPrecioVenta
+        }));
+        const { precioVentaId, almacenId } = newFilterOpciones;
+        dispatch(getAllProductosVentaAPI( precioVentaId, almacenId ));
+    }
 
 
+    useEffect(() => {
+        if( opcionesVenta?.almacenId && opcionesVenta.precioVentaId ){
+            setFilterOpciones({ 
+                almacenId: opcionesVenta?.almacenId, 
+                precioVentaId: opcionesVenta?.precioVentaId,
+                sucursalId
+            });
+            dispatch(getAllProductosVentaAPI(opcionesVenta?.precioVentaId, opcionesVenta?.almacenId ));
+        }
+    }, [opcionesVenta])
     return (
         <>
 
@@ -123,19 +164,41 @@ export default function TiendaVentas() {
             <BodySection>
                 <div className="flex flex-wrap justify-evenly relative pt-5">
 
-                    {listaProductos.map(p => (
-                        <ProductoCard key={p.id} producto={p} />
-                    ))}
-
-                    {listaProductos.map(p => (
-                        <ProductoCard key={p.id} producto={p} />
-                    ))}
-
-                    {listaProductos.map(p => (
-                        <ProductoCard key={p.id} producto={p} />
+                    {listaProductosTienda.map(p => (
+                        <ProductoCard key={p.productoId} producto={p} />
                     ))}
 
                 </div>
+                <div className={`${!openSettings && 'w-0'} absolute bottom-2 right-20 overflow-hidden`} >
+                    <InputSelect
+                        value={filterOpciones.almacenId}
+                        className="mb-2"
+                        name="almacenId"
+                        placeholder="Almacen de venta: "
+                        options={listaAlmacenes.map(a => ({ value: a.id, name: a.nombre }))}
+                        handleInputChange={handleOpcionChange}
+                        required
+                        disabled={loadingData}
+                    />
+                    <InputSelect
+                        value={filterOpciones.precioVentaId}
+                        name="precioVentaId"
+                        placeholder="Tipo de precio: "
+                        options={listaPrecioVenta.map(pv => ({ value: pv.id, name: pv.codigo }))}
+                        handleInputChange={handleOpcionChange}
+                        required
+                        disabled={loadingData}
+                    />
+                </div>
+                <button
+                    onClick={() => { setOpenSettings(s => !s) }}
+                    type="button"
+                    disabled={loadingData}
+                    className={`${openSettings && 'rotate-[135deg]'} absolute bottom-2 right-2 transition-all duration-300 flex justify-center items-center bg-primary bg-opacity-80 text-white text-[30px] hover:bg-opacity-100 w-14 h-14 rounded-full disabled:bg-secondary`}
+                >
+                    {loadingData? <AiOutlineLoading className="animate-spin"/> : <LuSettings /> }
+
+                </button>
             </BodySection>
         </>
     );

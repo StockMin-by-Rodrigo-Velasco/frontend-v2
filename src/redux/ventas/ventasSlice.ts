@@ -1,11 +1,12 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
-import { ClienteVenta, Log, OpcionesVenta, PrecioVenta, TipoMonedaVenta } from "../../interface";
+import { ClienteVenta, Log, OpcionesVenta, PrecioVenta, ProductoTienda, TipoMonedaVenta } from "../../interface";
 
 
 interface VentasInitialState {
     idUltimoTipoMonedaVentaEliminado: string,
     idUltimoPrecioVentaEliminado: string,
     opcionesVenta: OpcionesVenta | null,
+    listaProductosTienda: ProductoTienda[],
     listaClientes: ClienteVenta[];
     listaTipoMonedaVenta: TipoMonedaVenta[];
     listaPrecioVenta: PrecioVenta[];
@@ -16,6 +17,7 @@ const initialState: VentasInitialState = {
     idUltimoTipoMonedaVentaEliminado:'',
     idUltimoPrecioVentaEliminado: '',
     opcionesVenta: null,
+    listaProductosTienda: [],
     listaClientes: [],
     listaTipoMonedaVenta: [],
     listaPrecioVenta: [],
@@ -26,6 +28,9 @@ const VentasSlice = createSlice({
     name: 'ventas',
     initialState,
     reducers: {
+        getAllProductosVenta: (state, action: PayloadAction<ProductoTienda[]>) => {
+            state.listaProductosTienda= action.payload;
+        },
         getAllClientesVenta: (state, action: PayloadAction<ClienteVenta[]>) => {
             state.listaClientes = action.payload;
         },
@@ -86,6 +91,8 @@ const VentasSlice = createSlice({
 });
 
 export const {
+    getAllProductosVenta,
+
     getAllClientesVenta,
     createClienteVenta,
     updateClienteVenta,

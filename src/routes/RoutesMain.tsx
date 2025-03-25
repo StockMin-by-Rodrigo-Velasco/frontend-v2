@@ -22,7 +22,7 @@ import SelectedAlmacen from "./almacenes/sm-lista/SelectedAlmacen";
 import ClientesVentas from "./ventas/sm-clientes/ClientesVentas";
 import HistorialVentas from "./ventas/sm-historial/HistorialVentas";
 import OpcionesVentas from "./ventas/sm-opciones/OpcionesVentas";
-import TiendaVentas from "./ventas/sm-tienda/TeindaVentas";
+import TiendaVentas from "./ventas/sm-tienda/TiendaVentas";
 import Usuarios from "./usuarios/Usuarios";
 
 

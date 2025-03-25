@@ -1,3 +1,27 @@
+import { Categoria, Marca, UnidadMedida } from "./productosInterface";
+
+export interface ProductoTienda {
+
+    productoId: string;
+    codigo: string;
+    nombre: string;
+    descripcion: string;
+    imagen: string;
+    
+    cantidad: number;
+    precio: string;
+
+    Marca: Marca;
+    Categoria: Categoria;
+    UnidadMedida: UnidadMedida;
+
+    createdAt: string | undefined;
+    updatedAt: string | undefined;
+
+    show: boolean;
+    check: boolean;
+}
+
 export interface TipoMonedaVenta {
     id: string;
     sucursalId: string;
@@ -17,52 +41,44 @@ export interface PrecioVenta {
     TipoMonedaVenta?: TipoMonedaVenta;
 }
 
-
-export interface PrecioProductoVenta {
-    id: string;
-    precio: string;
-
-    precioVentaId: string;
-    PrecioVenta: PrecioVenta;
-
-    productoVentaId: string;
-    ProductoVenta: ProductoVenta;
-}
-
 export interface ProductoVenta {
     id: string;
-    sucursalId: string;
+    almacenId: string;
     productoId: string;
+    precio: string;
 
     createdAt?: string;
     updatedAt?: string;
 
-    PrecioProductoVenta: PrecioProductoVenta[]
+    precioVentaId: string;
+    PrecioVenta: PrecioVenta;
 }
 
 export interface ProductoDetalleVenta {
     id: string;
     cantidad: number;
     precio: string;
+    productoId: string;
 
-    ventaId: string;
-    Venta: Venta;
+    ventaId?: string;
+    Venta?: Venta;
 
     cotizacionVentaId?: string;
     CotizacionVenta?: CotizacionVenta;
-
-    productoVentaId?: string;
-    ProductoVenta?: ProductoVenta;
 }
 
 export interface Venta {
     id: string;
     sucursalId: string;
+    almacenId: string;
     numero: number;
     descuento: string;
     total: string;
     detalle?: string;
     createdAt?: string;
+
+    precioVentaId: string;
+    PrecioVenta: PrecioVenta;
 
     cotizacionVentaId?: string;
     CotizacionVenta?: CotizacionVenta;
@@ -163,13 +179,13 @@ export interface DeletePrecioVentaDto {
     sucursalId: string;
 }
 
-export interface CreateOpcionesVentaDto{
+export interface CreateOpcionesVentaDto {
     sucursalId: string;
     almacenId: string;
     precioVentaId: string;
 }
 
-export interface UpdateOpcionesVentaDto{
+export interface UpdateOpcionesVentaDto {
     id: string;
     sucursalId: string;
     almacenId?: string;

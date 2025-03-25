@@ -1,11 +1,11 @@
 import axios, { AxiosResponse } from "axios";
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from "../aplication/aplicationSlice";
 import { AppDispatch, RootState } from "../store";
-import { createClienteVenta, createPrecioVenta, createTipoMonedaVenta, deletePrecioVenta, deleteTipoMonedaVenta, getAllClientesVenta, getAllPrecioVenta, getAllTipoMonedaVenta, getLogsVentas, getOpcionesVenta, updateClienteVenta, updatePrecioVenta, updateTipoMonedaVenta } from "./ventasSlice";
+import { createClienteVenta, createPrecioVenta, createTipoMonedaVenta, deletePrecioVenta, deleteTipoMonedaVenta, getAllClientesVenta, getAllPrecioVenta, getAllProductosVenta, getAllTipoMonedaVenta, getLogsVentas, getOpcionesVenta, updateClienteVenta, updatePrecioVenta, updateTipoMonedaVenta } from "./ventasSlice";
 import api from "../../api/config";
-import { ClienteVenta, CreateClienteVentaDto, CreateTipoMonedaVentaDto, DeleteTipoMonedaVentaDto, TipoMonedaVenta, UpdateClienteVentaDto, UpdateTipoMonedaVentaDto } from "../../interface";
+import { ClienteVenta, CreateClienteVentaDto, CreateTipoMonedaVentaDto, DeleteTipoMonedaVentaDto, ProductoAlmacen, TipoMonedaVenta, UpdateClienteVentaDto, UpdateTipoMonedaVentaDto } from "../../interface";
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from "../notification/notificationSlice";
-import { CreateOpcionesVentaDto, CreatePrecioVentaDto, DeletePrecioVentaDto, OpcionesVenta, PrecioVenta, UpdateOpcionesVentaDto, UpdatePrecioVentaDto } from '../../interface/ventasInterfaces';
+import { CreateOpcionesVentaDto, CreatePrecioVentaDto, DeletePrecioVentaDto, OpcionesVenta, PrecioVenta, ProductoTienda, ProductoVenta, UpdateOpcionesVentaDto, UpdatePrecioVentaDto } from '../../interface/ventasInterfaces';
 
 
 export const getAllClientesVentaAPI = () => {
@@ -347,6 +347,57 @@ export const updateOpcionesVentaAPI = (updateOpcionesVentaDto:UpdateOpcionesVent
         }
     }
 }
+
+//* -------------------------------------------- PRODUCTOS VENTA ----------------------------------------------------------
+export const getAllProductosVentaAPI = (precioVentaId:string, almacenId:string) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const { id } = getState().Sucursal;
+        const { listaProductos } = getState().Productos;
+        if (!id) return;
+        try {
+            dispatch(startLoadingData());
+            const responseVenta: AxiosResponse = await api.get(`ventas-ms/get-all-productos-venta/${precioVentaId}/${almacenId}`);
+            const productosVenta: ProductoVenta[] = responseVenta.data;
+            const productosVentaObj = productosVenta.reduce((acc, producto) => { acc[producto.productoId] = producto; return acc; }, {} as Record<string, ProductoVenta>);
+
+            const responceAlmacen: AxiosResponse = await api.get(`almacenes-ms/get-all-productos-almacen/${almacenId}`);
+            const productosAlmacen: ProductoAlmacen[] = responceAlmacen.data.data;
+            const productosAlmacenObj = productosAlmacen.reduce((acc, producto) => { acc[producto.productoId] = producto; return acc; }, {} as Record<string, ProductoAlmacen>);
+
+            const productosTienda: ProductoTienda[] = listaProductos.map(p => ({
+                productoId: p.id,
+                Categoria: p.Categoria,
+                Marca: p.Marca,
+                UnidadMedida: p.UnidadMedida,
+                codigo: p.codigo,
+                imagen: p.imagen,
+                descripcion: p.descripcion,
+                nombre: p.nombre,
+                cantidad: productosAlmacenObj[p.id]?.cantidad || 0,
+                precio: productosVentaObj[p.id]?.precio || '0',
+                createdAt: productosVentaObj[p.id]?.createdAt,
+                updatedAt: productosVentaObj[p.id]?.updatedAt,
+                show: true,
+                check: false
+            }))
+
+            dispatch(getAllProductosVenta(productosTienda))
+            dispatch(finishLoadingData());
+        } catch (error) {
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                dispatch(showNotificationWarning({tittle: 'PRODUCTOS EN VENTA', description: data.message}));
+                dispatch(finishLoadingData());
+                setTimeout( () => dispatch(hideNotification()), 5000 );
+            }else console.log(error);
+            dispatch(finishLoadingData());
+        }
+    }
+}
+
+
+
+
 //* -------------------------------------------- LOGS ----------------------------------------------------------
 
 export const getLogsVentasAPI = (desde: string, hasta: string) => {
