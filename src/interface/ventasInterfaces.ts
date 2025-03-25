@@ -191,3 +191,15 @@ export interface UpdateOpcionesVentaDto {
     almacenId?: string;
     precioVentaId?: string;
 }
+
+export interface CreateProductoVentaDto{
+
+    almacenId: string;
+    productoId: string;
+    precioVentaId: string;
+    precio: string;
+
+    // ---- LOG ----
+    sucursalId: string;
+    codigoProducto: string;
+}

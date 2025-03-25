@@ -5,7 +5,7 @@ import { createClienteVenta, createPrecioVenta, createTipoMonedaVenta, deletePre
 import api from "../../api/config";
 import { ClienteVenta, CreateClienteVentaDto, CreateTipoMonedaVentaDto, DeleteTipoMonedaVentaDto, ProductoAlmacen, TipoMonedaVenta, UpdateClienteVentaDto, UpdateTipoMonedaVentaDto } from "../../interface";
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from "../notification/notificationSlice";
-import { CreateOpcionesVentaDto, CreatePrecioVentaDto, DeletePrecioVentaDto, OpcionesVenta, PrecioVenta, ProductoTienda, ProductoVenta, UpdateOpcionesVentaDto, UpdatePrecioVentaDto } from '../../interface/ventasInterfaces';
+import { CreateOpcionesVentaDto, CreatePrecioVentaDto, CreateProductoVentaDto, DeletePrecioVentaDto, OpcionesVenta, PrecioVenta, ProductoTienda, ProductoVenta, UpdateOpcionesVentaDto, UpdatePrecioVentaDto } from '../../interface/ventasInterfaces';
 
 
 export const getAllClientesVentaAPI = () => {
@@ -349,7 +349,7 @@ export const updateOpcionesVentaAPI = (updateOpcionesVentaDto:UpdateOpcionesVent
 }
 
 //* -------------------------------------------- PRODUCTOS VENTA ----------------------------------------------------------
-export const getAllProductosVentaAPI = (precioVentaId:string, almacenId:string) => {
+export const getAllProductosVentaAPI = (precioVentaId:string, almacenId:string, setLista?:React.Dispatch<React.SetStateAction<ProductoTienda[]>>) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id } = getState().Sucursal;
         const { listaProductos } = getState().Productos;
@@ -374,14 +374,15 @@ export const getAllProductosVentaAPI = (precioVentaId:string, almacenId:string) 
                 descripcion: p.descripcion,
                 nombre: p.nombre,
                 cantidad: productosAlmacenObj[p.id]?.cantidad || 0,
-                precio: productosVentaObj[p.id]?.precio || '0',
+                precio: productosVentaObj[p.id]?.precio || '-',
                 createdAt: productosVentaObj[p.id]?.createdAt,
                 updatedAt: productosVentaObj[p.id]?.updatedAt,
                 show: true,
                 check: false
             }))
+            dispatch(getAllProductosVenta(productosTienda));
+            if(setLista) setLista(productosTienda); //* Agrega los productos al componente de las ventas, para evitar usar el useEffect
 
-            dispatch(getAllProductosVenta(productosTienda))
             dispatch(finishLoadingData());
         } catch (error) {
             if( axios.isAxiosError(error) && error.response ){
@@ -389,6 +390,43 @@ export const getAllProductosVentaAPI = (precioVentaId:string, almacenId:string) 
                 dispatch(showNotificationWarning({tittle: 'PRODUCTOS EN VENTA', description: data.message}));
                 dispatch(finishLoadingData());
                 setTimeout( () => dispatch(hideNotification()), 5000 );
+            }else console.log(error);
+            dispatch(finishLoadingData());
+        }
+    }
+}
+
+export const createProductoVentaAPI = (createProductoVentaDto: CreateProductoVentaDto, setLista?:React.Dispatch<React.SetStateAction<ProductoTienda[]>>) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const { id: sucursalId } = getState().Sucursal;
+        const { listaProductosTienda } = getState().Ventas;
+        if (!sucursalId) return;
+        try {
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.post(`ventas-ms/create-producto-venta`, createProductoVentaDto);
+            
+            const {data, message}: {data:ProductoVenta , message: string} = response.data;
+
+            const { precio, productoId, updatedAt } = data;
+
+            //* EDITANDO SOLO EL PRECIO DEL PRODUCTO INDICADO 
+            const index = listaProductosTienda.findIndex((p) => p.productoId === productoId);
+            if (index === -1) return;
+            const newProductosTienda = [...listaProductosTienda];
+            newProductosTienda[index] = { ...newProductosTienda[index], precio, updatedAt};
+            dispatch(getAllProductosVenta(newProductosTienda));    
+            
+            if(setLista) setLista(newProductosTienda); //* Agrega los productos al componente de las ventas, para evitar usar el useEffect
+            
+            dispatch(showNotificationSuccess({tittle: 'PRECIO DE PRODUCTO', description: message}));
+            setTimeout( () => dispatch(hideNotification()), 5000 );
+            dispatch(finishLoadingData());
+        } catch (error) {
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                dispatch(showNotificationWarning({tittle: 'PRECIO DE PRODUCTO', description: data.message}));
+                setTimeout( () => dispatch(hideNotification()), 5000 );
+                dispatch(finishLoadingData());
             }else console.log(error);
             dispatch(finishLoadingData());
         }

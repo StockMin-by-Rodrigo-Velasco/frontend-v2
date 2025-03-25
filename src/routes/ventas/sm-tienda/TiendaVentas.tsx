@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import HeaderSection from "../../../components/HeaderSection";
 import { AppDispatch, RootState } from "../../../redux/store";
 import { useEffect, useState } from "react";
-import { CreateOpcionesVentaDto, Producto } from "../../../interface";
+import { CreateOpcionesVentaDto, ProductoTienda } from "../../../interface";
 import { InputSearch, InputSelect, InputSelectSearch } from "../../../components/Input";
 import BodySection from "../../../components/BodySection";
 import ProductoCard from "./components/ProductoCard";
@@ -13,35 +13,6 @@ import { getOpcionesVenta } from "../../../redux/ventas/ventasSlice";
 import { getAllProductosVentaAPI } from "../../../redux/ventas/ventasThunk";
 import { AiOutlineLoading } from "react-icons/ai";
 
-
-interface ProductoForDataTable extends Producto {
-    unidadMedida: string;
-    marca: string;
-    categoria: string;
-}
-
-const dataInitialState: ProductoForDataTable = {
-    id: '',
-    sucursalId: '',
-    codigo: '',
-    nombre: '',
-    descripcion: '',
-    imagen: '',
-    deleted: false,
-    createdAt: '',
-    updatedAt: '',
-    categoriaId: '',
-    marcaId: '',
-    unidadMedidaId: '',
-
-    Marca: { id: '', sucursalId: '', nombre: '', origen: '', deleted: false },
-    Categoria: { id: '', sucursalId: '', nombre: '', detalle: '', deleted: false },
-    UnidadMedida: { id: '', nombre: '', abreviatura: '', detalle: '' },
-
-    unidadMedida: '',
-    marca: '',
-    categoria: '',
-}
 
 interface FilterInterface {
     buscar: string;
@@ -56,70 +27,84 @@ const filterInitialState: FilterInterface = {
 
 export default function TiendaVentas() {
     const { loadingData } = useSelector((s: RootState) => s.Aplication);
-    const { id:sucursalId } = useSelector((s: RootState) => s.Sucursal);
-    const { opcionesVenta, listaPrecioVenta, listaProductosTienda } = useSelector((s: RootState) => s.Ventas);
+    const { id: sucursalId } = useSelector((s: RootState) => s.Sucursal);
+    const { opcionesVenta, listaPrecioVenta } = useSelector((s: RootState) => s.Ventas);
     const { listaAlmacenes } = useSelector((s: RootState) => s.Almacenes);
-    const { listaProductos, listaMarcas, listaCategorias } = useSelector((s: RootState) => s.Productos);
+    const { listaMarcas, listaCategorias } = useSelector((s: RootState) => s.Productos);
 
     const dispatch = useDispatch<AppDispatch>();
-    
+
+    const [filterProductosTienda, setFilterProductosTienda] = useState<ProductoTienda[]>([]);
+    const [checkedProductos, setCheckedProductos] = useState(0);
     const [openProformaVenta, setOpenProformaVenta] = useState(false);
     const [openSettings, setOpenSettings] = useState(false);
 
 
-    const [filterOpciones, setFilterOpciones] = useState<CreateOpcionesVentaDto>({ 
-        almacenId: opcionesVenta?.almacenId || '', 
+
+    const [filterOpciones, setFilterOpciones] = useState<CreateOpcionesVentaDto>({
+        almacenId: opcionesVenta?.almacenId || '',
         precioVentaId: opcionesVenta?.precioVentaId || '',
         sucursalId
     });
 
     const [filter, setFilter] = useState<FilterInterface>(filterInitialState);
-    const [filteredProducto, setFilteredProducto] = useState<ProductoForDataTable[]>([]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const filterProductos = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { value, name } = e.target;
         const newFilter = { ...filter, [name]: value };
-        const newData = listaProductos.filter(i =>
-            i.Categoria.nombre?.includes(newFilter.categoria) &&
-            i.Marca.nombre?.includes(newFilter.marca) &&
-            (i.nombre.includes(newFilter.buscar) || i.codigo.includes(newFilter.buscar))
+
+        const newListaProductosTienda = filterProductosTienda.map(p => {
+            if (
+                p.Categoria.nombre?.includes(newFilter.categoria) &&
+                p.Marca.nombre?.includes(newFilter.marca) &&
+                (p.nombre.includes(newFilter.buscar) || p.codigo.includes(newFilter.buscar))
+            ) return { ...p, show: true };
+            else return { ...p, show: false };
+        }
         );
 
-        const newListaProductos: ProductoForDataTable[] = newData.map(p => ({
-            ...p,
-            unidadMedida: p.UnidadMedida.nombre,
-            marca: p.Marca.nombre,
-            categoria: p.Categoria.nombre
-        }))
-        setFilteredProducto([...newListaProductos]);
+        setFilterProductosTienda(newListaProductosTienda);
         setFilter(newFilter);
+    }
+
+    const handleCheckProducto = (productoId: string) => {
+        const index = filterProductosTienda.findIndex((p) => p.productoId === productoId);
+        if (index === -1) return;
+
+        const newProductosTienda = [...filterProductosTienda];
+        newProductosTienda[index] = { ...newProductosTienda[index], check: !newProductosTienda[index].check };
+
+        if (newProductosTienda[index].check) setCheckedProductos(s => ++s);
+        else setCheckedProductos(s => --s);
+
+        setFilterProductosTienda(newProductosTienda);
     }
 
     const handleOpcionChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { value, name } = e.target;
-        const newFilterOpciones:CreateOpcionesVentaDto = {...filterOpciones, [name]: value}
-        setFilterOpciones({...newFilterOpciones});
+        const newFilterOpciones: CreateOpcionesVentaDto = { ...filterOpciones, [name]: value }
+        setFilterOpciones({ ...newFilterOpciones });
 
         const newPrecioVenta = listaPrecioVenta.find(pv => pv.id === newFilterOpciones.precioVentaId);
 
-        if(newPrecioVenta) dispatch(getOpcionesVenta({ 
-            id: opcionesVenta?.id || '' , 
+        if (newPrecioVenta) dispatch(getOpcionesVenta({
+            id: opcionesVenta?.id || '',
             ...newFilterOpciones,
             PrecioVenta: newPrecioVenta
         }));
         const { precioVentaId, almacenId } = newFilterOpciones;
-        dispatch(getAllProductosVentaAPI( precioVentaId, almacenId ));
+        dispatch(getAllProductosVentaAPI(precioVentaId, almacenId));
     }
 
 
     useEffect(() => {
-        if( opcionesVenta?.almacenId && opcionesVenta.precioVentaId ){
-            setFilterOpciones({ 
-                almacenId: opcionesVenta?.almacenId, 
+        if (opcionesVenta?.almacenId && opcionesVenta.precioVentaId) {
+            setFilterOpciones({
+                almacenId: opcionesVenta?.almacenId,
                 precioVentaId: opcionesVenta?.precioVentaId,
                 sucursalId
             });
-            dispatch(getAllProductosVentaAPI(opcionesVenta?.precioVentaId, opcionesVenta?.almacenId ));
+            dispatch(getAllProductosVentaAPI(opcionesVenta?.precioVentaId, opcionesVenta?.almacenId, setFilterProductosTienda));
         }
     }, [opcionesVenta])
     return (
@@ -128,7 +113,7 @@ export default function TiendaVentas() {
             {openProformaVenta && <ProformaVenta closeButton={() => { setOpenProformaVenta(false) }} />}
             <HeaderSection>
                 <InputSearch
-                    handleInputChange={handleChange}
+                    handleInputChange={filterProductos}
                     name='buscar'
                     placeholder="Buscar"
                     value={filter.buscar}
@@ -140,7 +125,7 @@ export default function TiendaVentas() {
                     placeholder="Categoría: "
                     options={listaCategorias.map(m => ({ value: m.nombre, name: m.nombre }))}
                     optionDefault="Todas..."
-                    handleInputChange={handleChange}
+                    handleInputChange={filterProductos}
                 />
                 <InputSelectSearch
                     value={filter.marca}
@@ -149,7 +134,7 @@ export default function TiendaVentas() {
                     placeholder="Marca: "
                     options={listaMarcas.map(m => ({ value: m.nombre, name: m.nombre }))}
                     optionDefault="Todas..."
-                    handleInputChange={handleChange}
+                    handleInputChange={filterProductos}
                 />
 
                 <button
@@ -157,19 +142,19 @@ export default function TiendaVentas() {
                     onClick={() => { setOpenProformaVenta(true) }}
                     className="relative ms-5 w-10 rounded border-2 border-success text-success text-[22px] flex justify-center items-center overflow-hidden">
                     <FaBasketShopping />
-                    <span className="bg-danger rounded-br text-white w-4 h-4 absolute top-0 left-0 text-[12px] flex justify-center items-center">4</span>
+                    <span className="bg-danger rounded-br text-white w-4 h-4 absolute top-0 left-0 text-[12px] flex justify-center items-center">{checkedProductos}</span>
                 </button>
             </HeaderSection>
 
             <BodySection>
                 <div className="flex flex-wrap justify-evenly relative pt-5">
 
-                    {listaProductosTienda.map(p => (
-                        <ProductoCard key={p.productoId} producto={p} />
+                    {filterProductosTienda.filter(p => p.show).map(p => (
+                        <ProductoCard key={p.productoId} producto={p} checkProducto={handleCheckProducto} setLista={setFilterProductosTienda} />
                     ))}
 
                 </div>
-                <div className={`${!openSettings && 'w-0'} absolute bottom-2 right-20 overflow-hidden`} >
+                <div className={`${openSettings ? 'p-2 bg-white border border-secondary rounded' : 'w-0'} absolute bottom-2 right-20 overflow-hidden `} >
                     <InputSelect
                         value={filterOpciones.almacenId}
                         className="mb-2"
@@ -196,7 +181,7 @@ export default function TiendaVentas() {
                     disabled={loadingData}
                     className={`${openSettings && 'rotate-[135deg]'} absolute bottom-2 right-2 transition-all duration-300 flex justify-center items-center bg-primary bg-opacity-80 text-white text-[30px] hover:bg-opacity-100 w-14 h-14 rounded-full disabled:bg-secondary`}
                 >
-                    {loadingData? <AiOutlineLoading className="animate-spin"/> : <LuSettings /> }
+                    {loadingData ? <AiOutlineLoading className="animate-spin" /> : <LuSettings />}
 
                 </button>
             </BodySection>

@@ -31,6 +31,17 @@ const VentasSlice = createSlice({
         getAllProductosVenta: (state, action: PayloadAction<ProductoTienda[]>) => {
             state.listaProductosTienda= action.payload;
         },
+        // updatePrecioProductoVenta: (state, action: PayloadAction<{productoId: string, precio: string, updatedAt: string}>) => {
+        //     const {productoId, precio, updatedAt} = action.payload;
+
+        //     const index = state.listaProductosTienda.findIndex((p) => p.productoId === productoId);
+        //     if (index === -1) return;
+
+        //     const newProductosTienda = [...state.listaProductosTienda];
+        //     newProductosTienda[index] = { ...newProductosTienda[index], precio, updatedAt};
+            
+        //     state.listaProductosTienda = [...newProductosTienda]
+        // },
         getAllClientesVenta: (state, action: PayloadAction<ClienteVenta[]>) => {
             state.listaClientes = action.payload;
         },
@@ -92,6 +103,7 @@ const VentasSlice = createSlice({
 
 export const {
     getAllProductosVenta,
+    // updatePrecioProductoVenta,
 
     getAllClientesVenta,
     createClienteVenta,
