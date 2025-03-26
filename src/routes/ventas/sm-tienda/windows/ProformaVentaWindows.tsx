@@ -4,11 +4,14 @@ import Windows from "../../../../components/Windows";
 import { useForm, useFormArray } from "../../../../hooks";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { useEffect, useState } from 'react';
-import { ClienteVenta, ProductoTienda } from "../../../../interface";
+import { ClienteVenta, CotizacionVenta, CreateCotizacionVentaDto, CreateProductoDetalleVentaDto, ProductoTienda } from "../../../../interface";
 import { dateLocal } from "../../../../helpers";
 import { InputNumber, InputTextarea, InputTextBlock } from "../../../../components/Input";
 import ListaClientes from "./ListaClientes";
 import { BsFillTrashFill } from "react-icons/bs";
+import { createCotizacionVentaAPI } from '../../../../redux/ventas/ventasThunk';
+import { hideNotification, showNotificationError } from "../../../../redux/notification/notificationSlice";
+import ViewCotizacion from "./ViewCotizacion";
 
 interface CreateManyProductosAlmacenProp {
   closeButton: () => void;
@@ -44,10 +47,12 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
   const dispatch = useDispatch<AppDispatch>();
 
   const [clienteSelected, setClienteSelected] = useState<ClienteVenta>({ id: '', apellido: '', codigo: '', nombre: '', sucursalId });
+  const [ultimaCotizacion, setUltimaCotizacion] = useState<CotizacionVenta | null>(null)
 
   const [openListaClientes, setOpenListaClientes] = useState(false);
+  const [openViewCotizacion, setOpenViewCotizacion] = useState(false);
 
-  const { data: formIngreso, handleInputChange: onChangeIngreso } = useForm<{ detalle: string, descuento: string }>({ detalle: '', descuento: '0' });
+  const { data: formProforma, handleInputChange: onChangeIngreso } = useForm<{ detalle: string, descuento: string }>({ detalle: '', descuento: '0' });
   const { arrayData, handleInputChange, replaceData, removeData } = useFormArray<FormTable>([]);
 
   const removeProducto = ( productoId: string, index: number ) => {
@@ -56,9 +61,35 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
   }
   
   const createCotizacion = () => {
-    console.log(arrayData);
-  }
 
+    if(!clienteSelected.id){
+      dispatch(showNotificationError({tittle: 'COTIZACION DE VENTA', description: 'Se necesitan datos del cliente.'}));
+      setTimeout( () => dispatch(hideNotification()), 5000 );
+      return;
+    }
+
+    const productoDetalleVenta:CreateProductoDetalleVentaDto[] = arrayData.map(p => ({
+      cantidad: p.cantidad as number,
+      precio: p.precio,
+      productoId: p.productoId,
+    }))
+
+    const totalNum = (arrayData.reduce((acc, p) => acc + (p.cantidad * parseFloat(p.precio)),0)-parseFloat(formProforma.descuento)).toFixed(3)
+
+    const cotizacionVenta: CreateCotizacionVentaDto = {
+      sucursalId,
+      total: totalNum.toString(),
+      usuarioId: userData.id,
+      descuento: formProforma.descuento,
+      detalle: formProforma.detalle,
+      precioVentaId: opcionesVenta?.precioVentaId||'',
+      clienteVentaId: clienteSelected.id,
+      productoDetalleVenta
+    }
+
+    // console.log(cotizacionVenta.total)
+    dispatch(createCotizacionVentaAPI(cotizacionVenta, setUltimaCotizacion, setOpenViewCotizacion));
+  }
 
   useEffect(() => {
     const selectedProductos: FormTable[] = checkProductosTienda
@@ -80,6 +111,7 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
     <Windows tittle="REGISTRAR NUEVA VENTA" closeButton={closeButton}>
 
       {openListaClientes && <ListaClientes closeButton={() => { setOpenListaClientes(false) }} setClienteSelected={setClienteSelected} />}
+      {openViewCotizacion&& <ViewCotizacion closeButton={() => {setOpenViewCotizacion(false)}} cotizacion={ultimaCotizacion}  /> }
 
 
       <div className="relative  flex flex-col h-[80vh] overflow-y-scroll scroll-custom ms-2 my-2 ">
@@ -97,21 +129,21 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
             />
             <span className="text-info text-[12px] cursor-pointer" onClick={() => { setOpenListaClientes(true) }} >Buscar cliente...</span>
 
-            <InputTextarea value={formIngreso.detalle} handleInputChange={onChangeIngreso} name="detalle" placeholder="Detalle" />
+            <InputTextarea value={formProforma.detalle} handleInputChange={onChangeIngreso} name="detalle" placeholder="Detalle" />
           </div>
 
 
           <div className="ms-auto" >
             <p><span className="font-bold">Fecha: </span> {dateLocal(Date.now())} </p>
             <p><span className="font-bold">Responsable: </span> <span className="capitalize" >{`${userData.nombre} ${userData.apellido}`}</span> </p>
-            <InputNumber className="mt-[82px]" value={formIngreso.descuento.toString()} handleInputChange={onChangeIngreso} name="descuento" placeholder="Descuento:" />
+            <InputNumber className="mt-[82px]" value={formProforma.descuento.toString()} handleInputChange={onChangeIngreso} name="descuento" placeholder="Descuento:" />
           </div>
         </div>
 
 
         <div className="bg-success mb-3 text-white text-end px-8 text-[22px]" >
           <span className="me-2" >Total:</span>
-          {arrayData.reduce((acc, p) => acc + (p.cantidad * parseFloat(p.precio)), 0) - parseFloat(formIngreso.descuento || '0')} 
+          {(arrayData.reduce((acc, p) => acc + (p.cantidad * parseFloat(p.precio)), 0) - parseFloat(formProforma.descuento || '0')).toFixed(2)} 
           <span className="ms-2 uppercase" >{opcionesVenta?.PrecioVenta.TipoMonedaVenta?.abreviatura}</span>  
         </div>
 
@@ -159,7 +191,7 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
                 </td>
                 <td className="p-1 text-center">
                   <p className="bg-secondary-1/50 border-secondary text-secondary border-[1px] py-1 px-2 rounded">
-                    {f.cantidad * parseFloat(f.precio)}
+                    {(f.cantidad * parseFloat(f.precio)).toFixed(2)}
                   </p>
                 </td>
                 <td className="text-center text-secondary" >

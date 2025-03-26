@@ -5,7 +5,7 @@ import { createClienteVenta, createPrecioVenta, createTipoMonedaVenta, deletePre
 import api from "../../api/config";
 import { ClienteVenta, CreateClienteVentaDto, CreateTipoMonedaVentaDto, DeleteTipoMonedaVentaDto, ProductoAlmacen, TipoMonedaVenta, UpdateClienteVentaDto, UpdateTipoMonedaVentaDto } from "../../interface";
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from "../notification/notificationSlice";
-import { CreateOpcionesVentaDto, CreatePrecioVentaDto, CreateProductoVentaDto, DeletePrecioVentaDto, OpcionesVenta, PrecioVenta, ProductoTienda, ProductoVenta, UpdateOpcionesVentaDto, UpdatePrecioVentaDto } from '../../interface/ventasInterfaces';
+import { CotizacionVenta, CreateCotizacionVentaDto, CreateOpcionesVentaDto, CreatePrecioVentaDto, CreateProductoVentaDto, DeletePrecioVentaDto, OpcionesVenta, PrecioVenta, ProductoTienda, ProductoVenta, UpdateOpcionesVentaDto, UpdatePrecioVentaDto } from '../../interface/ventasInterfaces';
 
 
 export const getAllClientesVentaAPI = () => {
@@ -434,6 +434,43 @@ export const createProductoVentaAPI = (createProductoVentaDto: CreateProductoVen
     }
 }
 
+//* -------------------------------------------- COTIZACION VENTA ----------------------------------------------------------
+
+export const createCotizacionVentaAPI = (
+    createCotizacionVentaDto: CreateCotizacionVentaDto, 
+    setUltimaCotizacion?: React.Dispatch<React.SetStateAction<CotizacionVenta | null>>,
+    setOpenViewCotizacion?: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const { id: sucursalId } = getState().Sucursal;
+        if(!sucursalId) return;
+
+        try {
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.post('ventas-ms/create-cotizacion-venta', createCotizacionVentaDto);
+            const {data, message}: {data: CotizacionVenta, message: string} = response.data;
+
+            if(setUltimaCotizacion && setOpenViewCotizacion){
+                setUltimaCotizacion(data);
+                setOpenViewCotizacion(true);
+            }
+
+            dispatch(showNotificationSuccess({tittle: 'COTIZACION DE VENTA', description: message}));
+            setTimeout( () => dispatch(hideNotification()), 5000 );
+
+            dispatch(finishLoadingData());
+            
+        } catch (error) {
+            // console.log(error)
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                dispatch(showNotificationError({tittle: 'COTIZACION DE VENTA', description: data.message}));
+                setTimeout( () => dispatch(hideNotification()), 5000 );
+                dispatch(finishLoadingData());
+            }else console.log(error);
+        }
+    }
+}
 
 
 

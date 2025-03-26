@@ -8,7 +8,7 @@ export interface ProductoTienda {
     nombre: string;
     descripcion: string;
     imagen: string;
-    
+
     cantidad: number;
     precio: string;
 
@@ -60,12 +60,9 @@ export interface ProductoDetalleVenta {
     cantidad: number;
     precio: string;
     productoId: string;
-
+    productoAlmacenId: string;
     ventaId?: string;
-    Venta?: Venta;
-
     cotizacionVentaId?: string;
-    CotizacionVenta?: CotizacionVenta;
 }
 
 export interface Venta {
@@ -73,36 +70,40 @@ export interface Venta {
     sucursalId: string;
     almacenId: string;
     numero: number;
-    descuento: string;
     total: string;
+    descuento?: string;
     detalle?: string;
     createdAt?: string;
 
     precioVentaId: string;
     PrecioVenta: PrecioVenta;
 
-    cotizacionVentaId?: string;
-    CotizacionVenta?: CotizacionVenta;
-
     clienteVentaId: string;
     ClienteVenta: ClienteVenta;
 
-    ProductoDetalleVenta: ProductoDetalleVenta[]
+    cotizacionVentaId?: string;
+    CotizacionVenta?: CotizacionVenta;
+
+    ProductoDetalleVenta: ProductoDetalleVenta[];
 }
 
-interface CotizacionVenta {
+export interface CotizacionVenta {
     id: string;
     sucursalId: string;
+    total: string;
+    usuarioId: string; 
     numero: number;
     descuento?: string;
-    total: string;
     detalle?: string;
-    createdAt?: string;
+    createdAt: string;
+    precioVentaId: string;
+    PrecioVenta: PrecioVenta
 
-    clienteVentaId: String
+    clienteVentaId: string;
     ClienteVenta: ClienteVenta
 
     ProductoDetalleVenta: ProductoDetalleVenta[]
+
 }
 
 export interface ClienteVenta {
@@ -123,6 +124,8 @@ export interface OpcionesVenta {
 
     PrecioVenta: PrecioVenta;
 }
+
+
 
 //------------------- DTOs -----------------
 export interface CreateClienteVentaDto {
@@ -193,7 +196,7 @@ export interface UpdateOpcionesVentaDto {
     precioVentaId?: string;
 }
 
-export interface CreateProductoVentaDto{
+export interface CreateProductoVentaDto {
 
     almacenId: string;
     productoId: string;
@@ -203,4 +206,24 @@ export interface CreateProductoVentaDto{
     // ---- LOG ----
     sucursalId: string;
     codigoProducto: string;
+}
+
+export interface CreateProductoDetalleVentaDto {
+    cantidad: number;
+    precio: string;
+    productoId: string;
+    cotizacionVentaId?: string;
+    ventaId?: string;
+}
+
+export interface CreateCotizacionVentaDto {
+    sucursalId: string;
+    total: string;
+    usuarioId: string;
+    numero?: number;
+    descuento?: string;
+    detalle?: string;
+    precioVentaId: string;
+    clienteVentaId: string;
+    productoDetalleVenta: CreateProductoDetalleVentaDto[]
 }
