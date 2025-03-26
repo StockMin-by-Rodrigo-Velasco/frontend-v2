@@ -7,11 +7,11 @@ import { InputSearch, InputSelect, InputSelectSearch } from "../../../components
 import BodySection from "../../../components/BodySection";
 import ProductoCard from "./components/ProductoCard";
 import ProformaVenta from "./windows/ProformaVentaWindows";
-import { FaBasketShopping } from "react-icons/fa6";
 import { LuSettings } from "react-icons/lu";
 import { getOpcionesVenta } from "../../../redux/ventas/ventasSlice";
 import { getAllProductosVentaAPI } from "../../../redux/ventas/ventasThunk";
 import { AiOutlineLoading } from "react-icons/ai";
+import { MdShoppingCart } from "react-icons/md";
 
 
 interface FilterInterface {
@@ -105,12 +105,19 @@ export default function TiendaVentas() {
                 sucursalId
             });
             dispatch(getAllProductosVentaAPI(opcionesVenta?.precioVentaId, opcionesVenta?.almacenId, setFilterProductosTienda));
+            setCheckedProductos(0);
         }
     }, [opcionesVenta])
     return (
         <>
 
-            {openProformaVenta && <ProformaVenta closeButton={() => { setOpenProformaVenta(false) }} />}
+            {openProformaVenta && 
+                <ProformaVenta 
+                    closeButton={() => {setOpenProformaVenta(false)}} 
+                    checkProductosTienda={filterProductosTienda.filter(p => p.check)} 
+                    handleCheckProducto={handleCheckProducto} 
+                />}
+            
             <HeaderSection>
                 <InputSearch
                     handleInputChange={filterProductos}
@@ -139,10 +146,16 @@ export default function TiendaVentas() {
 
                 <button
                     type="button"
+                    disabled={checkedProductos <= 0}
                     onClick={() => { setOpenProformaVenta(true) }}
-                    className="relative ms-5 w-10 rounded border-2 border-success text-success text-[22px] flex justify-center items-center overflow-hidden">
-                    <FaBasketShopping />
-                    <span className="bg-danger rounded-br text-white w-4 h-4 absolute top-0 left-0 text-[12px] flex justify-center items-center">{checkedProductos}</span>
+                    className="relative ms-5 w-10 rounded border-2 border-primary text-primary text-[22px] flex justify-center items-center overflow-hidden disabled:border-secondary disabled:text-secondary">
+                    <MdShoppingCart />
+                    {(checkedProductos > 0)&&
+                        <span 
+                        className="bg-danger rounded-br text-white w-4 h-4 absolute top-0 left-0 text-[12px] flex justify-center items-center">
+                        {checkedProductos}
+                        </span>
+                    }
                 </button>
             </HeaderSection>
 

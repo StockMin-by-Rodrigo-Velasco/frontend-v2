@@ -3,6 +3,7 @@ import { Categoria, Marca, UnidadMedida } from "./productosInterface";
 export interface ProductoTienda {
 
     productoId: string;
+    productoAlmacenId: string,
     codigo: string;
     nombre: string;
     descripcion: string;

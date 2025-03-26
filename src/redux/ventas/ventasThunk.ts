@@ -366,6 +366,7 @@ export const getAllProductosVentaAPI = (precioVentaId:string, almacenId:string, 
 
             const productosTienda: ProductoTienda[] = listaProductos.map(p => ({
                 productoId: p.id,
+                productoAlmacenId: productosAlmacenObj[p.id]?.id || '',
                 Categoria: p.Categoria,
                 Marca: p.Marca,
                 UnidadMedida: p.UnidadMedida,
