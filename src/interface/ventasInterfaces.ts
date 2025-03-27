@@ -96,6 +96,7 @@ export interface CotizacionVenta {
     descuento?: string;
     detalle?: string;
     createdAt: string;
+
     precioVentaId: string;
     PrecioVenta: PrecioVenta
 
@@ -103,7 +104,6 @@ export interface CotizacionVenta {
     ClienteVenta: ClienteVenta
 
     ProductoDetalleVenta: ProductoDetalleVenta[]
-
 }
 
 export interface ClienteVenta {
@@ -127,7 +127,7 @@ export interface OpcionesVenta {
 
 
 
-//------------------- DTOs -----------------
+//* ------------------- DTOs -----------------
 export interface CreateClienteVentaDto {
     sucursalId: string;
     codigo: string;
@@ -226,4 +226,10 @@ export interface CreateCotizacionVentaDto {
     precioVentaId: string;
     clienteVentaId: string;
     productoDetalleVenta: CreateProductoDetalleVentaDto[]
+}
+
+export interface GetCotizacionesVentaDto{
+    sucursalId: string;
+    desde: string;
+    hasta: string;
 }

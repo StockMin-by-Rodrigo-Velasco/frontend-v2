@@ -5,7 +5,7 @@ import { createClienteVenta, createPrecioVenta, createTipoMonedaVenta, deletePre
 import api from "../../api/config";
 import { ClienteVenta, CreateClienteVentaDto, CreateTipoMonedaVentaDto, DeleteTipoMonedaVentaDto, ProductoAlmacen, TipoMonedaVenta, UpdateClienteVentaDto, UpdateTipoMonedaVentaDto } from "../../interface";
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from "../notification/notificationSlice";
-import { CotizacionVenta, CreateCotizacionVentaDto, CreateOpcionesVentaDto, CreatePrecioVentaDto, CreateProductoVentaDto, DeletePrecioVentaDto, OpcionesVenta, PrecioVenta, ProductoTienda, ProductoVenta, UpdateOpcionesVentaDto, UpdatePrecioVentaDto } from '../../interface/ventasInterfaces';
+import { CotizacionVenta, CreateCotizacionVentaDto, CreateOpcionesVentaDto, CreatePrecioVentaDto, CreateProductoVentaDto, DeletePrecioVentaDto, GetCotizacionesVentaDto, OpcionesVenta, PrecioVenta, ProductoTienda, ProductoVenta, UpdateOpcionesVentaDto, UpdatePrecioVentaDto } from '../../interface/ventasInterfaces';
 
 
 export const getAllClientesVentaAPI = () => {
@@ -467,6 +467,30 @@ export const createCotizacionVentaAPI = (
                 dispatch(showNotificationError({tittle: 'COTIZACION DE VENTA', description: data.message}));
                 setTimeout( () => dispatch(hideNotification()), 5000 );
                 dispatch(finishLoadingData());
+            }else console.log(error);
+        }
+    }
+}
+
+export const getCotizacionesVentaAPI = ( 
+    getCotizacionesVentaDto: GetCotizacionesVentaDto,
+    setListaCotizacionesVenta: React.Dispatch<React.SetStateAction<CotizacionVenta[]>>
+    ) => {
+    return async (dispatch: AppDispatch) => {
+        dispatch(startLoadingData());
+        try {
+            const response: AxiosResponse = await api.post(`ventas-ms/get-cotizaciones-venta`, getCotizacionesVentaDto);
+            const data:CotizacionVenta[] = response.data;
+            // console.log(data);
+            setListaCotizacionesVenta(data);
+
+            dispatch(finishLoadingData());         
+        } catch (error) {
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                dispatch(showNotificationError({tittle: 'LISTA DE COTIZACIONES', description: data.message}));
+                dispatch(finishLoadingData());
+                setTimeout( () => dispatch(hideNotification()), 5000 );
             }else console.log(error);
         }
     }

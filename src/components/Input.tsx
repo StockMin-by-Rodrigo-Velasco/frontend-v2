@@ -129,7 +129,7 @@ function InputSearch({handleInputChange, value, name, placeholder, required=fals
   )
 }
 
-function InputSelectSearch({handleInputChange, value, name, placeholder, required=false, disabled=false, className='', options, optionDefault='...'}:InputSelectProps) {
+function InputSelectSearch({handleInputChange, value, name, placeholder, required=false, disabled=false, className='', options, optionDefault}:InputSelectProps) {
   return(
     <div className = {`${className} border-[1px] rounded-lg border-secondary text-secondary flex justify-center items-center px-2 text-[14px]`} >
       <label htmlFor={name} className="text-secondary/70 me-1" >{placeholder}</label>
@@ -143,7 +143,7 @@ function InputSelectSearch({handleInputChange, value, name, placeholder, require
         required={required}
         disabled={disabled}
       >
-        <option value='' >{optionDefault}</option>
+        {optionDefault&&  <option value='' >{optionDefault}</option>}
         {options.map(o => (
           <option key={o.value} value={o.value} >{o.name.toUpperCase()}</option>
         ))}      

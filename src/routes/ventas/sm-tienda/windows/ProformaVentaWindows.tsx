@@ -10,8 +10,10 @@ import { InputNumber, InputTextarea, InputTextBlock } from "../../../../componen
 import ListaClientes from "./ListaClientes";
 import { BsFillTrashFill } from "react-icons/bs";
 import { createCotizacionVentaAPI } from '../../../../redux/ventas/ventasThunk';
-import { hideNotification, showNotificationError } from "../../../../redux/notification/notificationSlice";
+import { hideNotification, showNotificationError, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
 import ViewCotizacion from "./ViewCotizacion";
+import { FaWarehouse } from "react-icons/fa";
+
 
 interface CreateManyProductosAlmacenProp {
   closeButton: () => void;
@@ -26,7 +28,7 @@ interface FormTable {
   nombre: string,
   unidadMedidaAbreviada?: string;
   cantidadAlmacen: number;
-  cantidad: number,
+  cantidad: string,
   precio: string,
   subtotal: string
 }
@@ -69,12 +71,12 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
     }
 
     const productoDetalleVenta:CreateProductoDetalleVentaDto[] = arrayData.map(p => ({
-      cantidad: p.cantidad as number,
+      cantidad:  parseInt(p.cantidad),
       precio: p.precio,
       productoId: p.productoId,
     }))
 
-    const totalNum = (arrayData.reduce((acc, p) => acc + (p.cantidad * parseFloat(p.precio)),0)-parseFloat(formProforma.descuento)).toFixed(3)
+    const totalNum = (arrayData.reduce((acc, p) => acc + (parseInt(p.cantidad) * parseFloat(p.precio)),0)-parseFloat(formProforma.descuento)).toFixed(3);
 
     const cotizacionVenta: CreateCotizacionVentaDto = {
       sucursalId,
@@ -86,9 +88,44 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
       clienteVentaId: clienteSelected.id,
       productoDetalleVenta
     }
-
-    // console.log(cotizacionVenta.total)
     dispatch(createCotizacionVentaAPI(cotizacionVenta, setUltimaCotizacion, setOpenViewCotizacion));
+  }
+
+  const createVenta = () => {
+    if(!clienteSelected.id){
+      dispatch(showNotificationError({tittle: 'REGISTRO DE VENTA', description: 'Se necesitan datos del cliente.'}));
+      setTimeout( () => dispatch(hideNotification()), 5000 );
+      return;
+    }
+
+    const verifyCantidades: boolean = arrayData.some(p => parseInt(p.cantidad) > p.cantidadAlmacen);
+    if(verifyCantidades){
+      dispatch(showNotificationWarning({tittle: 'REGISTRO DE VENTA', description: 'El almacén de ventas no cuenta con las cantidades a vender.'}));
+      setTimeout( () => dispatch(hideNotification()), 5000 );
+      return;
+    }
+
+    const productoDetalleVenta:CreateProductoDetalleVentaDto[] = arrayData.map(p => ({
+      cantidad:  parseInt(p.cantidad),
+      precio: p.precio,
+      productoId: p.productoId,
+    }));
+
+    const totalNum = (arrayData.reduce((acc, p) => acc + (parseInt(p.cantidad) * parseFloat(p.precio)),0)-parseFloat(formProforma.descuento)).toFixed(3);
+
+    const cotizacionVenta: CreateCotizacionVentaDto = { //! cambiar de dto
+      sucursalId,
+      total: totalNum.toString(),
+      usuarioId: userData.id,
+      descuento: formProforma.descuento,
+      detalle: formProforma.detalle,
+      precioVentaId: opcionesVenta?.precioVentaId||'',
+      clienteVentaId: clienteSelected.id,
+      productoDetalleVenta
+    }
+
+    console.log('vendiendo...')
+
   }
 
   useEffect(() => {
@@ -100,7 +137,7 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
         codigo: p.codigo,
         nombre: p.nombre,
         cantidadAlmacen: p.cantidad,
-        cantidad: 1,
+        cantidad: '1',
         precio: p.precio,
         subtotal: p.precio,
       }));
@@ -143,7 +180,7 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
 
         <div className="bg-success mb-3 text-white text-end px-8 text-[22px]" >
           <span className="me-2" >Total:</span>
-          {(arrayData.reduce((acc, p) => acc + (p.cantidad * parseFloat(p.precio)), 0) - parseFloat(formProforma.descuento || '0')).toFixed(2)} 
+          {(arrayData.reduce((acc, p) => acc + (parseInt(p.cantidad) * parseFloat(p.precio)), 0) - parseFloat(formProforma.descuento || '0')).toFixed(2)} 
           <span className="ms-2 uppercase" >{opcionesVenta?.PrecioVenta.TipoMonedaVenta?.abreviatura}</span>  
         </div>
 
@@ -169,7 +206,11 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
                 <td className="p-1 text-center">
                   <p className="bg-secondary-1/50 border-secondary text-secondary border-[1px] py-1 px-2 rounded">{f.unidadMedidaAbreviada?.toUpperCase()}</p>
                 </td>
-                <td className="p-1 text-center">
+                <td className="p-1 text-center relative ">
+                  {(parseInt(f.cantidad) > f.cantidadAlmacen)&&  <span 
+                    className="flex justify-center items-center bg-warning absolute text-[10px] px-1 right-0 top-0 rounded-full">
+                    <FaWarehouse className="me-2" />{f.cantidadAlmacen}
+                  </span>}
                   <input
                     onChange={handleInputChange}
                     className="border-secondary border-[1px] rounded max-w-[100px] p-1 focus:outline-none"
@@ -191,7 +232,7 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
                 </td>
                 <td className="p-1 text-center">
                   <p className="bg-secondary-1/50 border-secondary text-secondary border-[1px] py-1 px-2 rounded">
-                    {(f.cantidad * parseFloat(f.precio)).toFixed(2)}
+                    {(parseInt(f.cantidad) * parseFloat(f.precio)).toFixed(2)}
                   </p>
                 </td>
                 <td className="text-center text-secondary" >
@@ -211,7 +252,7 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
         <button
           type="button"
           className="border border-success rounded-full text-success px-3 transition-all duration-200 hover:bg-success hover:text-white"
-          onClick={createCotizacion}>REGISTRAR VENTA</button>
+          onClick={createVenta}>REGISTRAR VENTA</button>
 
         <button
           type="button"

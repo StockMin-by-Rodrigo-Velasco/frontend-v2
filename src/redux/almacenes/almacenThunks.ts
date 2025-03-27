@@ -6,24 +6,6 @@ import { finishLoadingAplication, finishLoadingData, startLoadingAplication, sta
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from '../notification/notificationSlice';
 import { CreateIngresoAlmacenDto, CreateManyProductosAlmacenDto, CreateProductoAlmacenDto, IngresoAlmacen, ProductoAlmacenDetallado, ProductoAlmacen, CreateAlmacenDto, Almacen, UpdateAlmacenDto, Producto } from '../../interface';
 
-// interface Producto {
-//     id: string;
-//     sucursalId: string;
-//     codigo: string;
-//     nombre: string;
-//     descripcion: string;
-//     imagen: string;
-//     deleted: boolean;
-//     categoriaId: string;
-//     categoria?: string;
-//     marcaId: string;
-//     marca?:string;
-//     unidadMedidaId: string;
-//     unidadMedida?: string;
-//     unidadMedidaAbreviada?: string;
-//     createdAt: number;
-//     updatedAt: number;
-// }
 
 export const getAllAlmacenesAPI = () => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {

@@ -12,6 +12,8 @@ import { getOpcionesVenta } from "../../../redux/ventas/ventasSlice";
 import { getAllProductosVentaAPI } from "../../../redux/ventas/ventasThunk";
 import { AiOutlineLoading } from "react-icons/ai";
 import { MdShoppingCart } from "react-icons/md";
+import { IoDocumentsOutline } from "react-icons/io5";
+import ListaVentasCotizaciones from "./windows/ListaVentasCotizaciones";
 
 
 interface FilterInterface {
@@ -37,6 +39,7 @@ export default function TiendaVentas() {
     const [filterProductosTienda, setFilterProductosTienda] = useState<ProductoTienda[]>([]);
     const [checkedProductos, setCheckedProductos] = useState(0);
     const [openProformaVenta, setOpenProformaVenta] = useState(false);
+    const [openListaVentasCotizaciones, setOpenListaVentasCotizaciones] = useState(false);
     const [openSettings, setOpenSettings] = useState(false);
 
 
@@ -116,7 +119,9 @@ export default function TiendaVentas() {
                     closeButton={() => {setOpenProformaVenta(false)}} 
                     checkProductosTienda={filterProductosTienda.filter(p => p.check)} 
                     handleCheckProducto={handleCheckProducto} 
-                />}
+                />
+            }
+            {openListaVentasCotizaciones&& <ListaVentasCotizaciones closeButton={() => {setOpenListaVentasCotizaciones(false)}}/>}
             
             <HeaderSection>
                 <InputSearch
@@ -125,9 +130,17 @@ export default function TiendaVentas() {
                     placeholder="Buscar"
                     value={filter.buscar}
                 />
+
+                <button
+                    type="button"
+                    className="ms-auto me-5 w-10 rounded border-2 border-primary text-primary text-[22px] flex justify-center items-center transition-all duration-200 hover:bg-primary hover:text-white"
+                    onClick={() => {setOpenListaVentasCotizaciones(true)}}
+                >
+                    <IoDocumentsOutline />
+                </button>
+
                 <InputSelectSearch
                     value={filter.categoria}
-                    className="ms-auto"
                     name="categoria"
                     placeholder="Categoría: "
                     options={listaCategorias.map(m => ({ value: m.nombre, name: m.nombre }))}
