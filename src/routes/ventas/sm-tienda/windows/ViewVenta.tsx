@@ -1,9 +1,11 @@
 import { useSelector } from "react-redux";
 import Windows from "../../../../components/Windows";
-import { Producto, Venta } from "../../../../interface";
+import { Producto, TipoMonedaVenta, Venta } from "../../../../interface";
 import { RootState } from "../../../../redux/store";
 import { dateLocal } from "../../../../helpers";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { generateCotizacionVentaPdf } from "../../../../helpers/cotizacion-venta-pdf";
+import { FaRegFilePdf } from "react-icons/fa";
 
 interface ViewVentaProp {
     closeButton: () => void;
@@ -21,13 +23,31 @@ interface ProductoDetalle {
 }
 
 export default function ViewVenta({ closeButton, venta }: ViewVentaProp) {
+    const tableRef = useRef<HTMLTableElement | null>(null);
     const { logo, users } = useSelector((s: RootState) => s.Sucursal);
     const { listaProductos } = useSelector((s: RootState) => s.Productos);
+    const { listaTipoMonedaVenta } = useSelector((s: RootState) => s.Ventas);
+
 
 
     const [responsable, setResponsable] = useState('');
+    const [monedaCotizacion, setMonedaCotizacion] = useState<TipoMonedaVenta>({ id: '', abreviatura: '', nombre: '', sucursalId: '' });
     const [listaProductosDetalle, setListaProductosDetalle] = useState<ProductoDetalle[]>([])
 
+    const descargarPdf = () => {
+        const tableId = tableRef.current?.id;
+
+        generateCotizacionVentaPdf({
+            fileName: `VENTA Nº${ venta.numero }-${venta.createdAt}.pdf`,
+            cliente: `${venta.ClienteVenta.nombre.toUpperCase()} ${venta.ClienteVenta.apellido.toUpperCase()}`,
+            responsable: responsable.toUpperCase(),
+            numero: venta.numero.toString(),
+            detalle: venta.detalle || '',
+            fecha: dateLocal(venta.createdAt),
+            tableId,
+            logo,
+        });
+    }
 
     useEffect(() => {
         const usuarioResponsable = users.find(u => u.id === venta?.usuarioId);
@@ -47,6 +67,10 @@ export default function ViewVenta({ closeButton, venta }: ViewVentaProp) {
             }))
             setListaProductosDetalle(productosDetalle);
         }
+
+        const listaTipoMonedaObj = listaTipoMonedaVenta.reduce((acc, tm) => { acc[tm.id] = tm; return acc; }, {} as Record<string, TipoMonedaVenta>);
+                const tipoMoneda = listaTipoMonedaObj[venta.PrecioVenta.tipoMonedaVentaId];
+                setMonedaCotizacion(tipoMoneda);
     }, [venta])
 
 
@@ -66,12 +90,12 @@ export default function ViewVenta({ closeButton, venta }: ViewVentaProp) {
                             <p><span className="font-bold">Fecha: </span> {dateLocal(venta.createdAt as string)} </p>
                             <p><span className="font-bold">Cliente: </span> {venta.ClienteVenta.nombre} {venta.ClienteVenta.apellido}</p>
                             <p><span className="font-bold">Responsable: </span> <span className="capitalize">{responsable}</span> </p>
-                            <p><span className="font-bold">Detalle:</span> {venta.detalle} </p>
                         </div>
                     }
                 </div>
+                <p className="p-2" ><span className="font-bold">Detalle:</span> {venta.detalle} </p>
 
-                <table className={`table-fixed text-left w-full border-secondary rounded overflow-hidden mb-3`}>
+                <table className={`table-fixed text-left w-full border-secondary rounded overflow-hidden mb-3`} id="tableViewVenta" ref={tableRef}>
                     <thead className="bg-secondary text-white sticky top-0" >
                         <tr>
                             <th className={`uppercase text-center px-2 w-[100px]`}>CODIGO</th>
@@ -79,32 +103,44 @@ export default function ViewVenta({ closeButton, venta }: ViewVentaProp) {
                             <th className={`uppercase text-center px-2 w-[70px]`}>U/M</th>
                             <th className={`uppercase text-center px-2 w-[110px]`}>CANTIDAD</th>
                             <th className={`uppercase text-center px-2 w-[110px]`}>PRECIO</th>
-                            <th className={`uppercase text-center px-2 w-[110px]`}>SUBTOTAL</th>
+                            <th className={`uppercase text-center px-2 w-[180px]`}>SUBTOTAL</th>
                         </tr>
                     </thead>
                     {venta &&
                         <tbody>
                             {listaProductosDetalle.map(p => (
                                 <tr key={p.productoId} className="border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase text-center" >
-                                    <td>{p.codigo}</td>
-                                    <td>{p.nombre}</td>
-                                    <td>{p.unidadMedida}</td>
+                                    <td>{p.codigo.toUpperCase()}</td>
+                                    <td>{p.nombre.toUpperCase()}</td>
+                                    <td>{p.unidadMedida.toUpperCase()}</td>
                                     <td>{p.cantidad}</td>
                                     <td>{p.precio}</td>
-                                    <td>{p.subTotal}</td>
+                                    <td className="text-end pe-2" >{p.subTotal} <span>{monedaCotizacion.abreviatura.toUpperCase()}</span></td>
                                 </tr>
                             ))}
+                        </tbody>}
+
+                        <tfoot>
                             <tr className=" bg-secondary/50 border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase text-end">
                                 <td colSpan={5} className="font-bold" >DESCUENTO</td>
-                                <td className="text-center" >{venta.descuento || 0}</td>
+                                <td className="text-end pe-2" >{parseFloat(venta.descuento || '0').toFixed(2)} <span>{monedaCotizacion.abreviatura.toUpperCase()}</span></td>
                             </tr>
 
                             <tr className=" bg-secondary/70 border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase text-end">
                                 <td colSpan={5} className="font-bold" >TOTAL</td>
-                                <td className="text-center" >{venta.total}</td>
+                                <td className="text-end pe-2" >{parseFloat(venta.total).toFixed(2) } <span>{monedaCotizacion.abreviatura.toUpperCase()}</span></td>
                             </tr>
-                        </tbody>}
+                        </tfoot>
                 </table>
+
+                <div className="flex justify-center" >
+                    <button
+                        type="button"
+                        onClick={descargarPdf}
+                        className="ms-2 flex items-center border border-danger rounded-full text-danger px-3 transition-all duration-200 hover:bg-danger hover:text-white"
+                    >DESCARGAR <FaRegFilePdf className="ms-2" />
+                    </button>
+                </div>
             </div>
         </Windows>
     );

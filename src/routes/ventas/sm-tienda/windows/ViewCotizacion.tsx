@@ -1,10 +1,12 @@
 import { useSelector } from "react-redux";
 import Windows from "../../../../components/Windows";
-import { CotizacionVenta, ListDecrementProductosAlmacenDto, ProductoTienda } from "../../../../interface";
+import { CotizacionVenta, ListDecrementProductosAlmacenDto, ProductoTienda, TipoMonedaVenta } from "../../../../interface";
 import { RootState } from "../../../../redux/store";
 import { dateLocal } from "../../../../helpers";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ProformaVentaWindow from "./ProformaVentaWindows";
+import { FaRegFilePdf } from "react-icons/fa";
+import { generateCotizacionVentaPdf } from "../../../../helpers/cotizacion-venta-pdf";
 
 interface ViewCotizacionProp {
     closeButton: () => void;
@@ -24,10 +26,13 @@ interface ProductoDetalle {
 
 
 export default function ViewCotizacion({ closeButton, cotizacion, decrementProductos }: ViewCotizacionProp) {
+    const tableRef = useRef<HTMLTableElement | null>(null);
+
     const { logo, users } = useSelector((s: RootState) => s.Sucursal);
-    const { listaProductosTienda } = useSelector((s: RootState) => s.Ventas);
+    const { listaProductosTienda, listaTipoMonedaVenta } = useSelector((s: RootState) => s.Ventas);
 
     const [responsable, setResponsable] = useState('');
+    const [monedaCotizacion, setMonedaCotizacion] = useState<TipoMonedaVenta>({ id: '', abreviatura: '', nombre: '', sucursalId: '' });
     const [listaProductosDetalle, setListaProductosDetalle] = useState<ProductoDetalle[]>([]);
     const [checkedProductosTienda, setCheckedProductosTienda] = useState<ProductoTienda[]>([])
 
@@ -60,6 +65,21 @@ export default function ViewCotizacion({ closeButton, cotizacion, decrementProdu
         setOpenProformaVenta(true)
     }
 
+    const descargarPdf = () => {
+        const tableId = tableRef.current?.id;
+
+        generateCotizacionVentaPdf({
+            fileName: `COTIZACION Nº${ cotizacion.numero }-${cotizacion.createdAt}.pdf`,
+            cliente: `${cotizacion.ClienteVenta.nombre.toUpperCase()} ${cotizacion.ClienteVenta.apellido.toUpperCase()}`,
+            responsable: responsable.toUpperCase(),
+            numero: cotizacion.numero.toString(),
+            detalle: cotizacion.detalle || '',
+            fecha: dateLocal(cotizacion.createdAt),
+            tableId,
+            logo,
+        });
+    }
+
     useEffect(() => {
         const usuarioResponsable = users.find(u => u.id === cotizacion.usuarioId);
         if (usuarioResponsable) setResponsable(`${usuarioResponsable.nombre} ${usuarioResponsable.apellido}`);
@@ -67,15 +87,19 @@ export default function ViewCotizacion({ closeButton, cotizacion, decrementProdu
 
         const productosDetalle: ProductoDetalle[] = cotizacion.ProductoDetalleVenta.map(p => ({
             cantidad: p.cantidad,
-            codigo: listaProductosObj[p.productoId].codigo,
-            nombre: listaProductosObj[p.productoId].nombre,
+            codigo: listaProductosObj[p.productoId].codigo.toUpperCase(),
+            nombre: listaProductosObj[p.productoId].nombre.toUpperCase(),
             precio: p.precio,
             productoId: p.productoId,
-            unidadMedida: listaProductosObj[p.productoId].UnidadMedida.abreviatura,
+            unidadMedida: listaProductosObj[p.productoId].UnidadMedida.abreviatura.toUpperCase(),
             subTotal: (parseFloat(p.precio) * p.cantidad).toString(),
 
         }))
         setListaProductosDetalle(productosDetalle);
+
+        const listaTipoMonedaObj = listaTipoMonedaVenta.reduce((acc, tm) => { acc[tm.id] = tm; return acc; }, {} as Record<string, TipoMonedaVenta>);
+        const tipoMoneda = listaTipoMonedaObj[cotizacion.PrecioVenta.tipoMonedaVentaId];
+        setMonedaCotizacion(tipoMoneda);
     }, [cotizacion])
 
 
@@ -85,7 +109,7 @@ export default function ViewCotizacion({ closeButton, cotizacion, decrementProdu
             {openProformaVenta &&
                 <ProformaVentaWindow
                     decrementProductos={decrementProductos}
-                    checkProductosTienda={checkedProductosTienda }
+                    checkProductosTienda={checkedProductosTienda}
                     datosCotizacion={{ cotizacionId: cotizacion.id, Cliente: cotizacion.ClienteVenta, descuento: cotizacion.descuento || '0' }}
                     closeButton={() => { setOpenProformaVenta(false) }} />
             }
@@ -99,14 +123,16 @@ export default function ViewCotizacion({ closeButton, cotizacion, decrementProdu
 
                     {cotizacion &&
                         <div className="ms-auto" >
+                            <p className="mb-3 text-[22px] "> <span className="font-bold">N°:</span> {cotizacion.numero} </p>
                             <p><span className="font-bold">Fecha: </span> {dateLocal(cotizacion.createdAt)} </p>
                             <p><span className="font-bold">Cliente: </span> {cotizacion.ClienteVenta.nombre} {cotizacion.ClienteVenta.apellido}</p>
                             <p><span className="font-bold">Responsable: </span> <span className="capitalize">{responsable}</span> </p>
                         </div>
                     }
                 </div>
+                <p className="p-2" ><span className="font-bold">Detalle:</span> {cotizacion.detalle} </p>
 
-                <table className={`table-fixed text-left w-full border-secondary rounded overflow-hidden mb-3`}>
+                <table className={`table-fixed text-left w-full border-secondary rounded overflow-hidden mb-3`} id="tableViewCotizacion" ref={tableRef} >
                     <thead className="bg-secondary text-white sticky top-0" >
                         <tr>
                             <th className={`uppercase text-center px-2 w-[100px]`}>CODIGO</th>
@@ -114,7 +140,7 @@ export default function ViewCotizacion({ closeButton, cotizacion, decrementProdu
                             <th className={`uppercase text-center px-2 w-[70px]`}>U/M</th>
                             <th className={`uppercase text-center px-2 w-[110px]`}>CANTIDAD</th>
                             <th className={`uppercase text-center px-2 w-[110px]`}>PRECIO</th>
-                            <th className={`uppercase text-center px-2 w-[110px]`}>SUBTOTAL</th>
+                            <th className={`uppercase text-center px-2 w-[180px]`}>SUBTOTAL</th>
                         </tr>
                     </thead>
                     {cotizacion &&
@@ -126,19 +152,22 @@ export default function ViewCotizacion({ closeButton, cotizacion, decrementProdu
                                     <td>{p.unidadMedida}</td>
                                     <td>{p.cantidad}</td>
                                     <td>{p.precio}</td>
-                                    <td>{p.subTotal}</td>
+                                    <td className="text-end pe-2" >{parseFloat(p.subTotal).toFixed(2)} <span>{monedaCotizacion.abreviatura.toUpperCase()}</span></td>
                                 </tr>
                             ))}
-                            <tr className=" bg-secondary/50 border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase text-end">
-                                <td colSpan={5} className="font-bold" >DESCUENTO</td>
-                                <td className="text-center" >{cotizacion.descuento || 0}</td>
-                            </tr>
-
-                            <tr className=" bg-secondary/70 border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase text-end">
-                                <td colSpan={5} className="font-bold" >TOTAL</td>
-                                <td className="text-center" >{cotizacion.total}</td>
-                            </tr>
                         </tbody>}
+
+                    <tfoot>
+                        <tr className=" bg-secondary/50 border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase text-end">
+                            <td colSpan={5} className="font-bold" >DESCUENTO</td>
+                            <td className="text-end pe-2" >{parseFloat(cotizacion.descuento || '0').toFixed(2)} <span>{monedaCotizacion.abreviatura.toUpperCase()}</span></td>
+                        </tr>
+
+                        <tr className=" bg-secondary/70 border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase text-end">
+                            <td colSpan={5} className="font-bold" >TOTAL</td>
+                            <td className="text-end pe-2" >{cotizacion.total} <span>{monedaCotizacion.abreviatura.toUpperCase()}</span></td>
+                        </tr>
+                    </tfoot>
                 </table>
 
                 <div className="flex justify-center" >
@@ -147,6 +176,13 @@ export default function ViewCotizacion({ closeButton, cotizacion, decrementProdu
                         onClick={cotizacionToVenta}
                         className="border border-success rounded-full text-success px-3 transition-all duration-200 hover:bg-success hover:text-white"
                     >CONVERTIR A VENTA
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={descargarPdf}
+                        className="ms-2 flex items-center border border-danger rounded-full text-danger px-3 transition-all duration-200 hover:bg-danger hover:text-white"
+                    >DESCARGAR <FaRegFilePdf className="ms-2" />
                     </button>
                 </div>
             </div>
