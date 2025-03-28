@@ -4,21 +4,23 @@ import Windows from "../../../../components/Windows";
 import { useForm, useFormArray } from "../../../../hooks";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { useEffect, useState } from 'react';
-import { ClienteVenta, CotizacionVenta, CreateCotizacionVentaDto, CreateProductoDetalleVentaDto, ProductoTienda } from "../../../../interface";
+import { ClienteVenta, CotizacionVenta, CreateCotizacionVentaDto, CreateProductoDetalleVentaDto, CreateVentaDto, ListDecrementProductosAlmacenDto, ProductoTienda, Venta } from "../../../../interface";
 import { dateLocal } from "../../../../helpers";
 import { InputNumber, InputTextarea, InputTextBlock } from "../../../../components/Input";
 import ListaClientes from "./ListaClientes";
 import { BsFillTrashFill } from "react-icons/bs";
-import { createCotizacionVentaAPI } from '../../../../redux/ventas/ventasThunk';
+import { createCotizacionVentaAPI, createVentaAPI } from '../../../../redux/ventas/ventasThunk';
 import { hideNotification, showNotificationError, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
 import ViewCotizacion from "./ViewCotizacion";
 import { FaWarehouse } from "react-icons/fa";
+import ViewVenta from "./ViewVenta";
 
 
 interface CreateManyProductosAlmacenProp {
   closeButton: () => void;
   checkProductosTienda: ProductoTienda[];
   handleCheckProducto: (productoId: string) => void;
+  decrementProductos: (listDecrementProductosAlmacenDto: ListDecrementProductosAlmacenDto) => void;
 }
 
 interface FormTable {
@@ -42,41 +44,43 @@ const columns: FormTableColumn<FormTable>[] = [
   { name: 'SUBTOTAL', type: FormTableColumnTypes.P, key: "subtotal", width: 'w-[110px]' }
 ];
 
-export default function ProformaVentaWindow({ closeButton, checkProductosTienda, handleCheckProducto }: CreateManyProductosAlmacenProp) {
+export default function ProformaVentaWindow({ closeButton, checkProductosTienda, handleCheckProducto, decrementProductos }: CreateManyProductosAlmacenProp) {
   const { id: sucursalId, logo, userData } = useSelector((s: RootState) => s.Sucursal);
   const { opcionesVenta } = useSelector((s: RootState) => s.Ventas);
-  
+
   const dispatch = useDispatch<AppDispatch>();
 
   const [clienteSelected, setClienteSelected] = useState<ClienteVenta>({ id: '', apellido: '', codigo: '', nombre: '', sucursalId });
   const [ultimaCotizacion, setUltimaCotizacion] = useState<CotizacionVenta | null>(null)
+  const [ultimaVenta, setUltimaVenta] = useState<Venta | null>(null);
 
   const [openListaClientes, setOpenListaClientes] = useState(false);
   const [openViewCotizacion, setOpenViewCotizacion] = useState(false);
+  const [openViewVenta, setOpenViewVenta] = useState(false);
 
   const { data: formProforma, handleInputChange: onChangeIngreso } = useForm<{ detalle: string, descuento: string }>({ detalle: '', descuento: '0' });
   const { arrayData, handleInputChange, replaceData, removeData } = useFormArray<FormTable>([]);
 
-  const removeProducto = ( productoId: string, index: number ) => {
+  const removeProducto = (productoId: string, index: number) => {
     handleCheckProducto(productoId);
     removeData(index);
   }
-  
+
   const createCotizacion = () => {
 
-    if(!clienteSelected.id){
-      dispatch(showNotificationError({tittle: 'COTIZACION DE VENTA', description: 'Se necesitan datos del cliente.'}));
-      setTimeout( () => dispatch(hideNotification()), 5000 );
+    if (!clienteSelected.id) {
+      dispatch(showNotificationError({ tittle: 'COTIZACION DE VENTA', description: 'Se necesitan datos del cliente.' }));
+      setTimeout(() => dispatch(hideNotification()), 5000);
       return;
     }
 
-    const productoDetalleVenta:CreateProductoDetalleVentaDto[] = arrayData.map(p => ({
-      cantidad:  parseInt(p.cantidad),
+    const productoDetalleVenta: CreateProductoDetalleVentaDto[] = arrayData.map(p => ({
+      cantidad: parseInt(p.cantidad),
       precio: p.precio,
-      productoId: p.productoId,
+      productoId: p.productoId
     }))
 
-    const totalNum = (arrayData.reduce((acc, p) => acc + (parseInt(p.cantidad) * parseFloat(p.precio)),0)-parseFloat(formProforma.descuento)).toFixed(3);
+    const totalNum = (arrayData.reduce((acc, p) => acc + (parseInt(p.cantidad) * parseFloat(p.precio)), 0) - parseFloat(formProforma.descuento)).toFixed(3);
 
     const cotizacionVenta: CreateCotizacionVentaDto = {
       sucursalId,
@@ -84,7 +88,7 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
       usuarioId: userData.id,
       descuento: formProforma.descuento,
       detalle: formProforma.detalle,
-      precioVentaId: opcionesVenta?.precioVentaId||'',
+      precioVentaId: opcionesVenta?.precioVentaId || '',
       clienteVentaId: clienteSelected.id,
       productoDetalleVenta
     }
@@ -92,40 +96,50 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
   }
 
   const createVenta = () => {
-    if(!clienteSelected.id){
-      dispatch(showNotificationError({tittle: 'REGISTRO DE VENTA', description: 'Se necesitan datos del cliente.'}));
-      setTimeout( () => dispatch(hideNotification()), 5000 );
+    if (!clienteSelected.id) {
+      dispatch(showNotificationError({ tittle: 'REGISTRO DE VENTA', description: 'Se necesitan datos del cliente.' }));
+      setTimeout(() => dispatch(hideNotification()), 5000);
       return;
     }
 
     const verifyCantidades: boolean = arrayData.some(p => parseInt(p.cantidad) > p.cantidadAlmacen);
-    if(verifyCantidades){
-      dispatch(showNotificationWarning({tittle: 'REGISTRO DE VENTA', description: 'El almacén de ventas no cuenta con las cantidades a vender.'}));
-      setTimeout( () => dispatch(hideNotification()), 5000 );
+    if (verifyCantidades) {
+      dispatch(showNotificationWarning({ tittle: 'REGISTRO DE VENTA', description: 'El almacén de ventas no cuenta con las cantidades a vender.' }));
+      setTimeout(() => dispatch(hideNotification()), 5000);
       return;
     }
 
-    const productoDetalleVenta:CreateProductoDetalleVentaDto[] = arrayData.map(p => ({
-      cantidad:  parseInt(p.cantidad),
+    const productoDetalleVenta: CreateProductoDetalleVentaDto[] = arrayData.map(p => ({
+      cantidad: parseInt(p.cantidad),
       precio: p.precio,
-      productoId: p.productoId,
+      productoId: p.productoId
     }));
 
-    const totalNum = (arrayData.reduce((acc, p) => acc + (parseInt(p.cantidad) * parseFloat(p.precio)),0)-parseFloat(formProforma.descuento)).toFixed(3);
+    const listDecrementProductos: ListDecrementProductosAlmacenDto = {
+      productos: arrayData.map(p => ({
+        cantidad: parseInt(p.cantidad),
+        productoAlmacenId: p.productoAlmacenId
+      }))
+    }
 
-    const cotizacionVenta: CreateCotizacionVentaDto = { //! cambiar de dto
+    const totalNum = (arrayData.reduce((acc, p) => acc + (parseInt(p.cantidad) * parseFloat(p.precio)), 0) - parseFloat(formProforma.descuento)).toFixed(3);
+
+    if (!opcionesVenta?.almacenId) return;
+
+    const venta: CreateVentaDto = {
       sucursalId,
+      almacenId: opcionesVenta.almacenId,
       total: totalNum.toString(),
       usuarioId: userData.id,
       descuento: formProforma.descuento,
       detalle: formProforma.detalle,
-      precioVentaId: opcionesVenta?.precioVentaId||'',
+      precioVentaId: opcionesVenta?.precioVentaId || '',
       clienteVentaId: clienteSelected.id,
       productoDetalleVenta
     }
 
-    console.log('vendiendo...')
-
+    decrementProductos(listDecrementProductos);
+    dispatch(createVentaAPI(venta, listDecrementProductos, setUltimaVenta, setOpenViewVenta));
   }
 
   useEffect(() => {
@@ -148,7 +162,8 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
     <Windows tittle="REGISTRAR NUEVA VENTA" closeButton={closeButton}>
 
       {openListaClientes && <ListaClientes closeButton={() => { setOpenListaClientes(false) }} setClienteSelected={setClienteSelected} />}
-      {openViewCotizacion&& <ViewCotizacion closeButton={() => {setOpenViewCotizacion(false)}} cotizacion={ultimaCotizacion}  /> }
+      {openViewCotizacion && <ViewCotizacion closeButton={() => { setOpenViewCotizacion(false) }} cotizacion={ultimaCotizacion} />}
+      {openViewVenta && <ViewVenta closeButton={() => { setOpenViewVenta(false) }} venta={ultimaVenta} />}
 
 
       <div className="relative  flex flex-col h-[80vh] overflow-y-scroll scroll-custom ms-2 my-2 ">
@@ -180,8 +195,8 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
 
         <div className="bg-success mb-3 text-white text-end px-8 text-[22px]" >
           <span className="me-2" >Total:</span>
-          {(arrayData.reduce((acc, p) => acc + (parseInt(p.cantidad) * parseFloat(p.precio)), 0) - parseFloat(formProforma.descuento || '0')).toFixed(2)} 
-          <span className="ms-2 uppercase" >{opcionesVenta?.PrecioVenta.TipoMonedaVenta?.abreviatura}</span>  
+          {(arrayData.reduce((acc, p) => acc + (parseInt(p.cantidad) * parseFloat(p.precio)), 0) - parseFloat(formProforma.descuento || '0')).toFixed(2)}
+          <span className="ms-2 uppercase" >{opcionesVenta?.PrecioVenta.TipoMonedaVenta?.abreviatura}</span>
         </div>
 
         <table className={`table-fixed text-left w-full border-secondary rounded overflow-hidden`}>
@@ -207,7 +222,7 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
                   <p className="bg-secondary-1/50 border-secondary text-secondary border-[1px] py-1 px-2 rounded">{f.unidadMedidaAbreviada?.toUpperCase()}</p>
                 </td>
                 <td className="p-1 text-center relative ">
-                  {(parseInt(f.cantidad) > f.cantidadAlmacen)&&  <span 
+                  {(parseInt(f.cantidad) > f.cantidadAlmacen) && <span
                     className="flex justify-center items-center bg-warning absolute text-[10px] px-1 right-0 top-0 rounded-full">
                     <FaWarehouse className="me-2" />{f.cantidadAlmacen}
                   </span>}
@@ -236,13 +251,13 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
                   </p>
                 </td>
                 <td className="text-center text-secondary" >
-                    <button 
-                    type="button" 
-                    className="bg-danger/80 p-1 rounded-full  text-white hover:bg-danger" 
-                    onClick={() => {removeProducto(f.productoId, indexFil)}}>
-                      <BsFillTrashFill />
-                    </button>
-                  </td>
+                  <button
+                    type="button"
+                    className="bg-danger/80 p-1 rounded-full  text-white hover:bg-danger"
+                    onClick={() => { removeProducto(f.productoId, indexFil) }}>
+                    <BsFillTrashFill />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

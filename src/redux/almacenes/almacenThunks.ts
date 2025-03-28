@@ -4,7 +4,7 @@ import api from '../../api/config';
 import { createAlmacen, createManyProductosAlmacen, createProductoAlmacen, getAllAlmacenes, getAllIngresosProductosAlmacen, getAllProductosAlmacen, getLogsAlmacenes, updateAlmacen, updateManyProductosAlmacen, updateProductoAlmacen } from './almacenesSlice';
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from '../aplication/aplicationSlice';
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from '../notification/notificationSlice';
-import { CreateIngresoAlmacenDto, CreateManyProductosAlmacenDto, CreateProductoAlmacenDto, IngresoAlmacen, ProductoAlmacenDetallado, ProductoAlmacen, CreateAlmacenDto, Almacen, UpdateAlmacenDto, Producto } from '../../interface';
+import { CreateIngresoAlmacenDto, CreateManyProductosAlmacenDto, CreateProductoAlmacenDto, IngresoAlmacen, ProductoAlmacenDetallado, ProductoAlmacen, CreateAlmacenDto, Almacen, UpdateAlmacenDto, Producto, ListDecrementProductosAlmacenDto } from '../../interface';
 
 
 export const getAllAlmacenesAPI = () => {
@@ -305,6 +305,19 @@ export const createIngresoProductosAlmacenAPI = (createIngresoProductosAlmacenDt
                 dispatch(finishLoadingData());
                 setTimeout( () => dispatch(hideNotification()), 5000 );
             }else console.log(error);
+        }
+    }
+}
+
+export const decrementProdutosAlmacenAPI = (listDecrementProductosAlmacenDto: ListDecrementProductosAlmacenDto) => {
+    return async (dispatch: AppDispatch) => {
+        try {
+            dispatch(startLoadingData());
+            await api.post(`almacenes-ms/decrement-productos-almacen`, listDecrementProductosAlmacenDto);
+            dispatch(finishLoadingData());
+        } catch (error) {
+            console.log(error);
+            dispatch(finishLoadingData());
         }
     }
 }

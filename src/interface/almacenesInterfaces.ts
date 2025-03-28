@@ -92,3 +92,12 @@ export interface CreateIngresoAlmacenDto {
     ingresoProductosAlmacen: CreateIngresoProductoAlmacenDto[]
 }
 
+export interface DecrementProductoAlmacenDto{
+    productoAlmacenId: string;
+    cantidad: number;
+}
+
+export interface ListDecrementProductosAlmacenDto {
+    productos: DecrementProductoAlmacenDto[]
+}
+

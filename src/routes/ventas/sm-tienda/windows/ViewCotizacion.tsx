@@ -53,7 +53,7 @@ export default function ViewCotizacion({ closeButton, cotizacion }: ViewCotizaci
     return (
         <Windows tittle="COTIZACION" closeButton={closeButton}>
 
-            <div className="relative  flex flex-col h-[80vh] overflow-y-scroll scroll-custom ms-2 my-2 ">
+            <div className="relative  flex flex-col max-h-[80vh] overflow-y-scroll scroll-custom ms-2 my-2 ">
 
                 <div className="mb-3 px-2 flex" >
                     <div className="flex items-center" >
@@ -97,7 +97,7 @@ export default function ViewCotizacion({ closeButton, cotizacion }: ViewCotizaci
                             <td className="text-center" >{cotizacion.descuento || 0}</td>
                         </tr>
 
-                        <tr className=" bg-success border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase text-end">
+                        <tr className=" bg-secondary/70 border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase text-end">
                             <td colSpan={5} className="font-bold" >TOTAL</td>
                             <td className="text-center" >{cotizacion.total}</td>
                         </tr>

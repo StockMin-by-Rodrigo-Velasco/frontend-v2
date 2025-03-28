@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import HeaderSection from "../../../components/HeaderSection";
 import { AppDispatch, RootState } from "../../../redux/store";
 import { useEffect, useState } from "react";
-import { CreateOpcionesVentaDto, ProductoTienda } from "../../../interface";
+import { CreateOpcionesVentaDto, DecrementProductoAlmacenDto, ListDecrementProductosAlmacenDto, ProductoTienda } from "../../../interface";
 import { InputSearch, InputSelect, InputSelectSearch } from "../../../components/Input";
 import BodySection from "../../../components/BodySection";
 import ProductoCard from "./components/ProductoCard";
@@ -30,7 +30,7 @@ const filterInitialState: FilterInterface = {
 export default function TiendaVentas() {
     const { loadingData } = useSelector((s: RootState) => s.Aplication);
     const { id: sucursalId } = useSelector((s: RootState) => s.Sucursal);
-    const { opcionesVenta, listaPrecioVenta } = useSelector((s: RootState) => s.Ventas);
+    const { opcionesVenta, listaPrecioVenta, listaProductosTienda } = useSelector((s: RootState) => s.Ventas);
     const { listaAlmacenes } = useSelector((s: RootState) => s.Almacenes);
     const { listaMarcas, listaCategorias } = useSelector((s: RootState) => s.Productos);
 
@@ -83,6 +83,18 @@ export default function TiendaVentas() {
         setFilterProductosTienda(newProductosTienda);
     }
 
+    const decrementProductos = (listDecrementProductosAlmacenDto: ListDecrementProductosAlmacenDto) => {
+        const { productos } = listDecrementProductosAlmacenDto;
+        const productosObj = productos.reduce((acc, p) => { acc[p.productoAlmacenId] = p; return acc; }, {} as Record<string, DecrementProductoAlmacenDto>);
+
+        const newListaProductos: ProductoTienda[] = listaProductosTienda.map(p => {
+            if (productosObj[p.productoAlmacenId]) {
+                return { ...p, cantidad: (p.cantidad - productosObj[p.productoAlmacenId].cantidad), check: true }
+            } else return { ...p }
+        });
+        setFilterProductosTienda(newListaProductos);
+    }
+
     const handleOpcionChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { value, name } = e.target;
         const newFilterOpciones: CreateOpcionesVentaDto = { ...filterOpciones, [name]: value }
@@ -114,15 +126,16 @@ export default function TiendaVentas() {
     return (
         <>
 
-            {openProformaVenta && 
-                <ProformaVenta 
-                    closeButton={() => {setOpenProformaVenta(false)}} 
-                    checkProductosTienda={filterProductosTienda.filter(p => p.check)} 
-                    handleCheckProducto={handleCheckProducto} 
+            {openProformaVenta &&
+                <ProformaVenta
+                    closeButton={() => { setOpenProformaVenta(false) }}
+                    checkProductosTienda={filterProductosTienda.filter(p => p.check)}
+                    handleCheckProducto={handleCheckProducto}
+                    decrementProductos={decrementProductos}
                 />
             }
-            {openListaVentasCotizaciones&& <ListaVentasCotizaciones closeButton={() => {setOpenListaVentasCotizaciones(false)}}/>}
-            
+            {openListaVentasCotizaciones && <ListaVentasCotizaciones closeButton={() => { setOpenListaVentasCotizaciones(false) }} />}
+
             <HeaderSection>
                 <InputSearch
                     handleInputChange={filterProductos}
@@ -134,7 +147,7 @@ export default function TiendaVentas() {
                 <button
                     type="button"
                     className="ms-auto me-5 w-10 rounded border-2 border-primary text-primary text-[22px] flex justify-center items-center transition-all duration-200 hover:bg-primary hover:text-white"
-                    onClick={() => {setOpenListaVentasCotizaciones(true)}}
+                    onClick={() => { setOpenListaVentasCotizaciones(true) }}
                 >
                     <IoDocumentsOutline />
                 </button>
@@ -163,10 +176,10 @@ export default function TiendaVentas() {
                     onClick={() => { setOpenProformaVenta(true) }}
                     className="relative ms-5 w-10 rounded border-2 border-primary text-primary text-[22px] flex justify-center items-center overflow-hidden disabled:border-secondary disabled:text-secondary">
                     <MdShoppingCart />
-                    {(checkedProductos > 0)&&
-                        <span 
-                        className="bg-danger rounded-br text-white w-4 h-4 absolute top-0 left-0 text-[12px] flex justify-center items-center">
-                        {checkedProductos}
+                    {(checkedProductos > 0) &&
+                        <span
+                            className="bg-danger rounded-br text-white w-4 h-4 absolute top-0 left-0 text-[12px] flex justify-center items-center">
+                            {checkedProductos}
                         </span>
                     }
                 </button>

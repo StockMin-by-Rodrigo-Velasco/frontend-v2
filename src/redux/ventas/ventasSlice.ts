@@ -1,5 +1,5 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
-import { ClienteVenta, Log, OpcionesVenta, PrecioVenta, ProductoTienda, TipoMonedaVenta } from "../../interface";
+import { ClienteVenta, DecrementProductoAlmacenDto, ListDecrementProductosAlmacenDto, Log, OpcionesVenta, PrecioVenta, ProductoTienda, TipoMonedaVenta } from "../../interface";
 
 
 interface VentasInitialState {
@@ -31,17 +31,16 @@ const VentasSlice = createSlice({
         getAllProductosVenta: (state, action: PayloadAction<ProductoTienda[]>) => {
             state.listaProductosTienda= action.payload;
         },
-        // updatePrecioProductoVenta: (state, action: PayloadAction<{productoId: string, precio: string, updatedAt: string}>) => {
-        //     const {productoId, precio, updatedAt} = action.payload;
-
-        //     const index = state.listaProductosTienda.findIndex((p) => p.productoId === productoId);
-        //     if (index === -1) return;
-
-        //     const newProductosTienda = [...state.listaProductosTienda];
-        //     newProductosTienda[index] = { ...newProductosTienda[index], precio, updatedAt};
-            
-        //     state.listaProductosTienda = [...newProductosTienda]
-        // },
+        decrementProductos: (state, action: PayloadAction<ListDecrementProductosAlmacenDto>) => {
+            const {productos} = action.payload;
+            const productosObj = productos.reduce((acc, p) => { acc[p.productoAlmacenId] = p; return acc; }, {} as Record<string, DecrementProductoAlmacenDto>);
+            const newListaProductos:ProductoTienda[] = current(state.listaProductosTienda).map(p => {
+                if(productosObj[p.productoAlmacenId]){
+                    return {...p, cantidad: (p.cantidad - productosObj[p.productoAlmacenId].cantidad)}
+                }else return {...p}
+            });
+            state.listaProductosTienda = [...newListaProductos];
+        },
         getAllClientesVenta: (state, action: PayloadAction<ClienteVenta[]>) => {
             state.listaClientes = action.payload;
         },
@@ -103,7 +102,7 @@ const VentasSlice = createSlice({
 
 export const {
     getAllProductosVenta,
-    // updatePrecioProductoVenta,
+    decrementProductos,
 
     getAllClientesVenta,
     createClienteVenta,

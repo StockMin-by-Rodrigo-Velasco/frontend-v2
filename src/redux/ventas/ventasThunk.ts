@@ -1,11 +1,12 @@
 import axios, { AxiosResponse } from "axios";
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from "../aplication/aplicationSlice";
 import { AppDispatch, RootState } from "../store";
-import { createClienteVenta, createPrecioVenta, createTipoMonedaVenta, deletePrecioVenta, deleteTipoMonedaVenta, getAllClientesVenta, getAllPrecioVenta, getAllProductosVenta, getAllTipoMonedaVenta, getLogsVentas, getOpcionesVenta, updateClienteVenta, updatePrecioVenta, updateTipoMonedaVenta } from "./ventasSlice";
+import { createClienteVenta, createPrecioVenta, createTipoMonedaVenta, decrementProductos, deletePrecioVenta, deleteTipoMonedaVenta, getAllClientesVenta, getAllPrecioVenta, getAllProductosVenta, getAllTipoMonedaVenta, getLogsVentas, getOpcionesVenta, updateClienteVenta, updatePrecioVenta, updateTipoMonedaVenta } from "./ventasSlice";
 import api from "../../api/config";
-import { ClienteVenta, CreateClienteVentaDto, CreateTipoMonedaVentaDto, DeleteTipoMonedaVentaDto, ProductoAlmacen, TipoMonedaVenta, UpdateClienteVentaDto, UpdateTipoMonedaVentaDto } from "../../interface";
+import { ClienteVenta, CreateClienteVentaDto, CreateTipoMonedaVentaDto, DeleteTipoMonedaVentaDto, ListDecrementProductosAlmacenDto, ProductoAlmacen, TipoMonedaVenta, UpdateClienteVentaDto, UpdateTipoMonedaVentaDto } from "../../interface";
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from "../notification/notificationSlice";
-import { CotizacionVenta, CreateCotizacionVentaDto, CreateOpcionesVentaDto, CreatePrecioVentaDto, CreateProductoVentaDto, DeletePrecioVentaDto, GetCotizacionesVentaDto, OpcionesVenta, PrecioVenta, ProductoTienda, ProductoVenta, UpdateOpcionesVentaDto, UpdatePrecioVentaDto } from '../../interface/ventasInterfaces';
+import { CotizacionVenta, CreateCotizacionVentaDto, CreateOpcionesVentaDto, CreatePrecioVentaDto, CreateProductoVentaDto, CreateVentaDto, DeletePrecioVentaDto, GetCotizacionesVentaDto, OpcionesVenta, PrecioVenta, ProductoTienda, ProductoVenta, UpdateOpcionesVentaDto, UpdatePrecioVentaDto, Venta } from '../../interface/ventasInterfaces';
+import { decrementProdutosAlmacenAPI } from "../almacenes/almacenThunks";
 
 
 export const getAllClientesVentaAPI = () => {
@@ -496,7 +497,69 @@ export const getCotizacionesVentaAPI = (
     }
 }
 
+//* -------------------------------------------- VENTA ----------------------------------------------------------
 
+export const createVentaAPI = (
+    createVentaDto: CreateVentaDto, 
+    listDecrementProductosAlmacenDto: ListDecrementProductosAlmacenDto,
+    setUltimaVenta?: React.Dispatch<React.SetStateAction<Venta | null>>,
+    setOpenViewVenta?: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const { id: sucursalId } = getState().Sucursal;
+        if(!sucursalId) return;
+
+        try {
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.post('ventas-ms/create-venta', createVentaDto);
+            const {data, message}: {data: Venta, message: string} = response.data;
+
+            if(setUltimaVenta && setOpenViewVenta){
+                setUltimaVenta(data);
+                setOpenViewVenta(true);
+            }
+
+            dispatch(decrementProdutosAlmacenAPI(listDecrementProductosAlmacenDto)); // Disminuye los productos del almacen correspondiente
+            dispatch(decrementProductos(listDecrementProductosAlmacenDto)); // Disminuye los productos de la lista de la tienda
+            dispatch(showNotificationSuccess({tittle: 'VENTA', description: message}));
+            setTimeout( () => dispatch(hideNotification()), 5000 );
+
+            dispatch(finishLoadingData());
+            
+        } catch (error) {
+            // console.log(error)
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                dispatch(showNotificationError({tittle: 'VENTA', description: data.message}));
+                setTimeout( () => dispatch(hideNotification()), 5000 );
+                dispatch(finishLoadingData());
+            }else console.log(error);
+        }
+    }
+}
+
+export const getVentasAPI = ( 
+    getCotizacionesVentaDto: GetCotizacionesVentaDto,
+    setListaVentas: React.Dispatch<React.SetStateAction<Venta[]>>
+    ) => {
+    return async (dispatch: AppDispatch) => {
+        dispatch(startLoadingData());
+        try {
+            const response: AxiosResponse = await api.post(`ventas-ms/get-ventas`, getCotizacionesVentaDto);
+            const data:Venta[] = response.data;
+            setListaVentas(data);
+
+            dispatch(finishLoadingData());         
+        } catch (error) {
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                dispatch(showNotificationError({tittle: 'LISTA DE VENTAS', description: data.message}));
+                dispatch(finishLoadingData());
+                setTimeout( () => dispatch(hideNotification()), 5000 );
+            }else console.log(error);
+        }
+    }
+}
 
 //* -------------------------------------------- LOGS ----------------------------------------------------------
 
