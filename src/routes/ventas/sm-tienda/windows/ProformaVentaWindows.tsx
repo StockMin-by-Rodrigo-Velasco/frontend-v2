@@ -14,13 +14,15 @@ import { hideNotification, showNotificationError, showNotificationWarning } from
 import ViewCotizacion from "./ViewCotizacion";
 import { FaWarehouse } from "react-icons/fa";
 import ViewVenta from "./ViewVenta";
+import { AiOutlineLoading } from "react-icons/ai";
 
 
 interface CreateManyProductosAlmacenProp {
   closeButton: () => void;
-  checkProductosTienda: ProductoTienda[];
-  handleCheckProducto: (productoId: string) => void;
   decrementProductos: (listDecrementProductosAlmacenDto: ListDecrementProductosAlmacenDto) => void;
+  datosCotizacion?: {cotizacionId: string, Cliente:ClienteVenta, descuento: string, },
+  checkProductosTienda: ProductoTienda[];
+  handleCheckProducto?: (productoId: string) => void;
 }
 
 interface FormTable {
@@ -44,25 +46,42 @@ const columns: FormTableColumn<FormTable>[] = [
   { name: 'SUBTOTAL', type: FormTableColumnTypes.P, key: "subtotal", width: 'w-[110px]' }
 ];
 
-export default function ProformaVentaWindow({ closeButton, checkProductosTienda, handleCheckProducto, decrementProductos }: CreateManyProductosAlmacenProp) {
+const initialCotizacion: CotizacionVenta = {
+  id:'',
+  ClienteVenta: {id:'', sucursalId:'', nombre:'', apellido: '', codigo: ''},
+  clienteVentaId: '',
+  numero: 0,
+  precioVentaId: '',
+  ProductoDetalleVenta: [],
+  sucursalId:'',
+  total:'',
+  usuarioId:'',
+  PrecioVenta: { id:'', codigo: '', sucursalId:'', tipoMonedaVentaId:''},
+  createdAt:''
+}
+
+export default function ProformaVentaWindow({ closeButton, checkProductosTienda, handleCheckProducto, decrementProductos, datosCotizacion }: CreateManyProductosAlmacenProp) {
+  const { loadingData } = useSelector((s: RootState) => s.Aplication);
   const { id: sucursalId, logo, userData } = useSelector((s: RootState) => s.Sucursal);
   const { opcionesVenta } = useSelector((s: RootState) => s.Ventas);
 
   const dispatch = useDispatch<AppDispatch>();
 
   const [clienteSelected, setClienteSelected] = useState<ClienteVenta>({ id: '', apellido: '', codigo: '', nombre: '', sucursalId });
-  const [ultimaCotizacion, setUltimaCotizacion] = useState<CotizacionVenta | null>(null)
+  const [ultimaCotizacion, setUltimaCotizacion] = useState<CotizacionVenta>(initialCotizacion)
   const [ultimaVenta, setUltimaVenta] = useState<Venta | null>(null);
 
   const [openListaClientes, setOpenListaClientes] = useState(false);
   const [openViewCotizacion, setOpenViewCotizacion] = useState(false);
   const [openViewVenta, setOpenViewVenta] = useState(false);
 
-  const { data: formProforma, handleInputChange: onChangeIngreso } = useForm<{ detalle: string, descuento: string }>({ detalle: '', descuento: '0' });
+  const { data: formProforma, handleInputChange: onChangeIngreso } = useForm<{ detalle: string, descuento: string }>({ detalle: '', descuento: datosCotizacion?.descuento || '0'  });
   const { arrayData, handleInputChange, replaceData, removeData } = useFormArray<FormTable>([]);
 
   const removeProducto = (productoId: string, index: number) => {
-    handleCheckProducto(productoId);
+    if (handleCheckProducto) {
+      handleCheckProducto(productoId);
+    }
     removeData(index);
   }
 
@@ -129,6 +148,7 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
     const venta: CreateVentaDto = {
       sucursalId,
       almacenId: opcionesVenta.almacenId,
+      cotizacionVentaId: datosCotizacion?.cotizacionId || undefined,
       total: totalNum.toString(),
       usuarioId: userData.id,
       descuento: formProforma.descuento,
@@ -143,6 +163,11 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
   }
 
   useEffect(() => {
+
+    if(datosCotizacion){
+      setClienteSelected(datosCotizacion.Cliente);
+    }
+
     const selectedProductos: FormTable[] = checkProductosTienda
       .map(p => ({
         productoId: p.productoId,
@@ -151,18 +176,19 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
         codigo: p.codigo,
         nombre: p.nombre,
         cantidadAlmacen: p.cantidad,
-        cantidad: '1',
+        cantidad:  p.cantidadCotizacion?.toString() || '1',
         precio: p.precio,
         subtotal: p.precio,
       }));
     replaceData(selectedProductos);
+
   }, [])
 
   return (
     <Windows tittle="REGISTRAR NUEVA VENTA" closeButton={closeButton}>
 
       {openListaClientes && <ListaClientes closeButton={() => { setOpenListaClientes(false) }} setClienteSelected={setClienteSelected} />}
-      {openViewCotizacion && <ViewCotizacion closeButton={() => { setOpenViewCotizacion(false) }} cotizacion={ultimaCotizacion} />}
+      {openViewCotizacion && <ViewCotizacion closeButton={() => { setOpenViewCotizacion(false) }} cotizacion={ultimaCotizacion} decrementProductos={decrementProductos} />}
       {openViewVenta && <ViewVenta closeButton={() => { setOpenViewVenta(false) }} venta={ultimaVenta} />}
 
 
@@ -264,15 +290,23 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
         </table>
       </div>
       <div className="p-2 border border-t-secondary flex justify-center" >
-        <button
-          type="button"
-          className="border border-success rounded-full text-success px-3 transition-all duration-200 hover:bg-success hover:text-white"
-          onClick={createVenta}>REGISTRAR VENTA</button>
+        {loadingData ?
+          <span className=" flex justify-center items-center border border-secondary rounded-full text-secondary px-3">
+            Registrando <AiOutlineLoading className="ms-2 animate-spin" />
+          </span>
+          :
+          <>
+            <button
+              type="button"
+              className="border border-success rounded-full text-success px-3 transition-all duration-200 hover:bg-success hover:text-white"
+              onClick={createVenta}>REGISTRAR VENTA</button>
 
-        <button
-          type="button"
-          className="border border-primary rounded-full text-primary px-3 transition-all duration-200 hover:bg-primary hover:text-white ms-3"
-          onClick={createCotizacion}>GENERAR COTIZACION</button>
+            <button
+              type="button"
+              className="border border-primary rounded-full text-primary px-3 transition-all duration-200 hover:bg-primary hover:text-white ms-3"
+              onClick={createCotizacion}>REGISTRAR COTIZACION</button>
+          </>
+        }
       </div>
 
     </Windows>

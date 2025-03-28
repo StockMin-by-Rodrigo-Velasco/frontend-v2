@@ -4,7 +4,7 @@ import Windows from "../../../../components/Windows";
 import { useForm } from "../../../../hooks";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { useEffect, useState } from "react";
-import { CotizacionVenta } from "../../../../interface";
+import { CotizacionVenta, ListDecrementProductosAlmacenDto } from "../../../../interface";
 import { getCotizacionesVentaAPI } from "../../../../redux/ventas/ventasThunk";
 import { AiOutlineLoading } from "react-icons/ai";
 import { IoSearch } from "react-icons/io5";
@@ -14,6 +14,7 @@ import ViewCotizacion from "./ViewCotizacion";
 
 interface ListaVentasCotizacionesProp {
     closeButton: () => void;
+    decrementProductos: (listDecrementProductosAlmacenDto: ListDecrementProductosAlmacenDto) => void;
 }
 
 interface DateRange {
@@ -54,7 +55,7 @@ const initialCotizacion: CotizacionVenta = {
 
 }
 
-export default function ListaVentasCotizaciones({ closeButton }: ListaVentasCotizacionesProp) {
+export default function ListaVentasCotizaciones({ closeButton, decrementProductos }: ListaVentasCotizacionesProp) {
     const { loadingData } = useSelector((s: RootState) => s.Aplication);
     const { id: sucursalId } = useSelector((s: RootState) => s.Sucursal);
 
@@ -92,7 +93,11 @@ export default function ListaVentasCotizaciones({ closeButton }: ListaVentasCoti
     return (
         <Windows tittle="LISTA DE VENTAS Y COTIZACIONES" closeButton={closeButton} >
 
-            {openViewCotizacion&& <ViewCotizacion cotizacion={cotizacionData} closeButton={() => { setOpenViewCotizacion(false) }} />}
+            {openViewCotizacion&& <ViewCotizacion 
+                decrementProductos={decrementProductos}
+                cotizacion={cotizacionData} 
+                closeButton={() => { setOpenViewCotizacion(false) }} 
+                />}
 
             <div className="flex m-2 ">
                 <InputDateSearch

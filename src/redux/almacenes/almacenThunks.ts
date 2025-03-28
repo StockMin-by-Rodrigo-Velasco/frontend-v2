@@ -132,6 +132,8 @@ export const createProductoAlmacenAPI = (createProductoAlmacenDto: CreateProduct
             const response: AxiosResponse = await api.post('almacenes-ms/create-producto-almacen', {almacenNombre: selectedAlmacen.nombre ,...createProductoAlmacenDto}, 
                 {headers: {"X-User-Id": userData.id, "X-Sucursal-Id": sucursalId}}
             );
+
+            // console.log(response.data);
             const { data, message } = response.data;
             const newProductoAlmacenDetallado: ProductoAlmacenDetallado = {
                     id: data.id,
@@ -156,9 +158,10 @@ export const createProductoAlmacenAPI = (createProductoAlmacenDto: CreateProduct
             setTimeout( () => dispatch(hideNotification()), 5000 );
             dispatch(finishLoadingData());
         } catch (error) {
+            // console.log(error);
             if( axios.isAxiosError(error) && error.response ){
                 const {data} = error.response;
-                dispatch(showNotificationError({tittle: 'NUEVO PRODUCTO', description: data.message}));
+                dispatch(showNotificationError({tittle: 'NUEVO PRODUCTO', description: data?.message || 'Internal server error'}));
                 dispatch(finishLoadingData());
                 setTimeout( () => dispatch(hideNotification()), 5000 );
             }else console.log(error);

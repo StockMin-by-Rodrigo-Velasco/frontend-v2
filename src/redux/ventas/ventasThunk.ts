@@ -439,7 +439,7 @@ export const createProductoVentaAPI = (createProductoVentaDto: CreateProductoVen
 
 export const createCotizacionVentaAPI = (
     createCotizacionVentaDto: CreateCotizacionVentaDto, 
-    setUltimaCotizacion?: React.Dispatch<React.SetStateAction<CotizacionVenta | null>>,
+    setUltimaCotizacion?: React.Dispatch<React.SetStateAction<CotizacionVenta>>,
     setOpenViewCotizacion?: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {

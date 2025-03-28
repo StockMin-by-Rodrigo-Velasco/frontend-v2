@@ -10,14 +10,15 @@ export interface ProductoTienda {
     imagen: string;
 
     cantidad: number;
+    cantidadCotizacion?: number;
     precio: string;
 
     Marca: Marca;
     Categoria: Categoria;
     UnidadMedida: UnidadMedida;
 
-    createdAt: string | undefined;
-    updatedAt: string | undefined;
+    createdAt?: string | undefined;
+    updatedAt?: string | undefined;
 
     show: boolean;
     check: boolean;

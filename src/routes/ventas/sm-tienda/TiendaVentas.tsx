@@ -134,7 +134,7 @@ export default function TiendaVentas() {
                     decrementProductos={decrementProductos}
                 />
             }
-            {openListaVentasCotizaciones && <ListaVentasCotizaciones closeButton={() => { setOpenListaVentasCotizaciones(false) }} />}
+            {openListaVentasCotizaciones && <ListaVentasCotizaciones closeButton={() => {setOpenListaVentasCotizaciones(false)}} decrementProductos={decrementProductos}/>}
 
             <HeaderSection>
                 <InputSearch
