@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 
 interface ViewVentaProp {
     closeButton: () => void;
-    venta: Venta | null
+    venta: Venta;
 }
 
 interface ProductoDetalle {

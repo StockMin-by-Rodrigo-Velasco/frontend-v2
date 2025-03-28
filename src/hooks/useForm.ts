@@ -28,6 +28,7 @@ export function useForm<T extends object>( obj: T ): FormInterface<T>
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { value, name } = e.target;
+        // console.log({...data, [name]: value});
         setData({...data, [name]: value});
     }
 

@@ -75,7 +75,7 @@ export interface Venta {
     usuarioId: string;
     descuento?: string;
     detalle?: string;
-    createdAt?: string;
+    createdAt: string;
 
     precioVentaId: string;
     PrecioVenta: PrecioVenta;
