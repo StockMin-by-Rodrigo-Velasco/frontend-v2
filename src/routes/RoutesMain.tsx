@@ -24,6 +24,7 @@ import HistorialVentas from "./ventas/sm-historial/HistorialVentas";
 import OpcionesVentas from "./ventas/sm-opciones/OpcionesVentas";
 import TiendaVentas from "./ventas/sm-tienda/TiendaVentas";
 import Usuarios from "./usuarios/Usuarios";
+import TraspasosAlmacenes from "./almacenes/sm-traspasos/TraspasosAlmacenes";
 
 
 export default function RoutesMain() {
@@ -51,6 +52,7 @@ export default function RoutesMain() {
               {selectedAlmacen.id&& <Route index element={<Navigate to={selectedAlmacen.id}/>} /> }
               <Route path=":nombre" element={<SelectedAlmacen/>} />
             </Route>
+            <Route path="traspasos" element={<TraspasosAlmacenes/>} />
             <Route path="historial" element={<HistorialAlmacenes/>} />
           </Route>
 

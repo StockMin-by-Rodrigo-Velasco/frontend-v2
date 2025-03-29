@@ -18,6 +18,7 @@ import { logoutSucursalUserAPI } from "../../redux/sucursal/sucursalThunk";
 import { LuSettings, LuWarehouse } from "react-icons/lu";
 import { AiOutlineShop } from "react-icons/ai";
 import { FiUsers } from "react-icons/fi";
+import { GrTransaction } from "react-icons/gr";
 
 const menu = [
     {
@@ -32,6 +33,7 @@ const menu = [
         title: 'Almacenes', path: '/main/almacenes', icon: <LuWarehouse size='20px' className="me-2" />,
         subTitles: [
             { title: 'Lista de almacenes', path: '/main/almacenes/lista', icon: <CiBoxes  size='14px' /> },
+            { title: 'Traspasos', path: '/main/almacenes/traspasos', icon: <GrTransaction  size='14px' /> },
             { title: 'Historial', path: '/main/almacenes/historial', icon: <TbHistory size='14px' /> },
         ]
     },

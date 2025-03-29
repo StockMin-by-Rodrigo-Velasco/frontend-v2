@@ -24,7 +24,7 @@ export interface ProductoAlmacenDetallado extends ProductoAlmacen {
     descripcion: string;
     imagen: string;
     categoria?: string;
-    marca?:string;
+    marca?: string;
     unidadMedida?: string;
     unidadMedidaAbreviada?: string;
 }
@@ -44,6 +44,27 @@ export interface IngresoAlmacen {
     detalle: string;
     createdAt: string;
     IngresoProductosAlmacen: IngresoProductosAlmacen[];
+}
+
+export interface TraspasoProductoAlmacen {
+    id: string;
+    productoId: string;
+    cantidad: string;
+
+    docTraspasoProductoAlmacenId: string;
+    DocTraspasoProductoAlmacen: DocTraspasoProductoAlmacen;
+}
+
+export interface DocTraspasoProductoAlmacen {
+    id: string;
+    sucursalId: string;
+    usuarioId: string;
+    almacenOrigenId: string;
+    almacenDestinoId: string;
+    detalle?: string;
+    createdAt: string;
+
+    TraspasoProductoAlmacen: TraspasoProductoAlmacen[];
 }
 
 // --------------------- DTOs ------------------------
@@ -92,7 +113,7 @@ export interface CreateIngresoAlmacenDto {
     ingresoProductosAlmacen: CreateIngresoProductoAlmacenDto[]
 }
 
-export interface DecrementProductoAlmacenDto{
+export interface DecrementProductoAlmacenDto {
     productoAlmacenId: string;
     cantidad: number;
 }
@@ -101,3 +122,23 @@ export interface ListDecrementProductosAlmacenDto {
     productos: DecrementProductoAlmacenDto[]
 }
 
+export interface GetTraspasosAlmacenDto {
+    sucursalId: string;
+    desde: string;
+    hasta: string;
+}
+
+export interface CreateTraspasoProductoAlmacenDto {
+    productoId: string;
+    cantidad: number;
+}
+
+export interface CreateDocTraspasoAlmacenDto {
+    sucursalId: string;
+    usuarioId: string;
+    almacenOrigenId: string;
+    almacenDestinoId: string;
+    detalle?: string;
+
+    traspasoProductosAlmacen: CreateTraspasoProductoAlmacenDto[]
+}
