@@ -1,5 +1,5 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
-import { Almacen, IngresoAlmacen, Log, ProductoAlmacenDetallado, ProductoAlmacen } from "../../interface";
+import { Almacen, IngresoAlmacen, Log, ProductoAlmacenDetallado, ProductoAlmacen, DocTraspasoProductoAlmacen } from "../../interface";
 
 
 export interface ProductoAlmacenWithOutIdInterface {
@@ -14,6 +14,7 @@ export interface ProductoAlmacenWithOutIdInterface {
 interface InitialStateInterface {
     selectedAlmacen: Almacen;
     historialIngresosAlmacen: IngresoAlmacen[];
+    historialTraspasos: DocTraspasoProductoAlmacen[];
     listaAlmacenes: Almacen[];
     listaProductosAlmacen: ProductoAlmacenDetallado[];
     listaLogs: Log[],
@@ -22,6 +23,7 @@ interface InitialStateInterface {
 const initialState: InitialStateInterface = {
     listaAlmacenes: [],
     historialIngresosAlmacen: [],
+    historialTraspasos:[],
     listaProductosAlmacen: [],
     selectedAlmacen: { id: '', sucursalId: '', nombre: '', descripcion: '', deleted: false, createdAt: '', updatedAt: '' },
     listaLogs: []
@@ -71,6 +73,12 @@ const AlmacenesSlice = createSlice({
                 .map(p => (p.id in productosAlmacen) ? { ...p, ...productosAlmacen[p.id] } : p);
             state.listaProductosAlmacen = [...newListaProductosAlmacen];
         },
+        getAllTraspasosProductosAlmacen:(state, action: PayloadAction<DocTraspasoProductoAlmacen[]>) =>{
+            state.historialTraspasos = action.payload;
+        },
+        createTraspasoProductosAlmacen:(state, action: PayloadAction<DocTraspasoProductoAlmacen>) =>{
+            state.historialTraspasos = [action.payload, ...state.historialTraspasos];
+        },
         getAllIngresosProductosAlmacen: (state, action: PayloadAction<IngresoAlmacen[]>) => {
             state.historialIngresosAlmacen = action.payload;
         },
@@ -98,6 +106,9 @@ export const {
     createProductoAlmacen,
     updateProductoAlmacen,
     updateManyProductosAlmacen,
+
+    getAllTraspasosProductosAlmacen,
+    createTraspasoProductosAlmacen,
 
     getAllIngresosProductosAlmacen,
     clearIngresosProductosAlmacen,

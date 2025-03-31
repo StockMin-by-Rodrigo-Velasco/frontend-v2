@@ -43,6 +43,16 @@ export interface PrecioVenta {
     TipoMonedaVenta?: TipoMonedaVenta;
 }
 
+export interface ProductoAlmacen {
+    id: string;
+    productoId: string;
+    almacenId: string;
+    cantidad: number;
+    cantidadMinima: number;
+    createdAt: string;
+    updatedAt: string;
+}
+
 export interface ProductoVenta {
     id: string;
     almacenId: string;
@@ -93,7 +103,7 @@ export interface CotizacionVenta {
     id: string;
     sucursalId: string;
     total: string;
-    usuarioId: string; 
+    usuarioId: string;
     numero: number;
     descuento?: string;
     detalle?: string;
@@ -228,14 +238,14 @@ export interface CreateCotizacionVentaDto {
     productoDetalleVenta: CreateProductoDetalleVentaDto[]
 }
 
-export interface CreateVentaDto{
+export interface CreateVentaDto {
     sucursalId: string;
     almacenId: string;
     usuarioId: string;
     numero?: number;
     total: string;
-    descuento?:string;
-    detalle?:string;
+    descuento?: string;
+    detalle?: string;
     precioVentaId: string;
     clienteVentaId: string;
     cotizacionVentaId?: string;
@@ -243,7 +253,7 @@ export interface CreateVentaDto{
     productoDetalleVenta: CreateProductoDetalleVentaDto[]
 }
 
-export interface GetCotizacionesVentaDto{
+export interface GetCotizacionesVentaDto {
     sucursalId: string;
     desde: string;
     hasta: string;

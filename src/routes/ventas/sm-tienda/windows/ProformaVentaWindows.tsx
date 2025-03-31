@@ -59,6 +59,34 @@ const initialCotizacion: CotizacionVenta = {
   PrecioVenta: { id:'', codigo: '', sucursalId:'', tipoMonedaVentaId:''},
   createdAt:''
 }
+const initialVenta: Venta = {
+    id: '',
+    sucursalId: '',
+    total: '',
+    usuarioId: '',
+    numero: 0,
+    createdAt: '',
+    precioVentaId: '',
+    PrecioVenta: {
+        id: '',
+        sucursalId: '',
+        codigo: '',
+        tipoMonedaVentaId: '',
+
+    },
+    clienteVentaId: '',
+    ClienteVenta: {
+        id: '',
+        sucursalId: '',
+        codigo: '',
+        nombre: '',
+        apellido: '',
+        contacto: '',
+        direccion: '',
+    },
+    ProductoDetalleVenta: [],
+    almacenId: '',
+}
 
 export default function ProformaVentaWindow({ closeButton, checkProductosTienda, handleCheckProducto, decrementProductos, datosCotizacion }: CreateManyProductosAlmacenProp) {
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
@@ -69,7 +97,7 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
 
   const [clienteSelected, setClienteSelected] = useState<ClienteVenta>({ id: '', apellido: '', codigo: '', nombre: '', sucursalId });
   const [ultimaCotizacion, setUltimaCotizacion] = useState<CotizacionVenta>(initialCotizacion)
-  const [ultimaVenta, setUltimaVenta] = useState<Venta | null>(null);
+  const [ultimaVenta, setUltimaVenta] = useState<Venta>(initialVenta);
 
   const [openListaClientes, setOpenListaClientes] = useState(false);
   const [openViewCotizacion, setOpenViewCotizacion] = useState(false);

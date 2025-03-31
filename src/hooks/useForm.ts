@@ -46,12 +46,12 @@ export function useFormArray<T>( array: T[])
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         //El name debe venir como name:index ->  ej: nombre:0
-        const { value, name } = e.target;
+        const { value, name, type } = e.target;
         const prop = name.split(':')[0]; // Nombre de la propiedad del objeto
         const index = parseInt(name.split(':')[1]); // Lugar del objeto en el array
         let newArray = arrayData;
 
-        newArray[index] = {...newArray[index], [prop]:value };
+        newArray[index] = {...newArray[index], [prop]: (value==='' && type==='number')? '0' : value };
         setArrayData([...newArray]);
     }
 

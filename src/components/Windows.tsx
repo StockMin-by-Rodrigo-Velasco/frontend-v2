@@ -2,15 +2,15 @@ import React from "react";
 import { IoIosClose } from "react-icons/io";
 
 interface WindowsPropInterface{
-    children: React.ReactNode,
-    tittle: string,
-    footer?: string,
-    closeButton: () => void
+    children: React.ReactNode;
+    tittle: string;
+    footer?: string;
+    closeButton: () => void;
 }
 
 export default function Windows({children, tittle, footer, closeButton}:WindowsPropInterface) {
   return (
-    <div className="bg-black/15 backdrop-blur-[2px] absolute top-0 bottom-0 left-0 right-0 flex justify-center items-center z-10">
+    <div className = {`bg-black/15 backdrop-blur-[2px] absolute top-0 bottom-0 left-0 right-0 flex justify-center items-center z-10`}>
         <div className="bg-white max-w-[80%] rounded-lg text-black overflow-hidden shadow-2xl">
             
             {/* HEADER */}

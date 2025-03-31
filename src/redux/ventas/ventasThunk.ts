@@ -502,7 +502,7 @@ export const getCotizacionesVentaAPI = (
 export const createVentaAPI = (
     createVentaDto: CreateVentaDto, 
     listDecrementProductosAlmacenDto: ListDecrementProductosAlmacenDto,
-    setUltimaVenta?: React.Dispatch<React.SetStateAction<Venta | null>>,
+    setUltimaVenta?: React.Dispatch<React.SetStateAction<Venta>>,
     setOpenViewVenta?: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {

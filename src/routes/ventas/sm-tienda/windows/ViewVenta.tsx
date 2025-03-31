@@ -22,6 +22,7 @@ interface ProductoDetalle {
     subTotal: string;
 }
 
+
 export default function ViewVenta({ closeButton, venta }: ViewVentaProp) {
     const tableRef = useRef<HTMLTableElement | null>(null);
     const { logo, users } = useSelector((s: RootState) => s.Sucursal);

@@ -89,7 +89,7 @@ export interface UpdateAlmacenDto {
 
 export interface CreateProductoAlmacenDto {
     productoId: string;
-    almacenId?: string;
+    almacenId: string;
     cantidad?: number;
     cantidadMinima?: number;
 }

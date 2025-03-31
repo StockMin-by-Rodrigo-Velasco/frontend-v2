@@ -69,6 +69,7 @@ export default function RegistarProductosAlmacenWindow({ closeButton }: CreateMa
         const cantidadMinimaInt = typeof p.cantidadMinima !== 'number'? parseInt(p.cantidadMinima): p.cantidadMinima;
         return {
         productoId: p.productoId, 
+        almacenId: selectedAlmacen.id,
         cantidad: isNaN(cantidadInt)? 0: cantidadInt, 
         cantidadMinima: isNaN(cantidadMinimaInt)? 0: cantidadMinimaInt
       }}

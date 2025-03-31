@@ -15,28 +15,28 @@ interface FormTable {
     nombre: string,
     unidadMedidaAbreviada?: string;
     cantidad: number,
-  }
+}
 
-  interface Productos {
+interface Productos {
     productoId: string;
     productoAlmacenId: string;
     codigo: string;
     nombre: string;
     imagen: string;
-  
+
     categoriaId: string;
     categoria?: string;
-  
+
     marcaId: string;
     marca?: string;
-  
+
     unidadMedidaId: string;
     unidadMedidaAbreviada?: string;
-  
+
     registered: boolean;
     selected: boolean;
     show: boolean;
-  }
+}
 
 interface ListaProductosOutAlmacenProp {
     closeButton: () => void;
@@ -95,16 +95,16 @@ export default function ListaProductosIngresarAlmacenWindow({ closeButton, produ
     }
 
     const registrarProducto = (productoId: string) => {
-            if( typeNotification === 'INFO' && showNotification ){
-                dispatch( createProductoAlmacenAPI( {productoId, almacenId:selectedAlmacen.id} ) );
-                dispatch(hideNotification());
-            }else{
-                dispatch(showNotificationInfo({
-                    tittle: 'Registrar producto en almacén', 
-                    description: 'Se registrará un nuevo producto en tu almacén. Si deseas continuar vuelve a presionar el botón “Registrar”, caso contrario cierra esta notificación.'
-                }));
-            }
+        if (typeNotification === 'INFO' && showNotification) {
+            dispatch(createProductoAlmacenAPI({ productoId, almacenId: selectedAlmacen.id }));
+            dispatch(hideNotification());
+        } else {
+            dispatch(showNotificationInfo({
+                tittle: 'Registrar producto en almacén',
+                description: 'Se registrará un nuevo producto en tu almacén. Si deseas continuar vuelve a presionar el botón “Registrar”, caso contrario cierra esta notificación.'
+            }));
         }
+    }
 
     return (
         <Windows tittle="Lista de productos" closeButton={closeButton} >
@@ -154,9 +154,9 @@ export default function ListaProductosIngresarAlmacenWindow({ closeButton, produ
                                                     <button
                                                         className="flex items-center bg-white text-info border border-info rounded-full px-2 text-[12px] transition-all duration-200 hover:bg-info hover:text-white disabled:cursor-not-allowed disabled:border-secondary disabled:bg-secondary disabled:text-white"
                                                         type="button"
-                                                        onClick={() => {registrarProducto(f.productoId)}}
-                                                    > 
-                                                    Registrar
+                                                        onClick={() => { registrarProducto(f.productoId) }}
+                                                    >
+                                                        Registrar
                                                     </button>
                                                 </div>
                                                 :
