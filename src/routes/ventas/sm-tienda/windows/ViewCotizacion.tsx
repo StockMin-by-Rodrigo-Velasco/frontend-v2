@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import Windows from "../../../../components/Windows";
-import { CotizacionVenta, ListTransactionProductosAlmacenDto, ProductoTienda, TipoMonedaVenta } from "../../../../interface";
+import { CotizacionVenta, ListTransactionProductosAlmacenDto, ProductoTienda } from "../../../../interface";
 import { RootState } from "../../../../redux/store";
 import { dateLocal } from "../../../../helpers";
 import { useEffect, useRef, useState } from "react";
@@ -29,10 +29,9 @@ export default function ViewCotizacion({ closeButton, cotizacion, decrementProdu
     const tableRef = useRef<HTMLTableElement | null>(null);
 
     const { logo, listUsers: users } = useSelector((s: RootState) => s.Sucursal);
-    const { listaProductosTienda, listaTipoMonedaVenta } = useSelector((s: RootState) => s.Ventas);
+    const { listaProductosTienda, opcionesVenta } = useSelector((s: RootState) => s.Ventas);
 
     const [responsable, setResponsable] = useState('');
-    const [monedaCotizacion, setMonedaCotizacion] = useState<TipoMonedaVenta>({ id: '', abreviatura: '', nombre: '', sucursalId: '' });
     const [listaProductosDetalle, setListaProductosDetalle] = useState<ProductoDetalle[]>([]);
     const [checkedProductosTienda, setCheckedProductosTienda] = useState<ProductoTienda[]>([])
 
@@ -44,6 +43,7 @@ export default function ViewCotizacion({ closeButton, cotizacion, decrementProdu
         const listaProductosTiendaObj = listaProductosTienda.reduce((acc, producto) => { acc[producto.productoId] = producto; return acc; }, {} as Record<string, ProductoTienda>);
 
         const productosTienda: ProductoTienda[] = cotizacion.ProductoDetalleVenta.map(p => ({
+            id: p.id,
             productoId: listaProductosTiendaObj[p.productoId].productoId,
             productoAlmacenId: listaProductosTiendaObj[p.productoId].productoAlmacenId,
             Categoria: listaProductosTiendaObj[p.productoId].Categoria,
@@ -96,10 +96,6 @@ export default function ViewCotizacion({ closeButton, cotizacion, decrementProdu
 
         }))
         setListaProductosDetalle(productosDetalle);
-
-        const listaTipoMonedaObj = listaTipoMonedaVenta.reduce((acc, tm) => { acc[tm.id] = tm; return acc; }, {} as Record<string, TipoMonedaVenta>);
-        const tipoMoneda = listaTipoMonedaObj[cotizacion.PrecioVenta.tipoMonedaVentaId];
-        setMonedaCotizacion(tipoMoneda);
     }, [cotizacion])
 
 
@@ -152,7 +148,7 @@ export default function ViewCotizacion({ closeButton, cotizacion, decrementProdu
                                     <td>{p.unidadMedida}</td>
                                     <td>{p.cantidad}</td>
                                     <td>{p.precio}</td>
-                                    <td className="text-end pe-2" >{parseFloat(p.subTotal).toFixed(2)} <span>{monedaCotizacion.abreviatura.toUpperCase()}</span></td>
+                                    <td className="text-end pe-2" >{parseFloat(p.subTotal).toFixed(2)} <span>{opcionesVenta.TipoMonedaVenta.abreviatura.toUpperCase()}</span></td>
                                 </tr>
                             ))}
                         </tbody>}
@@ -160,12 +156,12 @@ export default function ViewCotizacion({ closeButton, cotizacion, decrementProdu
                     <tfoot>
                         <tr className=" bg-secondary/50 border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase text-end">
                             <td colSpan={5} className="font-bold" >DESCUENTO</td>
-                            <td className="text-end pe-2" >{parseFloat(cotizacion.descuento || '0').toFixed(2)} <span>{monedaCotizacion.abreviatura.toUpperCase()}</span></td>
+                            <td className="text-end pe-2" >{parseFloat(cotizacion.descuento || '0').toFixed(2)} <span>{opcionesVenta.TipoMonedaVenta.abreviatura.toUpperCase()}</span></td>
                         </tr>
 
                         <tr className=" bg-secondary/70 border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase text-end">
                             <td colSpan={5} className="font-bold" >TOTAL</td>
-                            <td className="text-end pe-2" >{cotizacion.total} <span>{monedaCotizacion.abreviatura.toUpperCase()}</span></td>
+                            <td className="text-end pe-2" >{cotizacion.total} <span>{opcionesVenta.TipoMonedaVenta.abreviatura.toUpperCase()}</span></td>
                         </tr>
                     </tfoot>
                 </table>

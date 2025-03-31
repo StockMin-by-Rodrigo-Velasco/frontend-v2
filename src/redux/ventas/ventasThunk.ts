@@ -1,11 +1,10 @@
 import axios, { AxiosResponse } from "axios";
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from "../aplication/aplicationSlice";
 import { AppDispatch, RootState } from "../store";
-import { createClienteVenta, createPrecioVenta, createTipoMonedaVenta, decrementProductos, deletePrecioVenta, deleteTipoMonedaVenta, getAllClientesVenta, getAllPrecioVenta, getAllProductosVenta, getAllTipoMonedaVenta, getLogsVentas, getOpcionesVenta, updateClienteVenta, updatePrecioVenta, updateTipoMonedaVenta } from "./ventasSlice";
+import { createClienteVenta, createPrecioVenta, decrementProductos, deletePrecioVenta, getAllClientesVenta, getAllPrecioVenta, getAllProductosVenta, getAllTipoMonedaVenta, getLogsVentas, getOpcionesVenta, updateClienteVenta, updatePrecioVenta } from "./ventasSlice";
 import api from "../../api/config";
-import { ClienteVenta, CreateClienteVentaDto, CreateTipoMonedaVentaDto, DeleteTipoMonedaVentaDto, ListTransactionProductosAlmacenDto, ProductoAlmacen, TipoMonedaVenta, UpdateClienteVentaDto, UpdateTipoMonedaVentaDto } from "../../interface";
+import { ClienteVenta, CreateClienteVentaDto,  ListTransactionProductosAlmacenDto, ProductoAlmacen, TipoMonedaVenta, UpdateClienteVentaDto, CotizacionVenta, CreateCotizacionVentaDto, CreateOpcionesVentaDto, CreatePrecioVentaDto, CreateProductoVentaDto, CreateVentaDto, DeletePrecioVentaDto, GetCotizacionesVentaDto, OpcionesVenta, PrecioVenta, ProductoTienda, ProductoVenta, UpdateOpcionesVentaDto, UpdatePrecioVentaDto, Venta, UpdateProductoVentaDto } from "../../interface";
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from "../notification/notificationSlice";
-import { CotizacionVenta, CreateCotizacionVentaDto, CreateOpcionesVentaDto, CreatePrecioVentaDto, CreateProductoVentaDto, CreateVentaDto, DeletePrecioVentaDto, GetCotizacionesVentaDto, OpcionesVenta, PrecioVenta, ProductoTienda, ProductoVenta, UpdateOpcionesVentaDto, UpdatePrecioVentaDto, Venta } from '../../interface/ventasInterfaces';
 import { decrementProdutosAlmacenAPI } from "../almacenes/almacenThunks";
 
 
@@ -85,8 +84,9 @@ export const getAllTipoMonedaVentaAPI = () => {
         if (!id) return;
         try {
             dispatch(startLoadingAplication());
-            const response: AxiosResponse = await api.get(`ventas-ms/get-all-tipo-moneda-venta/${id}`);
-            dispatch(getAllTipoMonedaVenta(response.data))
+            const response: AxiosResponse = await api.get(`ventas-ms/get-all-tipo-moneda-venta`);
+            const listTipoMoneda: TipoMonedaVenta[] = response.data;
+            dispatch(getAllTipoMonedaVenta(listTipoMoneda))
             dispatch(finishLoadingAplication());
         } catch (error) {
             console.log(error);
@@ -94,85 +94,6 @@ export const getAllTipoMonedaVentaAPI = () => {
         }
     }
 }
-
-export const createTipoMonedaVentaAPI = (createTipoMonedaVentaDto:CreateTipoMonedaVentaDto) => {
-    return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { userData } = getState().Sucursal;
-        if(!createTipoMonedaVentaDto.sucursalId) return;
-        try {
-            dispatch(startLoadingData());
-            const response: AxiosResponse = await api.post('ventas-ms/create-tipo-moneda-venta', 
-                createTipoMonedaVentaDto,{headers: {"X-User-Id": userData.id}}
-            );
-            const {data, message}: {data: TipoMonedaVenta, message: string} = response.data;
-            dispatch(createTipoMonedaVenta(data));
-            dispatch(showNotificationSuccess({tittle: 'REGISTRO DE TIPO DE MONEDA', description: message}));
-            setTimeout( () => dispatch(hideNotification()), 5000 );
-            dispatch(finishLoadingData());
-            
-        } catch (error) {
-            if( axios.isAxiosError(error) && error.response ){
-                const {data} = error.response;
-                dispatch(showNotificationError({tittle: 'REGISTRO DE TIPO DE MONEDA', description: data.message}));
-                dispatch(finishLoadingData());
-                setTimeout( () => dispatch(hideNotification()), 5000 );
-            }else console.log(error);
-        }
-    }
-}
-
-export const updateTipoMonedaVentaAPI = (updateTipoMonedaVentaDto:UpdateTipoMonedaVentaDto) => {
-    return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { userData } = getState().Sucursal;
-        if(!updateTipoMonedaVentaDto.sucursalId) return;
-        try {
-            dispatch(startLoadingData());
-            const response: AxiosResponse = await api.patch('ventas-ms/update-tipo-moneda-venta', 
-                updateTipoMonedaVentaDto,{headers: {"X-User-Id": userData.id}}
-            );
-            const {data, message}: {data: TipoMonedaVenta, message: string} = response.data;
-            dispatch(updateTipoMonedaVenta(data));
-            dispatch(showNotificationSuccess({tittle: 'MODIFICACIÓN DE TIPO DE MONEDA', description: message}));
-            setTimeout( () => dispatch(hideNotification()), 5000 );
-            dispatch(finishLoadingData());
-            
-        } catch (error) {
-            if( axios.isAxiosError(error) && error.response ){
-                const {data} = error.response;
-                dispatch(showNotificationError({tittle: 'MODIFICACIÓN DE TIPO DE MONEDA', description: data.message}));
-                dispatch(finishLoadingData());
-                setTimeout( () => dispatch(hideNotification()), 5000 );
-            }else console.log(error);
-        }
-    }
-}
-
-export const deleteTipoMonedaVentaAPI = (deleteTipoMonedaVentaDto:DeleteTipoMonedaVentaDto) => {
-    return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { userData } = getState().Sucursal;
-        if(!deleteTipoMonedaVentaDto.sucursalId) return;
-        try {
-            dispatch(startLoadingData());
-            const response: AxiosResponse = await api.delete('ventas-ms/delete-tipo-moneda-venta', 
-                {headers: {"X-User-Id": userData.id}, data: deleteTipoMonedaVentaDto}
-            );
-            const {data, message}: {data: TipoMonedaVenta, message: string} = response.data;
-            dispatch(deleteTipoMonedaVenta(data.id));
-            dispatch(showNotificationSuccess({tittle: 'ELIMINACIÓN DE TIPO DE MONEDA', description: message}));
-            setTimeout( () => dispatch(hideNotification()), 5000 );
-            dispatch(finishLoadingData());
-            
-        } catch (error) {
-            if( axios.isAxiosError(error) && error.response ){
-                const {data} = error.response;
-                dispatch(showNotificationError({tittle: 'ELIMINACIÓN DE TIPO DE MONEDA', description: data.message}));
-                dispatch(finishLoadingData());
-                setTimeout( () => dispatch(hideNotification()), 5000 );
-            }else console.log(error);
-        }
-    }
-}
-
 
 //* -------------------------------------------- PRECIO VENTA ----------------------------------------------------------
 
@@ -350,11 +271,12 @@ export const updateOpcionesVentaAPI = (updateOpcionesVentaDto:UpdateOpcionesVent
 }
 
 //* -------------------------------------------- PRODUCTOS VENTA ----------------------------------------------------------
+
 export const getAllProductosVentaAPI = (precioVentaId:string, almacenId:string, setLista?:React.Dispatch<React.SetStateAction<ProductoTienda[]>>) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id } = getState().Sucursal;
         const { listaProductos } = getState().Productos;
-        if (!id) return;
+        if (!id || precioVentaId === '' || almacenId === '') return;
         try {
             dispatch(startLoadingData());
             const responseVenta: AxiosResponse = await api.get(`ventas-ms/get-all-productos-venta/${precioVentaId}/${almacenId}`);
@@ -366,6 +288,7 @@ export const getAllProductosVentaAPI = (precioVentaId:string, almacenId:string, 
             const productosAlmacenObj = productosAlmacen.reduce((acc, producto) => { acc[producto.productoId] = producto; return acc; }, {} as Record<string, ProductoAlmacen>);
 
             const productosTienda: ProductoTienda[] = listaProductos.map(p => ({
+                id: productosVentaObj[p.id]?.id || '',
                 productoId: p.id,
                 productoAlmacenId: productosAlmacenObj[p.id]?.id || '',
                 Categoria: p.Categoria,
@@ -406,7 +329,46 @@ export const createProductoVentaAPI = (createProductoVentaDto: CreateProductoVen
         try {
             dispatch(startLoadingData());
             const response: AxiosResponse = await api.post(`ventas-ms/create-producto-venta`, 
-                {headers: {"X-User-Id": userData.id}, createProductoVentaDto}
+                createProductoVentaDto, { headers: {"X-User-Id": userData.id} }
+            );
+            
+            const {data, message}: {data:ProductoVenta , message: string} = response.data;
+
+            const { id, precio, productoId, updatedAt } = data;
+
+            //* EDITANDO SOLO EL PRECIO Y ID DEL PRODUCTO INDICADO 
+            const index = listaProductosTienda.findIndex((p) => p.productoId === productoId);
+            if (index === -1) return;
+            const newProductosTienda = [...listaProductosTienda];
+            newProductosTienda[index] = { ...newProductosTienda[index], id, precio, updatedAt};
+            dispatch(getAllProductosVenta(newProductosTienda));    
+            
+            if(setLista) setLista(newProductosTienda); //* Agrega los productos al componente de las ventas, para evitar usar el useEffect
+            
+            dispatch(showNotificationSuccess({tittle: 'PRECIO DE PRODUCTO', description: message}));
+            setTimeout( () => dispatch(hideNotification()), 5000 );
+            dispatch(finishLoadingData());
+        } catch (error) {
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                dispatch(showNotificationWarning({tittle: 'PRECIO DE PRODUCTO', description: data.message}));
+                setTimeout( () => dispatch(hideNotification()), 5000 );
+                dispatch(finishLoadingData());
+            }else console.log(error);
+            dispatch(finishLoadingData());
+        }
+    }
+}
+
+export const updateProductoVentaAPI = (updateProductoVentaDto: UpdateProductoVentaDto, setLista?:React.Dispatch<React.SetStateAction<ProductoTienda[]>>) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const { id: sucursalId, userData } = getState().Sucursal;
+        const { listaProductosTienda } = getState().Ventas;
+        if (!sucursalId) return;
+        try {
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.patch(`ventas-ms/update-producto-venta`, 
+                updateProductoVentaDto, { headers: {"X-User-Id": userData.id} }
             );
             
             const {data, message}: {data:ProductoVenta , message: string} = response.data;
@@ -453,6 +415,8 @@ export const createCotizacionVentaAPI = (
             const response: AxiosResponse = await api.post('ventas-ms/create-cotizacion-venta', createCotizacionVentaDto);
             const {data, message}: {data: CotizacionVenta, message: string} = response.data;
 
+            // console.log(data);
+
             if(setUltimaCotizacion && setOpenViewCotizacion){
                 setUltimaCotizacion(data);
                 setOpenViewCotizacion(true);
@@ -464,7 +428,7 @@ export const createCotizacionVentaAPI = (
             dispatch(finishLoadingData());
             
         } catch (error) {
-            // console.log(error)
+            console.log(error)
             if( axios.isAxiosError(error) && error.response ){
                 const {data} = error.response;
                 dispatch(showNotificationError({tittle: 'COTIZACION DE VENTA', description: data.message}));
@@ -484,11 +448,12 @@ export const getCotizacionesVentaAPI = (
         try {
             const response: AxiosResponse = await api.post(`ventas-ms/get-cotizaciones-venta`, getCotizacionesVentaDto);
             const data:CotizacionVenta[] = response.data;
-            // console.log(data);
+            // console.log(response.data);
             setListaCotizacionesVenta(data);
 
             dispatch(finishLoadingData());         
         } catch (error) {
+            console.log(error);
             if( axios.isAxiosError(error) && error.response ){
                 const {data} = error.response;
                 dispatch(showNotificationError({tittle: 'LISTA DE COTIZACIONES', description: data.message}));
@@ -548,11 +513,12 @@ export const getVentasAPI = (
         dispatch(startLoadingData());
         try {
             const response: AxiosResponse = await api.post(`ventas-ms/get-ventas`, getCotizacionesVentaDto);
+            // console.log(response.data);
             const data:Venta[] = response.data;
             setListaVentas(data);
-
             dispatch(finishLoadingData());         
         } catch (error) {
+            // console.log(error);
             if( axios.isAxiosError(error) && error.response ){
                 const {data} = error.response;
                 dispatch(showNotificationError({tittle: 'LISTA DE VENTAS', description: data.message}));

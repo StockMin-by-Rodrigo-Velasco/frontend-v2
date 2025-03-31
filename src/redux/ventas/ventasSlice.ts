@@ -5,22 +5,34 @@ import { ClienteVenta, TransactionProductoAlmacenDto, ListTransactionProductosAl
 interface VentasInitialState {
     idUltimoTipoMonedaVentaEliminado: string,
     idUltimoPrecioVentaEliminado: string,
-    opcionesVenta: OpcionesVenta | null,
+    opcionesVenta: OpcionesVenta,
     listaProductosTienda: ProductoTienda[],
     listaClientes: ClienteVenta[];
     listaTipoMonedaVenta: TipoMonedaVenta[];
     listaPrecioVenta: PrecioVenta[];
+    listaPrecioVentaObj: Record<string, PrecioVenta>;
     listaLogs: Log[];
+}
+
+const initialOpciones:OpcionesVenta = { 
+    id:'', 
+    almacenId:'', 
+    sucursalId:'', 
+    precioVentaId:'',
+    tipoMonedaVentaId:'',
+    PrecioVenta:{id:'', codigo:'', sucursalId:'', deleted:false, descripcion:''},
+    TipoMonedaVenta:{id:'', abreviatura:'', nombre:''}
 }
 
 const initialState: VentasInitialState = {
     idUltimoTipoMonedaVentaEliminado:'',
     idUltimoPrecioVentaEliminado: '',
-    opcionesVenta: null,
+    opcionesVenta: initialOpciones,
     listaProductosTienda: [],
     listaClientes: [],
     listaTipoMonedaVenta: [],
     listaPrecioVenta: [],
+    listaPrecioVentaObj:{},
     listaLogs:[]
 }
 
@@ -55,21 +67,21 @@ const VentasSlice = createSlice({
         getAllTipoMonedaVenta: (state, action: PayloadAction<TipoMonedaVenta[]>) => {
             state.listaTipoMonedaVenta = action.payload;
         },
-        createTipoMonedaVenta: (state, action: PayloadAction<TipoMonedaVenta>) => {
-            state.listaTipoMonedaVenta = [action.payload, ...state.listaTipoMonedaVenta];
-        },
-        updateTipoMonedaVenta: (state, action: PayloadAction<TipoMonedaVenta>) => {
-            const updateListaTipoMoneda = current(state.listaTipoMonedaVenta).map(tm => (tm.id === action.payload.id) ? action.payload : tm);
-            state.listaTipoMonedaVenta = [...updateListaTipoMoneda];
-        },
-        deleteTipoMonedaVenta: (state, action: PayloadAction<string>) => {
-            const newListaTipoMoneda = state.listaTipoMonedaVenta.filter(tm => tm.id !== action.payload);
-            state.listaTipoMonedaVenta = [...newListaTipoMoneda];
-            state.idUltimoTipoMonedaVentaEliminado = action.payload;
-        },
-        resetIdUltimoTipoMonedaVentaEliminado: (state) => {
-            state.idUltimoTipoMonedaVentaEliminado = '';
-        },
+        // createTipoMonedaVenta: (state, action: PayloadAction<TipoMonedaVenta>) => {
+        //     state.listaTipoMonedaVenta = [action.payload, ...state.listaTipoMonedaVenta];
+        // },
+        // updateTipoMonedaVenta: (state, action: PayloadAction<TipoMonedaVenta>) => {
+        //     const updateListaTipoMoneda = current(state.listaTipoMonedaVenta).map(tm => (tm.id === action.payload.id) ? action.payload : tm);
+        //     state.listaTipoMonedaVenta = [...updateListaTipoMoneda];
+        // },
+        // deleteTipoMonedaVenta: (state, action: PayloadAction<string>) => {
+        //     const newListaTipoMoneda = state.listaTipoMonedaVenta.filter(tm => tm.id !== action.payload);
+        //     state.listaTipoMonedaVenta = [...newListaTipoMoneda];
+        //     state.idUltimoTipoMonedaVentaEliminado = action.payload;
+        // },
+        // resetIdUltimoTipoMonedaVentaEliminado: (state) => {
+        //     state.idUltimoTipoMonedaVentaEliminado = '';
+        // },
 
         getAllPrecioVenta: (state, action: PayloadAction<PrecioVenta[]>) => {
             state.listaPrecioVenta = action.payload;
@@ -109,10 +121,10 @@ export const {
     updateClienteVenta,
 
     getAllTipoMonedaVenta,
-    createTipoMonedaVenta,
-    updateTipoMonedaVenta,
-    deleteTipoMonedaVenta,
-    resetIdUltimoTipoMonedaVentaEliminado,
+    // createTipoMonedaVenta,
+    // updateTipoMonedaVenta,
+    // deleteTipoMonedaVenta,
+    // resetIdUltimoTipoMonedaVentaEliminado,
 
     getAllPrecioVenta,
     createPrecioVenta,

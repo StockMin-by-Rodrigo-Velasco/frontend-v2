@@ -24,7 +24,7 @@ export default function UpdatePrecioVenta({ dataUpdate, closeButton }: UpdatePre
   const { type: typeNotification, showNotification } = useSelector((s: RootState) => s.Notification);
   const { idUltimoPrecioVentaEliminado, listaTipoMonedaVenta } = useSelector((s: RootState) => s.Ventas);
 
-  const selectOptions = listaTipoMonedaVenta.map(tm => ({ name: tm.nombre, value: tm.id }));
+  // const selectOptions = listaTipoMonedaVenta.map(tm => ({ name: tm.nombre, value: tm.id }));
 
   const dispatch = useDispatch<AppDispatch>()
   const { data, handleInputChange, resetData } = useForm<PrecioVenta>(dataUpdate);
@@ -37,7 +37,7 @@ export default function UpdatePrecioVenta({ dataUpdate, closeButton }: UpdatePre
 
   const submitUpdate = (e: FormEvent) => {
     e.preventDefault();
-    dispatch(updatePrecioVentaAPI({ precioVentaId: data.id, sucursalId: data.sucursalId, tipoMonedaVentaId: data.tipoMonedaVentaId, codigo: data.codigo, descripcion: data.descripcion }));
+    dispatch(updatePrecioVentaAPI({ precioVentaId: data.id, sucursalId: data.sucursalId, codigo: data.codigo, descripcion: data.descripcion }));
   }
 
   const deletePrecioVenta = () => {
@@ -86,14 +86,14 @@ export default function UpdatePrecioVenta({ dataUpdate, closeButton }: UpdatePre
           disabled={!editMode || loadingData}
         />
 
-        <InputSelect
+        {/* <InputSelect
           options={selectOptions}
           handleInputChange={handleInputChange}
           placeholder="Tipo de moneda"
           name="tipoMonedaVentaId"
           value={data.tipoMonedaVentaId}
           disabled={!editMode || loadingData}
-        />
+        /> */}
 
         <InputTextarea
           handleInputChange={handleInputChange}

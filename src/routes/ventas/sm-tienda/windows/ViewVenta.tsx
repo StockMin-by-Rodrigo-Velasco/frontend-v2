@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import Windows from "../../../../components/Windows";
-import { Producto, TipoMonedaVenta, Venta } from "../../../../interface";
+import { Producto, Venta } from "../../../../interface";
 import { RootState } from "../../../../redux/store";
 import { dateLocal } from "../../../../helpers";
 import { useEffect, useRef, useState } from "react";
@@ -27,12 +27,9 @@ export default function ViewVenta({ closeButton, venta }: ViewVentaProp) {
     const tableRef = useRef<HTMLTableElement | null>(null);
     const { logo, listUsers: users } = useSelector((s: RootState) => s.Sucursal);
     const { listaProductos } = useSelector((s: RootState) => s.Productos);
-    const { listaTipoMonedaVenta } = useSelector((s: RootState) => s.Ventas);
-
-
+    const { opcionesVenta } = useSelector((s: RootState) => s.Ventas);
 
     const [responsable, setResponsable] = useState('');
-    const [monedaCotizacion, setMonedaCotizacion] = useState<TipoMonedaVenta>({ id: '', abreviatura: '', nombre: '', sucursalId: '' });
     const [listaProductosDetalle, setListaProductosDetalle] = useState<ProductoDetalle[]>([])
 
     const descargarPdf = () => {
@@ -68,10 +65,6 @@ export default function ViewVenta({ closeButton, venta }: ViewVentaProp) {
             }))
             setListaProductosDetalle(productosDetalle);
         }
-
-        const listaTipoMonedaObj = listaTipoMonedaVenta.reduce((acc, tm) => { acc[tm.id] = tm; return acc; }, {} as Record<string, TipoMonedaVenta>);
-                const tipoMoneda = listaTipoMonedaObj[venta.PrecioVenta.tipoMonedaVentaId];
-                setMonedaCotizacion(tipoMoneda);
     }, [venta])
 
 
@@ -116,7 +109,7 @@ export default function ViewVenta({ closeButton, venta }: ViewVentaProp) {
                                     <td>{p.unidadMedida.toUpperCase()}</td>
                                     <td>{p.cantidad}</td>
                                     <td>{p.precio}</td>
-                                    <td className="text-end pe-2" >{p.subTotal} <span>{monedaCotizacion.abreviatura.toUpperCase()}</span></td>
+                                    <td className="text-end pe-2" >{p.subTotal} <span>{opcionesVenta.TipoMonedaVenta.abreviatura.toUpperCase()}</span></td>
                                 </tr>
                             ))}
                         </tbody>}
@@ -124,12 +117,12 @@ export default function ViewVenta({ closeButton, venta }: ViewVentaProp) {
                         <tfoot>
                             <tr className=" bg-secondary/50 border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase text-end">
                                 <td colSpan={5} className="font-bold" >DESCUENTO</td>
-                                <td className="text-end pe-2" >{parseFloat(venta.descuento || '0').toFixed(2)} <span>{monedaCotizacion.abreviatura.toUpperCase()}</span></td>
+                                <td className="text-end pe-2" >{parseFloat(venta.descuento || '0').toFixed(2)} <span>{opcionesVenta.TipoMonedaVenta.abreviatura.toUpperCase()}</span></td>
                             </tr>
 
                             <tr className=" bg-secondary/70 border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase text-end">
                                 <td colSpan={5} className="font-bold" >TOTAL</td>
-                                <td className="text-end pe-2" >{parseFloat(venta.total).toFixed(2) } <span>{monedaCotizacion.abreviatura.toUpperCase()}</span></td>
+                                <td className="text-end pe-2" >{parseFloat(venta.total).toFixed(2) } <span>{opcionesVenta.TipoMonedaVenta.abreviatura.toUpperCase()}</span></td>
                             </tr>
                         </tfoot>
                 </table>

@@ -22,7 +22,7 @@ export default function CreatePrecioVenta({ closeButton }: UpdatePrecioVentaProp
   const dispatch = useDispatch<AppDispatch>();
   const selectOptions = listaTipoMonedaVenta.map(tm => ({ name: tm.nombre, value: tm.id }));
 
-  const { data, handleInputChange } = useForm<CreatePrecioVentaDto>({sucursalId, tipoMonedaVentaId:'', codigo:'', descripcion:''});
+  const { data, handleInputChange } = useForm<CreatePrecioVentaDto>({sucursalId, codigo:'', descripcion:''});
 
   const submitCreatePrecioVenta = (e: FormEvent) => {
     e.preventDefault();
@@ -46,7 +46,7 @@ export default function CreatePrecioVenta({ closeButton }: UpdatePrecioVentaProp
           disabled={loadingData}
           required
         />
-        <InputSelect
+        {/* <InputSelect
         optionDefault="Sin T/M"
           options={selectOptions}
           handleInputChange={handleInputChange}
@@ -55,7 +55,7 @@ export default function CreatePrecioVenta({ closeButton }: UpdatePrecioVentaProp
           value={data.tipoMonedaVentaId}
           disabled={loadingData}
           required
-        />
+        /> */}
         <InputText
           handleInputChange={handleInputChange}
           placeholder="Descripcion:"

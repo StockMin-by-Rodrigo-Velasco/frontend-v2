@@ -1,10 +1,10 @@
 import logos from "../../../../assets/logos";
-import { ProductoTienda } from "../../../../interface";
+import { ProductoTienda, UpdateProductoVentaDto } from "../../../../interface";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { MdShoppingCart } from "react-icons/md";
 import { useState } from "react";
-import { createProductoVentaAPI } from "../../../../redux/ventas/ventasThunk";
+import { createProductoVentaAPI, updateProductoVentaAPI } from "../../../../redux/ventas/ventasThunk";
 import { useForm } from "../../../../hooks";
 
 import { IoClose } from "react-icons/io5";
@@ -32,8 +32,6 @@ export default function ProductoCard({ producto, checkProducto, setLista }: Prod
     const { data: formPrecio, handleInputChange } = useForm<{ precio: string }>({precio: (producto.precio === '-')?'0': producto.precio});
 
     const createUpdatePrecio = () => {
-        if (!opcionesVenta) return;
-
         const newProducto = {
             almacenId: opcionesVenta.almacenId,
             productoId: producto.productoId,
@@ -46,7 +44,13 @@ export default function ProductoCard({ producto, checkProducto, setLista }: Prod
         if( producto.precio === '-' ){
             dispatch(createProductoVentaAPI(newProducto, setLista));
         }else{
-            console.log('Editando...')
+            const updateProducto: UpdateProductoVentaDto = {
+                id: producto.id,
+                precio:formPrecio.precio,
+                sucursalId,
+                codigoProducto: producto.codigo
+            }
+            dispatch(updateProductoVentaAPI(updateProducto, setLista));
         }
 
     }
@@ -83,7 +87,7 @@ export default function ProductoCard({ producto, checkProducto, setLista }: Prod
                             value={formPrecio.precio}
                         />
                         <div className="border border-secondary bg-secondary text-white rounded-e-md text-[12px] px-1" >
-                            {opcionesVenta?.PrecioVenta.TipoMonedaVenta?.abreviatura.toLocaleUpperCase()}
+                            {opcionesVenta.TipoMonedaVenta.abreviatura.toLocaleUpperCase()}
                         </div>
 
                         {loadingData ?
@@ -119,7 +123,7 @@ export default function ProductoCard({ producto, checkProducto, setLista }: Prod
                             :
                             <div className="flex" >
                                 {producto.precio}
-                                <span className="font-medium ms-1" >{opcionesVenta?.PrecioVenta.TipoMonedaVenta?.abreviatura.toLocaleUpperCase()} </span>
+                                <span className="font-medium ms-1" >{opcionesVenta.TipoMonedaVenta.abreviatura.toLocaleUpperCase()} </span>
                                 <button 
                                     type="button" 
                                     className="text-secondary/80 ms-2 text-[14px] hover:text-secondary"

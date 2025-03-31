@@ -39,8 +39,6 @@ const initialCotizacion: CotizacionVenta = {
         id: '',
         sucursalId: '',
         codigo: '',
-        tipoMonedaVentaId: '',
-
     },
     clienteVentaId: '',
     ClienteVenta: {

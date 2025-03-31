@@ -2,6 +2,7 @@ import { Categoria, Marca, UnidadMedida } from "./productosInterface";
 
 export interface ProductoTienda {
 
+    id: string;
     productoId: string;
     productoAlmacenId: string,
     codigo: string;
@@ -26,10 +27,8 @@ export interface ProductoTienda {
 
 export interface TipoMonedaVenta {
     id: string;
-    sucursalId: string;
     nombre: string;
     abreviatura: string;
-    deleted?: boolean;
 }
 
 export interface PrecioVenta {
@@ -38,9 +37,6 @@ export interface PrecioVenta {
     codigo: string;
     descripcion?: string;
     deleted?: boolean;
-
-    tipoMonedaVentaId: string;
-    TipoMonedaVenta?: TipoMonedaVenta;
 }
 
 export interface ProductoAlmacen {
@@ -133,8 +129,10 @@ export interface OpcionesVenta {
     sucursalId: string;
     almacenId: string;
     precioVentaId: string;
+    tipoMonedaVentaId: string; 
 
     PrecioVenta: PrecioVenta;
+    TipoMonedaVenta: TipoMonedaVenta;
 }
 
 
@@ -159,25 +157,12 @@ export interface UpdateClienteVentaDto {
     direccion?: string
 }
 
-export interface CreateTipoMonedaVentaDto {
-    sucursalId: string;
-    nombre: string
-    abreviatura: string
-}
 export interface CreatePrecioVentaDto {
     sucursalId: string;
-    tipoMonedaVentaId: string;
     codigo: string
     descripcion?: string
-    deleted?: boolean
 }
 
-export interface UpdateTipoMonedaVentaDto {
-    tipoMonedaVentaId: string;
-    sucursalId: string;
-    nombre?: string
-    abreviatura?: string
-}
 export interface UpdatePrecioVentaDto {
     precioVentaId: string;
     sucursalId: string;
@@ -186,10 +171,6 @@ export interface UpdatePrecioVentaDto {
     descripcion?: string
 }
 
-export interface DeleteTipoMonedaVentaDto {
-    tipoMonedaVentaId: string;
-    sucursalId: string;
-}
 export interface DeletePrecioVentaDto {
     precioVentaId: string;
     sucursalId: string;
@@ -199,6 +180,7 @@ export interface CreateOpcionesVentaDto {
     sucursalId: string;
     almacenId: string;
     precioVentaId: string;
+    tipoMonedaVentaId: string;
 }
 
 export interface UpdateOpcionesVentaDto {
@@ -215,6 +197,14 @@ export interface CreateProductoVentaDto {
     precioVentaId: string;
     precio: string;
 
+    // ---- LOG ----
+    sucursalId: string;
+    codigoProducto: string;
+}
+
+export interface UpdateProductoVentaDto{
+    id: string;
+    precio: string;
     // ---- LOG ----
     sucursalId: string;
     codigoProducto: string;

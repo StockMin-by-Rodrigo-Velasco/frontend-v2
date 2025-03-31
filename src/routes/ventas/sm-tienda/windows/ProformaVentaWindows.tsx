@@ -56,7 +56,7 @@ const initialCotizacion: CotizacionVenta = {
   sucursalId:'',
   total:'',
   usuarioId:'',
-  PrecioVenta: { id:'', codigo: '', sucursalId:'', tipoMonedaVentaId:''},
+  PrecioVenta: { id:'', codigo: '', sucursalId:''},
   createdAt:''
 }
 const initialVenta: Venta = {
@@ -71,8 +71,6 @@ const initialVenta: Venta = {
         id: '',
         sucursalId: '',
         codigo: '',
-        tipoMonedaVentaId: '',
-
     },
     clienteVentaId: '',
     ClienteVenta: {
@@ -171,8 +169,6 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
 
     const totalNum = (arrayData.reduce((acc, p) => acc + (parseInt(p.cantidad) * parseFloat(p.precio)), 0) - parseFloat(formProforma.descuento)).toFixed(3);
 
-    if (!opcionesVenta?.almacenId) return;
-
     const venta: CreateVentaDto = {
       sucursalId,
       almacenId: opcionesVenta.almacenId,
@@ -181,7 +177,7 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
       usuarioId: userData.id,
       descuento: formProforma.descuento,
       detalle: formProforma.detalle,
-      precioVentaId: opcionesVenta?.precioVentaId || '',
+      precioVentaId: opcionesVenta.precioVentaId,
       clienteVentaId: clienteSelected.id,
       productoDetalleVenta
     }
@@ -250,7 +246,7 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
         <div className="bg-success mb-3 text-white text-end px-8 text-[22px]" >
           <span className="me-2" >Total:</span>
           {(arrayData.reduce((acc, p) => acc + (parseInt(p.cantidad) * parseFloat(p.precio)), 0) - parseFloat(formProforma.descuento || '0')).toFixed(2)}
-          <span className="ms-2 uppercase" >{opcionesVenta?.PrecioVenta.TipoMonedaVenta?.abreviatura}</span>
+          <span className="ms-2 uppercase" >{opcionesVenta.TipoMonedaVenta.abreviatura}</span>
         </div>
 
         <table className={`table-fixed text-left w-full border-secondary rounded overflow-hidden`}>

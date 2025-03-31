@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import HeaderSection from "../../../components/HeaderSection";
 import { AppDispatch, RootState } from "../../../redux/store";
 import { useEffect, useState } from "react";
-import { CreateOpcionesVentaDto, TransactionProductoAlmacenDto, ListTransactionProductosAlmacenDto, ProductoTienda } from "../../../interface";
+import { CreateOpcionesVentaDto, TransactionProductoAlmacenDto, ListTransactionProductosAlmacenDto, ProductoTienda, PrecioVenta } from "../../../interface";
 import { InputSearch, InputSelect, InputSelectSearch } from "../../../components/Input";
 import BodySection from "../../../components/BodySection";
 import ProductoCard from "./components/ProductoCard";
@@ -45,8 +45,9 @@ export default function TiendaVentas() {
 
 
     const [filterOpciones, setFilterOpciones] = useState<CreateOpcionesVentaDto>({
-        almacenId: opcionesVenta?.almacenId || '',
-        precioVentaId: opcionesVenta?.precioVentaId || '',
+        almacenId: opcionesVenta.almacenId,
+        precioVentaId: opcionesVenta.precioVentaId,
+        tipoMonedaVentaId: opcionesVenta.tipoMonedaVentaId,
         sucursalId
     });
 
@@ -100,12 +101,16 @@ export default function TiendaVentas() {
         const newFilterOpciones: CreateOpcionesVentaDto = { ...filterOpciones, [name]: value }
         setFilterOpciones({ ...newFilterOpciones });
 
-        const newPrecioVenta = listaPrecioVenta.find(pv => pv.id === newFilterOpciones.precioVentaId);
+        const listaPrecioVentaObj = listaPrecioVenta.reduce((acc, pv) => { acc[pv.id] = pv; return acc }, {} as Record<string, PrecioVenta>)
 
-        if (newPrecioVenta) dispatch(getOpcionesVenta({
-            id: opcionesVenta?.id || '',
-            ...newFilterOpciones,
-            PrecioVenta: newPrecioVenta
+        dispatch(getOpcionesVenta({
+            id: opcionesVenta.id,
+            almacenId: newFilterOpciones.almacenId,
+            precioVentaId: newFilterOpciones.precioVentaId,
+            tipoMonedaVentaId: opcionesVenta.tipoMonedaVentaId,
+            sucursalId,
+            TipoMonedaVenta: opcionesVenta.TipoMonedaVenta,
+            PrecioVenta: listaPrecioVentaObj[opcionesVenta.precioVentaId] || { codigo: '', id: '', sucursalId: '', deleted: false, }
         }));
         const { precioVentaId, almacenId } = newFilterOpciones;
         dispatch(getAllProductosVentaAPI(precioVentaId, almacenId));
@@ -113,15 +118,15 @@ export default function TiendaVentas() {
 
 
     useEffect(() => {
-        if (opcionesVenta?.almacenId && opcionesVenta.precioVentaId) {
-            setFilterOpciones({
-                almacenId: opcionesVenta?.almacenId,
-                precioVentaId: opcionesVenta?.precioVentaId,
-                sucursalId
-            });
-            dispatch(getAllProductosVentaAPI(opcionesVenta?.precioVentaId, opcionesVenta?.almacenId, setFilterProductosTienda));
-            setCheckedProductos(0);
-        }
+        setFilterOpciones({
+            almacenId: opcionesVenta.almacenId,
+            precioVentaId: opcionesVenta.precioVentaId,
+            tipoMonedaVentaId: opcionesVenta.tipoMonedaVentaId,
+            sucursalId
+        });
+        dispatch(getAllProductosVentaAPI(opcionesVenta.precioVentaId, opcionesVenta.almacenId, setFilterProductosTienda));
+        setCheckedProductos(0);
+
     }, [opcionesVenta])
     return (
         <>
@@ -134,7 +139,7 @@ export default function TiendaVentas() {
                     decrementProductos={decrementProductos}
                 />
             }
-            {openListaVentasCotizaciones && <ListaVentasCotizaciones closeButton={() => {setOpenListaVentasCotizaciones(false)}} decrementProductos={decrementProductos}/>}
+            {openListaVentasCotizaciones && <ListaVentasCotizaciones closeButton={() => { setOpenListaVentasCotizaciones(false) }} decrementProductos={decrementProductos} />}
 
             <HeaderSection>
                 <InputSearch
