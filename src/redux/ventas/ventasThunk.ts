@@ -3,7 +3,7 @@ import { finishLoadingAplication, finishLoadingData, startLoadingAplication, sta
 import { AppDispatch, RootState } from "../store";
 import { createClienteVenta, createPrecioVenta, createTipoMonedaVenta, decrementProductos, deletePrecioVenta, deleteTipoMonedaVenta, getAllClientesVenta, getAllPrecioVenta, getAllProductosVenta, getAllTipoMonedaVenta, getLogsVentas, getOpcionesVenta, updateClienteVenta, updatePrecioVenta, updateTipoMonedaVenta } from "./ventasSlice";
 import api from "../../api/config";
-import { ClienteVenta, CreateClienteVentaDto, CreateTipoMonedaVentaDto, DeleteTipoMonedaVentaDto, ListDecrementProductosAlmacenDto, ProductoAlmacen, TipoMonedaVenta, UpdateClienteVentaDto, UpdateTipoMonedaVentaDto } from "../../interface";
+import { ClienteVenta, CreateClienteVentaDto, CreateTipoMonedaVentaDto, DeleteTipoMonedaVentaDto, ListTransactionProductosAlmacenDto, ProductoAlmacen, TipoMonedaVenta, UpdateClienteVentaDto, UpdateTipoMonedaVentaDto } from "../../interface";
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from "../notification/notificationSlice";
 import { CotizacionVenta, CreateCotizacionVentaDto, CreateOpcionesVentaDto, CreatePrecioVentaDto, CreateProductoVentaDto, CreateVentaDto, DeletePrecioVentaDto, GetCotizacionesVentaDto, OpcionesVenta, PrecioVenta, ProductoTienda, ProductoVenta, UpdateOpcionesVentaDto, UpdatePrecioVentaDto, Venta } from '../../interface/ventasInterfaces';
 import { decrementProdutosAlmacenAPI } from "../almacenes/almacenThunks";
@@ -400,12 +400,14 @@ export const getAllProductosVentaAPI = (precioVentaId:string, almacenId:string, 
 
 export const createProductoVentaAPI = (createProductoVentaDto: CreateProductoVentaDto, setLista?:React.Dispatch<React.SetStateAction<ProductoTienda[]>>) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { id: sucursalId } = getState().Sucursal;
+        const { id: sucursalId, userData } = getState().Sucursal;
         const { listaProductosTienda } = getState().Ventas;
         if (!sucursalId) return;
         try {
             dispatch(startLoadingData());
-            const response: AxiosResponse = await api.post(`ventas-ms/create-producto-venta`, createProductoVentaDto);
+            const response: AxiosResponse = await api.post(`ventas-ms/create-producto-venta`, 
+                {headers: {"X-User-Id": userData.id}, createProductoVentaDto}
+            );
             
             const {data, message}: {data:ProductoVenta , message: string} = response.data;
 
@@ -501,7 +503,7 @@ export const getCotizacionesVentaAPI = (
 
 export const createVentaAPI = (
     createVentaDto: CreateVentaDto, 
-    listDecrementProductosAlmacenDto: ListDecrementProductosAlmacenDto,
+    listDecrementProductosAlmacenDto: ListTransactionProductosAlmacenDto,
     setUltimaVenta?: React.Dispatch<React.SetStateAction<Venta>>,
     setOpenViewVenta?: React.Dispatch<React.SetStateAction<boolean>>
 ) => {

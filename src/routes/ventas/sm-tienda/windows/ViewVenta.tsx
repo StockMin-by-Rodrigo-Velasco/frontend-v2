@@ -25,7 +25,7 @@ interface ProductoDetalle {
 
 export default function ViewVenta({ closeButton, venta }: ViewVentaProp) {
     const tableRef = useRef<HTMLTableElement | null>(null);
-    const { logo, users } = useSelector((s: RootState) => s.Sucursal);
+    const { logo, listUsers: users } = useSelector((s: RootState) => s.Sucursal);
     const { listaProductos } = useSelector((s: RootState) => s.Productos);
     const { listaTipoMonedaVenta } = useSelector((s: RootState) => s.Ventas);
 

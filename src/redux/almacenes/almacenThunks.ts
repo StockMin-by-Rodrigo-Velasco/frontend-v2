@@ -4,7 +4,7 @@ import api from '../../api/config';
 import { createAlmacen, createManyProductosAlmacen, createProductoAlmacen, createTraspasoProductosAlmacen, getAllAlmacenes, getAllIngresosProductosAlmacen, getAllProductosAlmacen, getAllTraspasosProductosAlmacen, getLogsAlmacenes, updateAlmacen, updateManyProductosAlmacen, updateProductoAlmacen } from './almacenesSlice';
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from '../aplication/aplicationSlice';
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from '../notification/notificationSlice';
-import { CreateIngresoAlmacenDto, CreateManyProductosAlmacenDto, CreateProductoAlmacenDto, IngresoAlmacen, ProductoAlmacenDetallado, ProductoAlmacen, CreateAlmacenDto, Almacen, UpdateAlmacenDto, Producto, ListDecrementProductosAlmacenDto, CreateDocTraspasoAlmacenDto, DocTraspasoProductoAlmacen } from '../../interface';
+import { CreateIngresoAlmacenDto, CreateManyProductosAlmacenDto, CreateProductoAlmacenDto, IngresoAlmacen, ProductoAlmacenDetallado, ProductoAlmacen, CreateAlmacenDto, Almacen, UpdateAlmacenDto, Producto, ListTransactionProductosAlmacenDto, CreateDocTraspasoAlmacenDto, DocTraspasoProductoAlmacen } from '../../interface';
 
 
 export const getAllAlmacenesAPI = () => {
@@ -403,15 +403,22 @@ export const getAllTraspasosProductosAlmacenAPI = (desde: string, hasta: string,
     }
 }
 
-export const decrementProdutosAlmacenAPI = (listDecrementProductosAlmacenDto: ListDecrementProductosAlmacenDto) => {
-    return async (dispatch: AppDispatch) => {
+export const incrementProdutosAlmacenAPI = (listIncrementProductosAlmacenDto: ListTransactionProductosAlmacenDto) => {
+    return async () => {
         try {
-            dispatch(startLoadingData());
-            await api.post(`almacenes-ms/decrement-productos-almacen`, listDecrementProductosAlmacenDto);
-            dispatch(finishLoadingData());
+            await api.post(`almacenes-ms/increment-productos-almacen`, listIncrementProductosAlmacenDto);
         } catch (error) {
             console.log(error);
-            dispatch(finishLoadingData());
+        }
+    }
+}
+
+export const decrementProdutosAlmacenAPI = (listDecrementProductosAlmacenDto: ListTransactionProductosAlmacenDto) => {
+    return async () => {
+        try {
+            await api.post(`almacenes-ms/decrement-productos-almacen`, listDecrementProductosAlmacenDto);
+        } catch (error) {
+            console.log(error);
         }
     }
 }

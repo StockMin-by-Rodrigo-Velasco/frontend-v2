@@ -14,6 +14,7 @@ import { getAllTraspasosProductosAlmacenAPI } from "../../../redux/almacenes/alm
 import { AiOutlineLoading } from "react-icons/ai";
 import { dateLocalWhitTime } from '../../../helpers/dateConvert';
 import { BsBoxArrowInUpRight } from "react-icons/bs";
+import ViewTraspasoAlmacen from "./windows/ViewTraspasoAlmacen";
 
 
 
@@ -40,7 +41,7 @@ const initialDocTraspaso: DocTraspasoProductoAlmacen = {
 export default function TraspasosAlmacenes() {
     const { loadingApplication, loadingData } = useSelector((s: RootState) => s.Aplication);
     const { listaAlmacenes, historialTraspasos } = useSelector((s: RootState) => s.Almacenes);
-    const { users } = useSelector((s: RootState) => s.Sucursal);
+    const { listUsers: users } = useSelector((s: RootState) => s.Sucursal);
 
     const listaAlmacenesObj = listaAlmacenes.reduce((acc, a) => { acc[a.id] = a; return acc; }, {} as Record<string, Almacen>);
     const listaUsersObj = users.reduce((acc, u) => { acc[u.id] = u; return acc; }, {} as Record<string, User>);
@@ -58,8 +59,8 @@ export default function TraspasosAlmacenes() {
 
     const getTraspaso = (traspaso: DocTraspasoProductoAlmacen) => {
         setOpenViewTraspaso(true);
+        setOpenCreateTraspasoAlmacen(false);
         setTraspasoSelected(traspaso);
-        console.log(traspaso);
     }
 
     const filterTraspasos = () => {
@@ -82,6 +83,7 @@ export default function TraspasosAlmacenes() {
         <>
             {loadingApplication && <LoadingSection title="Cargando historial" />}
             {openCreateTraspasoAlmacen && <CreateTraspasoAlmacen closeButton={() => { setOpenCreateTraspasoAlmacen(false) }} getTraspaso={getTraspaso} />}
+            {openViewTraspaso && <ViewTraspasoAlmacen closeButton={() => {setOpenViewTraspaso(false)}} traspaso={traspasoSelected} />}
 
             <HeaderSection>
                 <InputDateSearch

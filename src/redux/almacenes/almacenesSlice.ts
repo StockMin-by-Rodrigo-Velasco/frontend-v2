@@ -16,12 +16,14 @@ interface InitialStateInterface {
     historialIngresosAlmacen: IngresoAlmacen[];
     historialTraspasos: DocTraspasoProductoAlmacen[];
     listaAlmacenes: Almacen[];
+    listaAlmacenesObj: Record<string, Almacen>;
     listaProductosAlmacen: ProductoAlmacenDetallado[];
     listaLogs: Log[],
 }
 
 const initialState: InitialStateInterface = {
     listaAlmacenes: [],
+    listaAlmacenesObj:{},
     historialIngresosAlmacen: [],
     historialTraspasos:[],
     listaProductosAlmacen: [],
@@ -35,6 +37,7 @@ const AlmacenesSlice = createSlice({
     reducers: {
         getAllAlmacenes: (state, action: PayloadAction<Almacen[]>) => {
             state.listaAlmacenes = [...action.payload];
+            state.listaAlmacenesObj = action.payload.reduce((acc, a) => {acc[a.id]=a; return acc}, {} as Record<string, Almacen>)
         },
         selectAlmacen: (state, action: PayloadAction<Almacen>) => {
             state.selectedAlmacen = action.payload;

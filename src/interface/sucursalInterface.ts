@@ -25,9 +25,9 @@ export interface UpdateSucursalUserInterface{
 
 export interface User {
   id: string;
+  sucursalId: string;
   nombre: string;
   apellido: string;
   ci: string;
   imagen: string;
-  sucursalId: string;
 }

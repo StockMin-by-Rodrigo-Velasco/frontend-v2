@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import HeaderSection from "../../../components/HeaderSection";
 import { AppDispatch, RootState } from "../../../redux/store";
 import { useEffect, useState } from "react";
-import { CreateOpcionesVentaDto, DecrementProductoAlmacenDto, ListDecrementProductosAlmacenDto, ProductoTienda } from "../../../interface";
+import { CreateOpcionesVentaDto, TransactionProductoAlmacenDto, ListTransactionProductosAlmacenDto, ProductoTienda } from "../../../interface";
 import { InputSearch, InputSelect, InputSelectSearch } from "../../../components/Input";
 import BodySection from "../../../components/BodySection";
 import ProductoCard from "./components/ProductoCard";
@@ -83,9 +83,9 @@ export default function TiendaVentas() {
         setFilterProductosTienda(newProductosTienda);
     }
 
-    const decrementProductos = (listDecrementProductosAlmacenDto: ListDecrementProductosAlmacenDto) => {
+    const decrementProductos = (listDecrementProductosAlmacenDto: ListTransactionProductosAlmacenDto) => {
         const { productos } = listDecrementProductosAlmacenDto;
-        const productosObj = productos.reduce((acc, p) => { acc[p.productoAlmacenId] = p; return acc; }, {} as Record<string, DecrementProductoAlmacenDto>);
+        const productosObj = productos.reduce((acc, p) => { acc[p.productoAlmacenId] = p; return acc; }, {} as Record<string, TransactionProductoAlmacenDto>);
 
         const newListaProductos: ProductoTienda[] = listaProductosTienda.map(p => {
             if (productosObj[p.productoAlmacenId]) {

@@ -14,7 +14,7 @@ import { TbLogout2 } from "react-icons/tb";
 export default function SucursalUsers() {
 
   const dispatch = useDispatch<AppDispatch>();
-  const { id: sucursalId, logo, users } = useSelector((s: RootState) => s.Sucursal);
+  const { id: sucursalId, logo, listUsers: users } = useSelector((s: RootState) => s.Sucursal);
   const { loadingApplication } = useSelector((s: RootState) => s.Aplication);
   const navigate = useNavigate();
 

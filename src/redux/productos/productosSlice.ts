@@ -6,6 +6,7 @@ interface InitialStateInterface {
     idUltimaMarcaEliminada: string;
     idUltimaCategoriaEliminada: string;
     listaProductos: Producto[],
+    listaProductosObj: Record<string, Producto>,
     listaMarcas: Marca[],
     listaCategorias: Categoria[],
     listaUnidadesMedida: UnidadMedida[],
@@ -18,6 +19,7 @@ const initialState: InitialStateInterface = {
     idUltimaMarcaEliminada: '',
     idUltimaCategoriaEliminada: '',
     listaProductos: [],
+    listaProductosObj:{},
     listaMarcas: [],
     listaCategorias: [],
     listaUnidadesMedida:[],
@@ -30,6 +32,7 @@ const ProductosSlice = createSlice({
     reducers: {
         getAllProductos: (state, action: PayloadAction<Producto[]>) => {
             state.listaProductos = [...action.payload];
+            state.listaProductosObj = action.payload.reduce((acc, p) => {acc[p.id] = p; return acc}, {} as Record<string, Producto>);
         },
         createProducto: (state, action: PayloadAction<Producto>) => {
             state.listaProductos = [action.payload, ...state.listaProductos]

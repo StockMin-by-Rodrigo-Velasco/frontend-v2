@@ -67,7 +67,7 @@ interface ViewIngresoProductoAlmacenWindowProp {
 }
 
 export default function ViewIngresoProductoAlmacenWindow({ closeButton, data }: ViewIngresoProductoAlmacenWindowProp) {
-  const { logo, users } = useSelector((s: RootState) => s.Sucursal);
+  const { logo, listUsers: users } = useSelector((s: RootState) => s.Sucursal);
   const { listaProductos } = useSelector((s: RootState) => s.Productos);
 
   const [ingresoProductos, setIngresoProductos] = useState<ProductoForDataTable[]>([]);

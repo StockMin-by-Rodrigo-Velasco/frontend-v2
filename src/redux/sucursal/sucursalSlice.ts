@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import Cookie from 'js-cookie';
+import { User } from '../../interface';
 
 
 interface SucursalDataInterface{
@@ -24,14 +25,6 @@ interface UserDataInterface{
     activo: boolean;
 }
 
-interface UserInterface{
-    id: string;
-    sucursalId: string;
-    nombre: string;
-    apellido: string;
-    ci: string;
-    imagen: string;
-}
 interface UserLoginInterface{
     id: string;
     sucursalId: string;
@@ -41,9 +34,10 @@ interface SucursalStateInterface{
     id: string;
     data: SucursalDataInterface;
     userData: UserDataInterface,
-    logUserData: UserInterface,
-    users: UserInterface[];
-    userSelected: UserLoginInterface,
+    logUserData: User;
+    listUsers: User[];
+    listUsersObj: Record<string, User>;
+    userSelected: UserLoginInterface;
     logo: string;
 }
 
@@ -52,7 +46,8 @@ const initialState: SucursalStateInterface = {
     data: {nit:'', nombre:'', propietario:'', direccion:'', contacto: '', activo: false},
     userData: { id:'', sucursalId:'', nombre:'', apellido:'', ci:'', imagen:'', contacto:'', direccion:'', permisos:'', activo:false },
     logUserData: {id:'', sucursalId:'', nombre:'', apellido:'', ci:'', imagen:''},
-    users:[],
+    listUsers:[],
+    listUsersObj:{},
     userSelected: {id: '', sucursalId: ''},
     logo: '',
 }
@@ -69,7 +64,7 @@ const SucursalSlice = createSlice({
     logoutSucursal: (state) => {
         state.id = '';
         state.data = {nit:'', nombre:'', propietario:'', direccion:'', contacto: '', activo: false};
-        state.users =[];
+        state.listUsers =[];
         state.userSelected = {id: '', sucursalId: ''};
         state.logo = '';
 
@@ -84,10 +79,11 @@ const SucursalSlice = createSlice({
     logoutSucursalUser: (state) => {
         state.userData = { id:'', sucursalId:'', nombre:'', apellido:'', ci:'', imagen:'', contacto:'', direccion:'', permisos:'', activo:false };
     },
-    getSucursalUsers: (state, action: PayloadAction<UserInterface[]>) => {
-        state.users = [...action.payload]
+    getSucursalUsers: (state, action: PayloadAction<User[]>) => {
+        state.listUsers = [...action.payload]
+        state.listUsersObj = action.payload.reduce((acc, a) => {acc[a.id] = a; return acc}, {} as Record<string, User>);
     },
-    getOneSucursalUser: (state, action: PayloadAction<UserInterface>) => {
+    getOneSucursalUser: (state, action: PayloadAction<User>) => {
         state.logUserData = action.payload;
     },
     selectSucursalUser: (state, action: PayloadAction<UserLoginInterface>) => {

@@ -1,5 +1,5 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
-import { ClienteVenta, DecrementProductoAlmacenDto, ListDecrementProductosAlmacenDto, Log, OpcionesVenta, PrecioVenta, ProductoTienda, TipoMonedaVenta } from "../../interface";
+import { ClienteVenta, TransactionProductoAlmacenDto, ListTransactionProductosAlmacenDto, Log, OpcionesVenta, PrecioVenta, ProductoTienda, TipoMonedaVenta } from "../../interface";
 
 
 interface VentasInitialState {
@@ -31,9 +31,9 @@ const VentasSlice = createSlice({
         getAllProductosVenta: (state, action: PayloadAction<ProductoTienda[]>) => {
             state.listaProductosTienda= action.payload;
         },
-        decrementProductos: (state, action: PayloadAction<ListDecrementProductosAlmacenDto>) => {
+        decrementProductos: (state, action: PayloadAction<ListTransactionProductosAlmacenDto>) => {
             const {productos} = action.payload;
-            const productosObj = productos.reduce((acc, p) => { acc[p.productoAlmacenId] = p; return acc; }, {} as Record<string, DecrementProductoAlmacenDto>);
+            const productosObj = productos.reduce((acc, p) => { acc[p.productoAlmacenId] = p; return acc; }, {} as Record<string, TransactionProductoAlmacenDto>);
             const newListaProductos:ProductoTienda[] = current(state.listaProductosTienda).map(p => {
                 if(productosObj[p.productoAlmacenId]){
                     return {...p, cantidad: (p.cantidad - productosObj[p.productoAlmacenId].cantidad)}

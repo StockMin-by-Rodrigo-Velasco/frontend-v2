@@ -113,13 +113,13 @@ export interface CreateIngresoAlmacenDto {
     ingresoProductosAlmacen: CreateIngresoProductoAlmacenDto[]
 }
 
-export interface DecrementProductoAlmacenDto {
+export interface TransactionProductoAlmacenDto {
     productoAlmacenId: string;
     cantidad: number;
 }
 
-export interface ListDecrementProductosAlmacenDto {
-    productos: DecrementProductoAlmacenDto[]
+export interface ListTransactionProductosAlmacenDto {
+    productos: TransactionProductoAlmacenDto[]
 }
 
 export interface GetTraspasosAlmacenDto {

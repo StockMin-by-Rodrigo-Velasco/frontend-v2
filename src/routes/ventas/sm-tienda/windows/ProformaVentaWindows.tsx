@@ -4,7 +4,7 @@ import Windows from "../../../../components/Windows";
 import { useForm, useFormArray } from "../../../../hooks";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { useEffect, useState } from 'react';
-import { ClienteVenta, CotizacionVenta, CreateCotizacionVentaDto, CreateProductoDetalleVentaDto, CreateVentaDto, ListDecrementProductosAlmacenDto, ProductoTienda, Venta } from "../../../../interface";
+import { ClienteVenta, CotizacionVenta, CreateCotizacionVentaDto, CreateProductoDetalleVentaDto, CreateVentaDto, ListTransactionProductosAlmacenDto, ProductoTienda, Venta } from "../../../../interface";
 import { dateLocal } from "../../../../helpers";
 import { InputNumber, InputTextarea, InputTextBlock } from "../../../../components/Input";
 import ListaClientes from "./ListaClientes";
@@ -19,7 +19,7 @@ import { AiOutlineLoading } from "react-icons/ai";
 
 interface CreateManyProductosAlmacenProp {
   closeButton: () => void;
-  decrementProductos: (listDecrementProductosAlmacenDto: ListDecrementProductosAlmacenDto) => void;
+  decrementProductos: (listDecrementProductosAlmacenDto: ListTransactionProductosAlmacenDto) => void;
   datosCotizacion?: {cotizacionId: string, Cliente:ClienteVenta, descuento: string, },
   checkProductosTienda: ProductoTienda[];
   handleCheckProducto?: (productoId: string) => void;
@@ -162,7 +162,7 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
       productoId: p.productoId
     }));
 
-    const listDecrementProductos: ListDecrementProductosAlmacenDto = {
+    const listDecrementProductos: ListTransactionProductosAlmacenDto = {
       productos: arrayData.map(p => ({
         cantidad: parseInt(p.cantidad),
         productoAlmacenId: p.productoAlmacenId

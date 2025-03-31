@@ -1,13 +1,11 @@
-import { useEffect } from "react";
+
 import Windows from "../../../../components/Windows";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../../../redux/store";
-import { getOneSucursalUserAPI } from "../../../../redux/sucursal/sucursalThunk";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../redux/store";
 import { perfilColor, perfilImg } from "../../../../assets/perfil";
-import { AiOutlineLoading } from "react-icons/ai";
 import { Log } from "../../../../interface";
 import { dateLocalWhitTime } from "../../../../helpers";
-
+import logos from "../../../../assets/logos";
 
 interface LogDetailWindowsPropInterface {
     log: Log
@@ -15,43 +13,36 @@ interface LogDetailWindowsPropInterface {
 }
 
 export default function LogDetailsWindows({ log, closeButton }: LogDetailWindowsPropInterface) {
-    const { logUserData } = useSelector((s: RootState) => s.Sucursal);
-    const { loadingData } = useSelector((s: RootState) => s.Aplication)
-    const dispatch = useDispatch<AppDispatch>();
-
-    useEffect(() => {
-        dispatch(getOneSucursalUserAPI(log.userId));
-    }, [])
+    const { listUsersObj } = useSelector((s: RootState) => s.Sucursal);
 
     return (
         <Windows tittle='DETALLES DE LA ACCION' closeButton={closeButton}>
             <div className="p-3 flex">
 
                 <div className="rounded border-secondary border-[1px] p-3 relative overflow-hidden" >
-                    {loadingData&& 
-                        <div className="absolute top-0 right-0 left-0 bottom-0 bg-white flex justify-center items-center text-[50px] text-secondary" >
-                            <AiOutlineLoading className="ms-2 animate-spin"/>
-                        </div>
-                    }
                     <h1 className="text-center border-b-[1px] border-secondary mb-3 text-secondary" >Datos del usuario</h1>
                     <div className="w-full flex items-center justify-center">
                         <div className="flex justify-center items-center w-32 h-32 rounded mb-3"
-                            style={{ backgroundColor: perfilColor(logUserData.imagen.split(' ')[1]) }}
+                            style={{ backgroundColor: listUsersObj[log.userId]? perfilColor(listUsersObj[log.userId].imagen.split(' ')[1]):'white' }}
                         >
-                            <img src={perfilImg(logUserData.imagen.split(' ')[0])} width='120px' />
+                            <img src={ listUsersObj[log.userId]?
+                                perfilImg(listUsersObj[log.userId].imagen.split('')[0])
+                                :
+                                logos.logoNoImage
+                            } width='120px' />
                         </div>
                     </div>
                     <p className="bg-secondary-1 rounded overflow-hidden mb-2" > 
                         <span className="bg-secondary px-2 text-white" >Nombre:</span> 
-                        <span className="uppercase px-2" >{logUserData.nombre}</span>
+                        <span className="uppercase px-2" >{ listUsersObj[log.userId]? listUsersObj[log.userId].nombre:'desconocido'}</span>
                     </p>
                     <p className="bg-secondary-1 rounded overflow-hidden mb-2" > 
                         <span className="bg-secondary px-2 text-white" >Apellido:</span> 
-                        <span className="uppercase px-2" >{logUserData.apellido}</span>
+                        <span className="uppercase px-2" >{ listUsersObj[log.userId]? listUsersObj[log.userId].apellido:'desconocido'}</span>
                     </p>
                     <p className="bg-secondary-1 rounded overflow-hidden mb-2" > 
                         <span className="bg-secondary px-2 text-white" >CI:</span> 
-                        <span className="uppercase px-2" >{logUserData.ci}</span>
+                        <span className="uppercase px-2" >{ listUsersObj[log.userId]? listUsersObj[log.userId].ci:'desconocido'}</span>
                     </p>
                 </div>
 

@@ -4,7 +4,7 @@ import Windows from "../../../../components/Windows";
 import { useForm } from "../../../../hooks";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { useEffect, useState } from "react";
-import { CotizacionVenta, ListDecrementProductosAlmacenDto, Venta } from "../../../../interface";
+import { CotizacionVenta, ListTransactionProductosAlmacenDto, Venta } from "../../../../interface";
 import { getCotizacionesVentaAPI, getVentasAPI } from "../../../../redux/ventas/ventasThunk";
 import { AiOutlineLoading } from "react-icons/ai";
 import { IoSearch } from "react-icons/io5";
@@ -15,7 +15,7 @@ import ViewVenta from "./ViewVenta";
 
 interface ListaVentasCotizacionesProp {
     closeButton: () => void;
-    decrementProductos: (listDecrementProductosAlmacenDto: ListDecrementProductosAlmacenDto) => void;
+    decrementProductos: (listDecrementProductosAlmacenDto: ListTransactionProductosAlmacenDto) => void;
 }
 
 interface DateRange {

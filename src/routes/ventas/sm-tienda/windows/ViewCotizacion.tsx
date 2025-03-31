@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import Windows from "../../../../components/Windows";
-import { CotizacionVenta, ListDecrementProductosAlmacenDto, ProductoTienda, TipoMonedaVenta } from "../../../../interface";
+import { CotizacionVenta, ListTransactionProductosAlmacenDto, ProductoTienda, TipoMonedaVenta } from "../../../../interface";
 import { RootState } from "../../../../redux/store";
 import { dateLocal } from "../../../../helpers";
 import { useEffect, useRef, useState } from "react";
@@ -11,7 +11,7 @@ import { generateCotizacionVentaPdf } from "../../../../helpers/cotizacion-venta
 interface ViewCotizacionProp {
     closeButton: () => void;
     cotizacion: CotizacionVenta;
-    decrementProductos: (listDecrementProductosAlmacenDto: ListDecrementProductosAlmacenDto) => void;
+    decrementProductos: (listDecrementProductosAlmacenDto: ListTransactionProductosAlmacenDto) => void;
 }
 
 interface ProductoDetalle {
@@ -28,7 +28,7 @@ interface ProductoDetalle {
 export default function ViewCotizacion({ closeButton, cotizacion, decrementProductos }: ViewCotizacionProp) {
     const tableRef = useRef<HTMLTableElement | null>(null);
 
-    const { logo, users } = useSelector((s: RootState) => s.Sucursal);
+    const { logo, listUsers: users } = useSelector((s: RootState) => s.Sucursal);
     const { listaProductosTienda, listaTipoMonedaVenta } = useSelector((s: RootState) => s.Ventas);
 
     const [responsable, setResponsable] = useState('');

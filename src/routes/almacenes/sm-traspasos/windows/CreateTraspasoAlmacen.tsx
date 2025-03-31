@@ -5,8 +5,8 @@ import { InputSelect, InputTextarea } from "../../../../components/Input";
 import { dateLocal } from "../../../../helpers";
 import { useForm, useFormArray } from "../../../../hooks";
 import { useState } from "react";
-import { CreateDocTraspasoAlmacenDto, CreateProductoAlmacenDto, CreateTraspasoProductoAlmacenDto, DocTraspasoProductoAlmacen, Producto, ProductoAlmacen } from "../../../../interface";
-import { getProductosOneAlmacenAPI, createOneProductoAlmacenAPI, createTraspasoProductosAlmacenAPI } from '../../../../redux/almacenes/almacenThunks';
+import { CreateDocTraspasoAlmacenDto, CreateProductoAlmacenDto, CreateTraspasoProductoAlmacenDto, DocTraspasoProductoAlmacen, Producto, ProductoAlmacen, TransactionProductoAlmacenDto } from "../../../../interface";
+import { getProductosOneAlmacenAPI, createOneProductoAlmacenAPI, createTraspasoProductosAlmacenAPI, decrementProdutosAlmacenAPI, incrementProdutosAlmacenAPI } from '../../../../redux/almacenes/almacenThunks';
 import { FaCheckCircle, FaLongArrowAltRight, FaPlus, FaWarehouse } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
 import ListaProductosAlmacen from "./ListaProductosAlmacen";
@@ -163,31 +163,47 @@ export default function CreateTraspasoAlmacen({ closeButton, getTraspaso }: Crea
   const registrarTraspaso = () => {
     const checkProductos = listOrigen.filter(p => p.check);
 
-    if(checkProductos.length <=0 ){
-      dispatch(showNotificationError({tittle:'REGISTRO DE TRASPASO', description:'No se puede registrar un traspaso sin productos.'}))
+    if (checkProductos.length <= 0) {
+      dispatch(showNotificationError({ tittle: 'REGISTRO DE TRASPASO', description: 'No se puede registrar un traspaso sin productos.' }))
       setTimeout(() => { dispatch(hideNotification()) }, 5000);
       return;
     }
 
-    if( checkProductos.find(p => parseInt(p.cantidad) < parseInt(p.cantidadTraspaso))){
-      dispatch(showNotificationWarning({tittle:'REGISTRO DE TRASPASO', description:'Existen productos con cantidades insuficiente para el traspaso.'}))
+    if (checkProductos.find(p => parseInt(p.cantidad) < parseInt(p.cantidadTraspaso))) {
+      dispatch(showNotificationWarning({ tittle: 'REGISTRO DE TRASPASO', description: 'Existen productos con cantidades insuficiente para el traspaso.' }))
       setTimeout(() => { dispatch(hideNotification()) }, 5000);
       return;
     }
 
-    if( checkProductos.find(p => parseInt(p.cantidadTraspaso) === 0)){
-      dispatch(showNotificationWarning({tittle:'REGISTRO DE TRASPASO', description:'Se detectaron productos con 0 cantidad de traspaso.'}))
+    if (checkProductos.find(p => parseInt(p.cantidadTraspaso) === 0)) {
+      dispatch(showNotificationWarning({ tittle: 'REGISTRO DE TRASPASO', description: 'Se detectaron productos con 0 cantidad de traspaso.' }))
       setTimeout(() => { dispatch(hideNotification()) }, 5000);
       return;
     }
 
-    const traspasoProductosAlmacen:CreateTraspasoProductoAlmacenDto[] = listOrigen.filter(p => p.check).map(p => ({productoId: p.productoId, cantidad: parseInt(p.cantidadTraspaso)}) );
-    const docTraspaso: CreateDocTraspasoAlmacenDto={
+    const listProductosIncrement:TransactionProductoAlmacenDto[] = [];
+    const listProductosDecrement:TransactionProductoAlmacenDto[] = [];
+
+    for (const producto of checkProductos) {
+      if (listDestino[producto.productoId].id === '') {
+        dispatch(showNotificationWarning({ tittle: 'REGISTRO DE TRASPASO', description: 'El destino tiene 1 o mas productos sin registrar para su traspaso.' }))
+        setTimeout(() => { dispatch(hideNotification()) }, 5000);
+        return;
+      }else{
+        listProductosIncrement.push({productoAlmacenId: listDestino[producto.productoId].id, cantidad: parseInt(producto.cantidadTraspaso)});
+        listProductosDecrement.push({productoAlmacenId: producto.id, cantidad: parseInt(producto.cantidadTraspaso)});
+      }
+    }
+
+    const traspasoProductosAlmacen: CreateTraspasoProductoAlmacenDto[] = listOrigen.filter(p => p.check).map(p => ({ productoId: p.productoId, cantidad: parseInt(p.cantidadTraspaso) }));
+    const docTraspaso: CreateDocTraspasoAlmacenDto = {
       ...formTraspaso,
       traspasoProductosAlmacen
     }
 
-    dispatch(createTraspasoProductosAlmacenAPI(docTraspaso, getTraspaso))
+    dispatch(createTraspasoProductosAlmacenAPI(docTraspaso, getTraspaso));
+    dispatch(decrementProdutosAlmacenAPI({productos: listProductosDecrement}));
+    dispatch(incrementProdutosAlmacenAPI({productos: listProductosIncrement}));
   }
 
 
@@ -276,7 +292,7 @@ export default function CreateTraspasoAlmacen({ closeButton, getTraspaso }: Crea
                     className="flex justify-center items-center bg-warning absolute text-[10px] px-1 right-0 top-0 rounded-full">
                     <FaWarehouse className="me-2" />{parseInt(p.cantidad)}
                   </span>}
-                  {(parseInt(p.cantidadTraspaso) === 0 ) && <span
+                  {(parseInt(p.cantidadTraspaso) === 0) && <span
                     className="flex justify-center items-center bg-warning text-black w-[16px] h-[16px] absolute p-[2px] right-0 top-0 rounded-full">
                     <LuTriangleAlert />
                   </span>}
@@ -331,8 +347,11 @@ export default function CreateTraspasoAlmacen({ closeButton, getTraspaso }: Crea
       <div className="p-2 border border-t-secondary flex justify-center" >
         <button
           type="button"
-          className="border border-success rounded-full text-success px-3 transition-all duration-200 hover:bg-success hover:text-white"
+          disabled={loadingData}
+          className="flex items-center border border-success rounded-full text-success px-3 transition-all duration-200 hover:bg-success hover:text-white 
+                    disabled:cursor-not-allowed disabled:border-secondary disabled:text-secondary disabled:bg-white"
           onClick={registrarTraspaso}>REGISTRAR TRASPASO DE PRODUCTOS
+          {loadingData&& <AiOutlineLoading className="ms-2 animate-spin"/>}
         </button>
 
       </div>
