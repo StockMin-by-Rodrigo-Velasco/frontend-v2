@@ -37,7 +37,7 @@ export default function TiendaVentas() {
     const dispatch = useDispatch<AppDispatch>();
 
     const [filterProductosTienda, setFilterProductosTienda] = useState<ProductoTienda[]>([]);
-    const [checkedProductos, setCheckedProductos] = useState(0);
+    // const [checkedProductos, setCheckedProductos] = useState(0);
     const [openProformaVenta, setOpenProformaVenta] = useState(false);
     const [openListaVentasCotizaciones, setOpenListaVentasCotizaciones] = useState(false);
     const [openSettings, setOpenSettings] = useState(false);
@@ -78,8 +78,8 @@ export default function TiendaVentas() {
         const newProductosTienda = [...filterProductosTienda];
         newProductosTienda[index] = { ...newProductosTienda[index], check: !newProductosTienda[index].check };
 
-        if (newProductosTienda[index].check) setCheckedProductos(s => ++s);
-        else setCheckedProductos(s => --s);
+        // if (newProductosTienda[index].check) setCheckedProductos(s => ++s);
+        // else setCheckedProductos(s => --s);
 
         setFilterProductosTienda(newProductosTienda);
     }
@@ -125,7 +125,7 @@ export default function TiendaVentas() {
             sucursalId
         });
         dispatch(getAllProductosVentaAPI(opcionesVenta.precioVentaId, opcionesVenta.almacenId, setFilterProductosTienda));
-        setCheckedProductos(0);
+        // setCheckedProductos(0);
 
     }, [opcionesVenta])
     return (
@@ -177,14 +177,14 @@ export default function TiendaVentas() {
 
                 <button
                     type="button"
-                    disabled={checkedProductos <= 0}
+                    disabled={filterProductosTienda.filter(p => p.check).length <= 0}
                     onClick={() => { setOpenProformaVenta(true) }}
                     className="relative ms-5 w-10 rounded border-2 border-primary text-primary text-[22px] flex justify-center items-center overflow-hidden disabled:border-secondary disabled:text-secondary">
                     <MdShoppingCart />
-                    {(checkedProductos > 0) &&
+                    {(filterProductosTienda.filter(p => p.check).length > 0) &&
                         <span
                             className="bg-danger rounded-br text-white w-4 h-4 absolute top-0 left-0 text-[12px] flex justify-center items-center">
-                            {checkedProductos}
+                            {filterProductosTienda.filter(p => p.check).length}
                         </span>
                     }
                 </button>

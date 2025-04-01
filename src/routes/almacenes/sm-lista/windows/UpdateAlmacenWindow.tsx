@@ -37,8 +37,9 @@ export default function UpdateAlmacenWindow({closeButton, almacen}: UpdateAlmace
         <form onSubmit={formSubmit} className="p-3" >
             <InputText
                 name="nombre"
-                placeholder="Nombre:"
+                placeholder="*Nombre:"
                 value={data.nombre}
+                maxLenght={20}
                 handleInputChange={handleInputChange}
             />
             <InputTextarea

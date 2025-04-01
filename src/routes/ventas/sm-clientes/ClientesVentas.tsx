@@ -41,7 +41,7 @@ export default function ClientesVentas() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { value, name } = e.target;
     const newFilter = { ...filter, [name]: value };
-    const newData = listaClientes.filter(i => (i.nombre.includes(newFilter.buscar) || i.codigo.includes(newFilter.buscar)));
+    const newData = listaClientes.filter(i => i.nombre.toLowerCase().includes(newFilter.buscar.toLowerCase()) || i.codigo.includes(newFilter.buscar));
 
     setFilteredClientes([...newData]);
     setFilter(newFilter);

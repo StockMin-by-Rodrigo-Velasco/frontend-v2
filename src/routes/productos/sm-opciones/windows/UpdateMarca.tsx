@@ -76,9 +76,10 @@ export default function UpdateMarca({ dataUpdate, closeButton }: UpdateMarcaProp
         </div>
         <InputText
           handleInputChange={handleInputChange}
-          placeholder="Nombre:"
+          placeholder="*Nombre:"
           name="nombre"
           value={data.nombre}
+          maxLenght={20}
           disabled={!editMode || loadingData}
         />
         <InputTextarea

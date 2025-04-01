@@ -8,6 +8,7 @@ import { FaPlus } from "react-icons/fa";
 import { User } from "../../../interface";
 import { useEffect, useState } from "react";
 import UpdateUsuario from "./windows/UpdateUsuario";
+import CreateUsuario from "./windows/CreateUsuario";
 
 interface FilterInterface {
   buscar: string;
@@ -32,8 +33,8 @@ export default function ListaUsuarios() {
     const [openUpdateUsuario, setOpenUpdateUsuario] = useState(false);
   
   
-    const initialStateClienteVentaSelected: User = { id:'', sucursalId:'', nombre: '', apellido: '', ci: '', imagen: ''};
-    const [clienteVentaSelected, setClienteVentaSelected] = useState<User>(initialStateClienteVentaSelected);
+    const initialStateClienteVentaSelected: User = { id:'', sucursalId:'', nombre: '', apellido: '', ci: '', imagen:'', direccion:'', contacto:''};
+    const [userSelected, setUserSelected] = useState<User>(initialStateClienteVentaSelected);
     const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -46,7 +47,8 @@ export default function ListaUsuarios() {
     }
   
     const getUsuario = (d: User) => {
-      setClienteVentaSelected(d);  
+      setUserSelected(d);  
+      setOpenCreateUsuario(false);
       setOpenUpdateUsuario(true); 
     }
 
@@ -57,8 +59,8 @@ export default function ListaUsuarios() {
 
   return (
     <>
-
-    { openUpdateUsuario&& <UpdateUsuario closeButton={() => { setOpenUpdateUsuario(false) }} /> }
+    { openUpdateUsuario&& <UpdateUsuario closeButton={() => { setOpenUpdateUsuario(false) }} usuario={userSelected} /> }
+    { openCreateUsuario&& <CreateUsuario closeButton={() => { setOpenCreateUsuario(false) }} getUsuario={getUsuario} /> }
 
 
       <HeaderSection>

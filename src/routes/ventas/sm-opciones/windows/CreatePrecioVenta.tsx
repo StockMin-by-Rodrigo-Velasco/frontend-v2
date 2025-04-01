@@ -4,7 +4,7 @@ import { AppDispatch, RootState } from "../../../../redux/store";
 import { useForm } from "../../../../hooks";
 import { FormEvent } from "react";
 
-import { InputSelect, InputText } from "../../../../components/Input";
+import { InputText } from "../../../../components/Input";
 import { ButtonColors, ButtonSubmit } from "../../../../components/Buttons";
 import { CreatePrecioVentaDto } from "../../../../interface";
 import { createPrecioVentaAPI } from '../../../../redux/ventas/ventasThunk';
@@ -17,10 +17,8 @@ interface UpdatePrecioVentaProps {
 export default function CreatePrecioVenta({ closeButton }: UpdatePrecioVentaProps) {
   const { id: sucursalId } = useSelector((s: RootState) => s.Sucursal);
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
-  const { listaTipoMonedaVenta } = useSelector((s: RootState) => s.Ventas);
 
   const dispatch = useDispatch<AppDispatch>();
-  const selectOptions = listaTipoMonedaVenta.map(tm => ({ name: tm.nombre, value: tm.id }));
 
   const { data, handleInputChange } = useForm<CreatePrecioVentaDto>({sucursalId, codigo:'', descripcion:''});
 
@@ -40,22 +38,13 @@ export default function CreatePrecioVenta({ closeButton }: UpdatePrecioVentaProp
         </div>
         <InputText
           handleInputChange={handleInputChange}
-          placeholder="Codigo:"
+          placeholder="*Codigo:"
           name="codigo"
           value={data.codigo}
           disabled={loadingData}
+          maxLenght={3}
           required
         />
-        {/* <InputSelect
-        optionDefault="Sin T/M"
-          options={selectOptions}
-          handleInputChange={handleInputChange}
-          placeholder="Tipo de moneda"
-          name="tipoMonedaVentaId"
-          value={data.tipoMonedaVentaId}
-          disabled={loadingData}
-          required
-        /> */}
         <InputText
           handleInputChange={handleInputChange}
           placeholder="Descripcion:"

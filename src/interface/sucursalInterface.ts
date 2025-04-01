@@ -1,15 +1,15 @@
-export interface LoginSucursalInterface{
+export interface LoginSucursalInterface {
     nit: string;
     password: string;
 }
 
-export interface LoginSucursalUserInterface{
+export interface LoginSucursalUserInterface {
     id: string;
     sucursalId: string;
     password: string;
 }
 
-export interface UpdateSucursalUserInterface{
+export interface UpdateSucursalUserInterface {
     id: string;
     sucursalId: string;
     nombre?: string;
@@ -24,10 +24,39 @@ export interface UpdateSucursalUserInterface{
 }
 
 export interface User {
-  id: string;
-  sucursalId: string;
-  nombre: string;
-  apellido: string;
-  ci: string;
-  imagen: string;
+    id: string;
+    sucursalId: string;
+    nombre: string;
+    contacto: string;
+    direccion: string;
+    apellido: string;
+    ci: string;
+    imagen: string;
+}
+
+export interface Permiso {
+    id: string;
+    codigo: string;
+    modulo: string;
+    permiso: string;
+    descripcion: string;
+}
+
+export interface UsuarioPermiso {
+    id: string;
+    userId: string;
+    permisoId: string;
+}
+
+
+// ------------- DTOs ----------------
+export interface CreateSucursalUserDto {
+    sucursalId: string;
+    nombre: string;
+    apellido: string;
+    ci: string;
+    imagen: string;
+    contacto: string;
+    direccion: string;
+    password: string;
 }

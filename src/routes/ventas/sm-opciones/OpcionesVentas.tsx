@@ -31,7 +31,7 @@ export default function OpcionesVentas() {
     sucursalId,
     almacenId: opcionesVenta.almacenId, 
     precioVentaId:opcionesVenta.precioVentaId, 
-    tipoMonedaVentaId:opcionesVenta.precioVentaId
+    tipoMonedaVentaId:opcionesVenta.tipoMonedaVentaId
   });
 
 

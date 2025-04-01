@@ -5,7 +5,7 @@ import { useForm } from "../../../../hooks";
 import { FormEvent, useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
-import { InputSelect, InputText, InputTextarea } from "../../../../components/Input";
+import { InputText, InputTextarea } from "../../../../components/Input";
 import { Button, ButtonColors, ButtonSubmit } from "../../../../components/Buttons";
 import { BsFillTrashFill } from "react-icons/bs";
 import { hideNotification, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
@@ -22,7 +22,7 @@ export default function UpdatePrecioVenta({ dataUpdate, closeButton }: UpdatePre
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
   const { id: sucursalId } = useSelector((s: RootState) => s.Sucursal);
   const { type: typeNotification, showNotification } = useSelector((s: RootState) => s.Notification);
-  const { idUltimoPrecioVentaEliminado, listaTipoMonedaVenta } = useSelector((s: RootState) => s.Ventas);
+  const { idUltimoPrecioVentaEliminado } = useSelector((s: RootState) => s.Ventas);
 
   // const selectOptions = listaTipoMonedaVenta.map(tm => ({ name: tm.nombre, value: tm.id }));
 
@@ -80,20 +80,12 @@ export default function UpdatePrecioVenta({ dataUpdate, closeButton }: UpdatePre
         </div>
         <InputText
           handleInputChange={handleInputChange}
-          placeholder="Codigo:"
+          placeholder="*Codigo:"
           name="codigo"
           value={data.codigo}
+          maxLenght={3}
           disabled={!editMode || loadingData}
         />
-
-        {/* <InputSelect
-          options={selectOptions}
-          handleInputChange={handleInputChange}
-          placeholder="Tipo de moneda"
-          name="tipoMonedaVentaId"
-          value={data.tipoMonedaVentaId}
-          disabled={!editMode || loadingData}
-        /> */}
 
         <InputTextarea
           handleInputChange={handleInputChange}

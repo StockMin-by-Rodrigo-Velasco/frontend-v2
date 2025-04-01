@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import Cookie from 'js-cookie';
-import { User } from '../../interface';
+import { Permiso, User } from '../../interface';
 
 
 interface SucursalDataInterface{
@@ -37,17 +37,20 @@ interface SucursalStateInterface{
     logUserData: User;
     listUsers: User[];
     listUsersObj: Record<string, User>;
+    listaPermisos: Permiso[];
     userSelected: UserLoginInterface;
     logo: string;
 }
+
 
 const initialState: SucursalStateInterface = {
     id: '',
     data: {nit:'', nombre:'', propietario:'', direccion:'', contacto: '', activo: false},
     userData: { id:'', sucursalId:'', nombre:'', apellido:'', ci:'', imagen:'', contacto:'', direccion:'', permisos:'', activo:false },
-    logUserData: {id:'', sucursalId:'', nombre:'', apellido:'', ci:'', imagen:''},
+    logUserData: {id:'', sucursalId:'', nombre:'', apellido:'', ci:'', imagen:'', contacto:'', direccion:''},
     listUsers:[],
     listUsersObj:{},
+    listaPermisos:[],
     userSelected: {id: '', sucursalId: ''},
     logo: '',
 }
@@ -83,11 +86,18 @@ const SucursalSlice = createSlice({
         state.listUsers = [...action.payload]
         state.listUsersObj = action.payload.reduce((acc, a) => {acc[a.id] = a; return acc}, {} as Record<string, User>);
     },
+    getAllPermisos: (state, action: PayloadAction<Permiso[]>) => {
+        state.listaPermisos = action.payload;
+    },
     getOneSucursalUser: (state, action: PayloadAction<User>) => {
         state.logUserData = action.payload;
     },
     selectSucursalUser: (state, action: PayloadAction<UserLoginInterface>) => {
         state.userSelected= action.payload;
+    },
+    createSucursalUser: (state, action: PayloadAction<User>) => {
+        state.listUsers = [action.payload, ...state.listUsers];
+        state.listUsersObj[action.payload.id] = action.payload;
     }
   }
 });
@@ -95,9 +105,15 @@ const SucursalSlice = createSlice({
 export const {
     loginSucursal,
     logoutSucursal,
+
+    getAllPermisos,
+
     loginSucursalUser,
     logoutSucursalUser,
+
+    createSucursalUser,
     updateSucursalUser,
+
     getSucursalUsers,
     getOneSucursalUser,
     selectSucursalUser,

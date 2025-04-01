@@ -55,21 +55,22 @@ export default function CreateProductoWindow({ closeButton }: ProductoSelectedWi
                                     handleInputChange={handleInputChange}
                                     value={data.codigo}
                                     name="codigo"
-                                    placeholder="Codigo"
+                                    placeholder="*Código:"
+                                    maxLenght={8}
                                     required
                                 />
                                 <InputText
                                     handleInputChange={handleInputChange}
                                     value={data.nombre}
                                     name="nombre"
-                                    placeholder="Nombre"
+                                    placeholder="*Nombre:"
                                     required
                                 />
                                 <InputTextarea
                                     handleInputChange={handleInputChange}
                                     value={data.descripcion}
                                     name="descripcion"
-                                    placeholder="Descripcion" 
+                                    placeholder="Descripción" 
                                 />
                             </div>
                             <div className="flex flex-col ms-3" >
@@ -77,7 +78,7 @@ export default function CreateProductoWindow({ closeButton }: ProductoSelectedWi
                                     handleInputChange={handleInputChange}
                                     value={data.categoriaId}
                                     name='categoriaId'
-                                    placeholder="Categoria"
+                                    placeholder="*Categoría:"
                                     options={listaCategorias.map(c => ({name: c.nombre, value: c.id}))}
                                     optionDefault="Sin categoría"
                                     required
@@ -86,7 +87,7 @@ export default function CreateProductoWindow({ closeButton }: ProductoSelectedWi
                                     handleInputChange={handleInputChange}
                                     value={data.marcaId}
                                     name='marcaId'
-                                    placeholder="Marca"
+                                    placeholder="*Marca:"
                                     options={listaMarcas.map(m => ({ name: m.nombre, value: m.id }))}
                                     optionDefault="Sin Marca"
                                     required
@@ -95,7 +96,7 @@ export default function CreateProductoWindow({ closeButton }: ProductoSelectedWi
                                     handleInputChange={handleInputChange}
                                     value={data.unidadMedidaId}
                                     name='unidadMedidaId'
-                                    placeholder="U. Medida"
+                                    placeholder="*U. Medida:"
                                     options={listaUnidadesMedidaSucursal.map(um => ({ name: um.UnidadMedida.nombre, value: um.unidadMedidaId }))}
                                     optionDefault="Sin U/M"
                                     required

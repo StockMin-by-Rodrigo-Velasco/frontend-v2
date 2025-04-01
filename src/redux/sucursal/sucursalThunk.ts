@@ -1,9 +1,9 @@
 import axios, { AxiosResponse } from "axios";
 import { AppDispatch, RootState } from "../store"
 import api from "../../api/config";
-import { LoginSucursalInterface, LoginSucursalUserInterface, UpdateSucursalUserInterface } from "../../interface";
+import { CreateSucursalUserDto, LoginSucursalInterface, LoginSucursalUserInterface, Permiso, UpdateSucursalUserInterface, User } from "../../interface";
 import { hideNotification, showNotificationError, showNotificationSuccess } from "../notification/notificationSlice";
-import { getOneSucursalUser, getSucursalUsers, loginSucursal, loginSucursalUser, logoutSucursal, logoutSucursalUser, updateSucursalUser } from "./sucursalSlice";
+import { createSucursalUser, getAllPermisos, getOneSucursalUser, getSucursalUsers, loginSucursal, loginSucursalUser, logoutSucursal, logoutSucursalUser, updateSucursalUser } from "./sucursalSlice";
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from "../aplication/aplicationSlice";
 import Cookie from 'js-cookie';
 
@@ -103,6 +103,38 @@ export const updateSucursalUserAPI = (dataUpdate: UpdateSucursalUserInterface) =
     }
 }
 
+export const createSucursalUserAPI = (createSucursalUserDto: CreateSucursalUserDto, functionReturn?: (data:User)=>void ) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+
+        const { id:sucursalId } = getState().Sucursal;
+        if(!sucursalId) return;
+
+        try {
+            dispatch(startLoadingData());
+
+            const res: AxiosResponse = await api.post('sucursal-ms/create-sucursal-user', createSucursalUserDto );
+            const {data, message}:{data:User, message:string} = res.data;
+
+            dispatch(createSucursalUser(data));
+            if(functionReturn) functionReturn(data);
+
+            dispatch(showNotificationSuccess({tittle: 'Registro de usuario', description: message}));
+            setTimeout( () => dispatch(hideNotification()), 5000 );
+            dispatch(finishLoadingData());            
+        } catch (error) {
+            if( axios.isAxiosError(error) && error.response ){
+                const {data} = error.response;
+                dispatch(showNotificationError({tittle: 'Registro de usuario', description: data.message}));
+                dispatch(finishLoadingData());
+
+                setTimeout( () => dispatch(hideNotification()), 5000 );
+            }else console.log(error);            
+        }
+    }
+}
+
+
+
 export const getSucursalUsersAPI = ( sucursalId: string ) => {
     return async ( dispatch: AppDispatch) => {
         try {
@@ -119,6 +151,20 @@ export const getSucursalUsersAPI = ( sucursalId: string ) => {
                 setTimeout( () => dispatch(hideNotification()), 5000 );
             }else console.log(error);
             dispatch(startLoadingAplication());         
+        }
+    }
+}
+
+export const getAllPermisosAPI = () => {
+    return async ( dispatch: AppDispatch) => {
+        try {
+            dispatch(startLoadingAplication());
+            const res: AxiosResponse = await api.get(`sucursal-ms/get-all-permisos`)
+            const permisos : Permiso[] = res.data;
+            dispatch(getAllPermisos(permisos));
+            dispatch(finishLoadingAplication());    
+        } catch (error) {
+            console.log(error);        
         }
     }
 }

@@ -125,7 +125,7 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
       productoId: p.productoId
     }))
 
-    const totalNum = (arrayData.reduce((acc, p) => acc + (parseInt(p.cantidad) * parseFloat(p.precio)), 0) - parseFloat(formProforma.descuento)).toFixed(3);
+    const totalNum = (arrayData.reduce((acc, p) => acc + (parseInt(p.cantidad) * parseFloat(p.precio)), 0) - parseFloat(formProforma.descuento)).toFixed(2);
 
     const cotizacionVenta: CreateCotizacionVentaDto = {
       sucursalId,
@@ -167,7 +167,7 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
       }))
     }
 
-    const totalNum = (arrayData.reduce((acc, p) => acc + (parseInt(p.cantidad) * parseFloat(p.precio)), 0) - parseFloat(formProforma.descuento)).toFixed(3);
+    const totalNum = (arrayData.reduce((acc, p) => acc + (parseInt(p.cantidad) * parseFloat(p.precio)), 0) - parseFloat(formProforma.descuento)).toFixed(2);
 
     const venta: CreateVentaDto = {
       sucursalId,

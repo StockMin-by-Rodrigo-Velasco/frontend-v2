@@ -25,7 +25,7 @@ interface ProductoDetalle {
 
 export default function ViewVenta({ closeButton, venta }: ViewVentaProp) {
     const tableRef = useRef<HTMLTableElement | null>(null);
-    const { logo, listUsers: users } = useSelector((s: RootState) => s.Sucursal);
+    const { logo, listUsers: users, data } = useSelector((s: RootState) => s.Sucursal);
     const { listaProductos } = useSelector((s: RootState) => s.Productos);
     const { opcionesVenta } = useSelector((s: RootState) => s.Ventas);
 
@@ -36,7 +36,10 @@ export default function ViewVenta({ closeButton, venta }: ViewVentaProp) {
         const tableId = tableRef.current?.id;
 
         generateCotizacionVentaPdf({
-            fileName: `VENTA Nº${ venta.numero }-${venta.createdAt}.pdf`,
+            fileName: `VENTA Nº${ venta.numero }-${venta.createdAt}`,
+            contacto: data.contacto,
+            direccion: data.direccion,
+            type: 'VENTA',
             cliente: `${venta.ClienteVenta.nombre.toUpperCase()} ${venta.ClienteVenta.apellido.toUpperCase()}`,
             responsable: responsable.toUpperCase(),
             numero: venta.numero.toString(),

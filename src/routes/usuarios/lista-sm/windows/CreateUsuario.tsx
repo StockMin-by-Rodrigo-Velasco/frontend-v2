@@ -2,38 +2,29 @@ import { useDispatch, useSelector } from "react-redux";
 import Windows from "../../../../components/Windows";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { perfilColor, perfilImg } from "../../../../assets/perfil";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
-import { InputText, InputTextBlock } from "../../../../components/Input";
+import { InputText } from "../../../../components/Input";
 import { useForm } from "../../../../hooks";
 import { FormEvent } from 'react';
 import { CreateSucursalUserDto, User } from "../../../../interface";
-import { FaEdit } from "react-icons/fa";
+import { createSucursalUserAPI } from "../../../../redux/sucursal/sucursalThunk";
 
-interface UpdateUsuarioProp {
-  closeButton: () => void,
-  usuario: User
+interface CreateUsuarioProp {
+  closeButton: () => void;
+  getUsuario: (data:User)=>void
 }
 
-export default function UpdateUsuario({ closeButton, usuario }: UpdateUsuarioProp) {
+export default function CreateUsuario({ closeButton, getUsuario }: CreateUsuarioProp) {
   const { id: sucursalId, listaPermisos } = useSelector((s: RootState) => s.Sucursal);
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const initialStateFormData: CreateSucursalUserDto = { 
-    sucursalId, 
-    nombre: usuario.nombre, 
-    apellido: usuario.apellido, 
-    contacto: usuario.contacto,
-    direccion: usuario.direccion, 
-    password: '*****************', 
-    ci: usuario.ci, 
-    imagen: usuario.imagen, 
-  };
+  const initialStateFormData: CreateSucursalUserDto = { sucursalId, nombre: '', apellido: '', contacto: '', direccion: '', password: '', ci: '', imagen: '' };
   const { data: formData, handleInputChange: handleInputChangeData } = useForm<CreateSucursalUserDto>(initialStateFormData);
-  const [imagen, setImagen] = useState(usuario.imagen);
-  const [modeEditInfo, setModeEditInfo] = useState(false);
+  const [imagen, setImagen] = useState('img1 color1');
+
 
   const changeColor = (e: React.MouseEvent<HTMLButtonElement>) => {
     const newColor = e.currentTarget.value;
@@ -49,36 +40,37 @@ export default function UpdateUsuario({ closeButton, usuario }: UpdateUsuarioPro
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     console.log({ ...formData, imagen });
-    // dispatch(updateSucursalUserAPI({ id: userData.id, sucursalId: userData.sucursalId, ...formData, ...formPassword }));
+    dispatch(createSucursalUserAPI({ ...formData, imagen }, getUsuario));
   }
- 
+
   return (
     <Windows tittle="configuracion de perfil" closeButton={closeButton} >
       <div className="flex" >
         <div>
           <div className="flex">
             <div className="p-5 flex flex-col">
-              <div style={{ backgroundColor: perfilColor(imagen.split(' ')[1]  ) }} className="rounded relative">
-                <img src={perfilImg(imagen.split(' ')[0])} width={ modeEditInfo? '145px':'173px'} />
+              <div style={{ backgroundColor: perfilColor(imagen.split(' ')[1]) }} className="rounded relative">
+                <img src={perfilImg(imagen.split(' ')[0])} width={'145px'} />
               </div>
 
-              {modeEditInfo&& <div className="mt-1 flex justify-between">
+              <div className="mt-1 flex justify-between">
                 <button type="button" className="w-6 h-6 rounded-full" style={{ backgroundColor: perfilColor('color1') }} value='color1' onClick={changeColor}></button>
                 <button type="button" className="w-6 h-6 rounded-full" style={{ backgroundColor: perfilColor('color2') }} value='color2' onClick={changeColor}></button>
                 <button type="button" className="w-6 h-6 rounded-full" style={{ backgroundColor: perfilColor('color3') }} value='color3' onClick={changeColor}></button>
                 <button type="button" className="w-6 h-6 rounded-full" style={{ backgroundColor: perfilColor('color4') }} value='color4' onClick={changeColor}></button>
-              </div>}
+              </div>
+
             </div>
 
-            { modeEditInfo&& <div className="flex flex-col justify-between h-[200px]" >
+            <div className="flex flex-col justify-between h-[200px]" >
               <button type="button" className="w-10 h-10" value='img1' onClick={changeImg}><img src={perfilImg('img1')} /></button>
               <button type="button" className="w-10 h-10" value='img2' onClick={changeImg}><img src={perfilImg('img2')} /></button>
               <button type="button" className="w-10 h-10" value='img3' onClick={changeImg}><img src={perfilImg('img3')} /></button>
               <button type="button" className="w-10 h-10" value='img4' onClick={changeImg}><img src={perfilImg('img4')} /></button>
-            </div>}
+            </div>
           </div>
           <form onSubmit={onSubmit} className="flex flex-col px-5 pb-5" >
-            <button type="button" className="text-center text-secondary flex items-center" onClick={() => {setModeEditInfo(s=>!s)}} >INFORMACION DE USUARIO <FaEdit className="ms-2"/> </button>
+            <h1 className="text-center text-secondary" >INFORMACION DE USUARIO</h1>
             <div>
               <InputText
                 className="w-full"
@@ -87,7 +79,7 @@ export default function UpdateUsuario({ closeButton, usuario }: UpdateUsuarioPro
                 value={formData.nombre}
                 placeholder="*Nombre:"
                 required
-                disabled={loadingData || !modeEditInfo} />
+                disabled={loadingData} />
 
               <InputText
                 className="w-full"
@@ -96,7 +88,7 @@ export default function UpdateUsuario({ closeButton, usuario }: UpdateUsuarioPro
                 value={formData.apellido}
                 placeholder="*Apellido:"
                 required
-                disabled={loadingData || !modeEditInfo} />
+                disabled={loadingData} />
 
               <InputText
                 className="w-full"
@@ -105,7 +97,7 @@ export default function UpdateUsuario({ closeButton, usuario }: UpdateUsuarioPro
                 value={formData.direccion}
                 placeholder="*Direccion:"
                 required
-                disabled={loadingData || !modeEditInfo} />
+                disabled={loadingData} />
 
               <InputText
                 className="w-full"
@@ -114,7 +106,7 @@ export default function UpdateUsuario({ closeButton, usuario }: UpdateUsuarioPro
                 value={formData.ci}
                 placeholder="*CI:"
                 required
-                disabled={loadingData || !modeEditInfo} />
+                disabled={loadingData} />
 
               <InputText
                 className="w-full"
@@ -123,20 +115,22 @@ export default function UpdateUsuario({ closeButton, usuario }: UpdateUsuarioPro
                 value={formData.contacto}
                 placeholder="*Contacto:"
                 required
-                disabled={loadingData || !modeEditInfo} />
+                disabled={loadingData} />
 
-              <InputTextBlock
+              <InputText
                 className="w-full"
+                handleInputChange={handleInputChangeData}
                 name="password"
                 value={formData.password}
                 placeholder="*Contraseña:"
-                />
+                required
+                disabled={loadingData} />
             </div>
 
             <div className="mt-4 flex justify-center" >
               <button
                 className="bg-success bg-opacity-85 px-2 rounded-full text-white hover:bg-opacity-100 disabled:bg-opacity-85 disabled:cursor-not-allowed flex items-center disabled:bg-secondary"
-                disabled={loadingData || !modeEditInfo}
+                disabled={loadingData}
                 type="submit"
               >Guardar {loadingData && <AiOutlineLoading className="ms-2 animate-spin h-[12px] w-[12px]" color="white" />}
               </button>
@@ -144,6 +138,12 @@ export default function UpdateUsuario({ closeButton, usuario }: UpdateUsuarioPro
           </form>
         </div>
         <div className="border border-secondary rounded m-2 p-2 relative">
+
+          <div className="bg-secondary/70 absolute top-0 left-0 right-0 bottom-0">
+            <div className="p-3 text-center h-full flex items-end text-white" >
+              <p> Es necesario registrar al usuario para poder asignarle sus respectivos permisos.</p>
+            </div>
+          </div>
 
           <h1 className="text-center text-secondary" >PERMISOS</h1>
           <div>

@@ -40,10 +40,11 @@ export default function CreateCategoria({ closeButton }: UpdateMarcaProps) {
         </div>
         <InputText
           handleInputChange={handleInputChange}
-          placeholder="Nombre:"
+          placeholder="*Nombre:"
           name="nombre"
           value={data.nombre}
           disabled={loadingData}
+          maxLenght={20}
           required
         />
         <InputTextarea

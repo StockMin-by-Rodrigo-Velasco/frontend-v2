@@ -24,11 +24,7 @@ export default function ListaClientes({ closeButton, setClienteSelected }: Lista
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { value, name } = e.target;
     const newFilter = { ...filter, [name]: value };
-    console.log(newFilter);
-    const newData: ClienteVenta[] = listaClientes.filter(c => {
-      if( c.codigo.includes(newFilter.buscar) || c.nombre.includes(newFilter.buscar) )
-        return c;
-    });
+    const newData: ClienteVenta[] = listaClientes.filter(i => i.nombre.toLowerCase().includes(newFilter.buscar.toLowerCase()) || i.codigo.includes(newFilter.buscar));
 
     setFilteredClientes([...newData]);
     setFilter(newFilter);

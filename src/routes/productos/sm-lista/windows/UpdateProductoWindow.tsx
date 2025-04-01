@@ -130,7 +130,7 @@ export default function UpdateProductoWindow({ producto, closeButton }: Producto
                                     handleInputChange={handleInputChange}
                                     value={data.codigo}
                                     name="codigo"
-                                    placeholder="Codigo"
+                                    placeholder="*Código:"
                                     disabled={!editMode}
 
                                 />
@@ -138,7 +138,7 @@ export default function UpdateProductoWindow({ producto, closeButton }: Producto
                                     handleInputChange={handleInputChange}
                                     value={data.nombre}
                                     name="nombre"
-                                    placeholder="Nombre"
+                                    placeholder="*Nombre:"
                                     disabled={!editMode}
 
                                 />
@@ -146,7 +146,7 @@ export default function UpdateProductoWindow({ producto, closeButton }: Producto
                                     handleInputChange={handleInputChange}
                                     value={data.descripcion}
                                     name="descripcion"
-                                    placeholder="Descripcion"
+                                    placeholder="Descripción"
                                     disabled={!editMode}
                                 />
                             </div>
@@ -155,7 +155,7 @@ export default function UpdateProductoWindow({ producto, closeButton }: Producto
                                     handleInputChange={handleInputChange}
                                     value={data.categoriaId}
                                     name='categoriaId'
-                                    placeholder="Categoria"
+                                    placeholder="*Categoría:"
                                     options={listaCategorias.map(c => ({name: c.nombre, value: c.id}))}
                                     disabled={!editMode}
                                 />
@@ -163,7 +163,7 @@ export default function UpdateProductoWindow({ producto, closeButton }: Producto
                                     handleInputChange={handleInputChange}
                                     value={data.marcaId}
                                     name='marcaId'
-                                    placeholder="Marca"
+                                    placeholder="*Marca:"
                                     options={listaMarcas.map(m => ({ name: m.nombre, value: m.id }))}
                                     disabled={!editMode}
                                 />
@@ -171,7 +171,7 @@ export default function UpdateProductoWindow({ producto, closeButton }: Producto
                                     handleInputChange={handleInputChange}
                                     value={data.unidadMedidaId}
                                     name='unidadMedidaId'
-                                    placeholder="U. Medida"
+                                    placeholder="*U. Medida:"
                                     options={listaUnidadesMedida.map(m => ({ name: m.nombre, value: m.id }))}
                                     disabled={!editMode}
                                 />

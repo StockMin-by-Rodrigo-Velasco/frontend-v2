@@ -11,7 +11,8 @@ interface InputProps {
   value: string,
   required?:boolean,
   disabled?:boolean,
-  className?:string
+  className?:string,
+  maxLenght?: number,
 }
 
 interface InputBlockProps {
@@ -152,7 +153,7 @@ function InputSelectSearch({handleInputChange, value, name, placeholder, require
   )  
 }
 
-function InputText({ handleInputChange, value, name, placeholder, required=false, disabled=false, className='' }:InputProps){
+function InputText({ handleInputChange, value, name, placeholder, required=false, disabled=false, maxLenght, className='' }:InputProps){
   return(
 
     <div className = {`${className} relative mt-6`} >
@@ -165,6 +166,7 @@ function InputText({ handleInputChange, value, name, placeholder, required=false
         value={value}
         required={required}
         disabled={disabled}
+        maxLength={maxLenght}
       />
       <label
         className={ value === '' ?

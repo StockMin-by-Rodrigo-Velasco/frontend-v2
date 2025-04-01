@@ -54,7 +54,7 @@ export default function UpdateCategoria({ dataUpdate, closeButton }: UpdateCateg
 
 
   return (
-    <Windows tittle='Detalles de categoria' closeButton={closeButton} >
+    <Windows tittle='Detalles de categoría' closeButton={closeButton} >
       <form className="px-5 py-3 relative" onSubmit={submitUpdate} >
 
         {(idUltimaCategoriaEliminada === dataUpdate.id) &&
@@ -77,8 +77,9 @@ export default function UpdateCategoria({ dataUpdate, closeButton }: UpdateCateg
         </div>
         <InputText
           handleInputChange={handleInputChange}
-          placeholder="Nombre:"
+          placeholder="*Nombre:"
           name="nombre"
+          maxLenght={20}
           value={data.nombre}
           disabled={!editMode || loadingData}
         />

@@ -7,6 +7,7 @@ import { QuicksandSemibold } from '../assets/pdf/QuicksandSemibold';
 
 interface datosPdf{
     fileName: string;
+    type: 'COTIZACION' | 'VENTA';
     tableId: string | undefined;
     numero: string;
     fecha: string;
@@ -14,6 +15,8 @@ interface datosPdf{
     responsable: string;
     detalle: string;
     logo: string;
+    direccion: string;
+    contacto: string;
   }
 
 export const generateCotizacionVentaPdf = ( datos: datosPdf ) => {
@@ -27,7 +30,7 @@ export const generateCotizacionVentaPdf = ( datos: datosPdf ) => {
 
 
         //DIVIDIR LOS ITEMS EN SUS HOJAS CORRECPONDIENTES
-      const doc = new jsPDF({ //creamos el documento con unidades en PULGADAS y en tamaño LEGAL
+      const doc = new jsPDF({ //creamos el documento con unidades en PULGADAS y en tamaño CARTA
           unit: "in",
           format: 'letter'
         });
@@ -47,23 +50,26 @@ export const generateCotizacionVentaPdf = ( datos: datosPdf ) => {
       // AGREGAMOS EL LOGO DE LA EMPRESA
       doc.addImage(datos.logo, 'png', 0.5, 0.2, imgWidth, imgHeight );
 
-      //AGREGAMOS LA FECHA, MODIFICANDO EL TAMAÑO DE LA LETRA A 12px
+      //AGREGAMOS LA FECHA, MODIFICANDO EL TAMAÑO DE LA LETRA A 10px
       doc.setFontSize(10);
            
       doc.setFont("QuicksandSemibold");
-      doc.text( 'Fecha: ', 4.2, 0.5);
+      doc.text( `${datos.type} Nº ${ datos.numero }`, 4.2, 0.5 );
+      
+      doc.setFont("QuicksandSemibold");
+      doc.text( 'Fecha: ', 4.2, 0.9);
       doc.setFont("QuicksandRegular");
-      doc.text( `${ datos.fecha }`, 5.2, 0.5 );
+      doc.text( `${ datos.fecha }`, 5.2, 0.9 );
 
       doc.setFont("QuicksandSemibold");
-      doc.text( 'Responsable: ', 4.2, 0.7);
+      doc.text( 'Responsable: ', 4.2, 1.1);
       doc.setFont("QuicksandRegular");
-      doc.text( `${ datos.responsable }`, 5.2, 0.7 );
+      doc.text( `${ datos.responsable }`, 5.2, 1.1 );
 
       doc.setFont("QuicksandSemibold");
-      doc.text( 'Cliente: ', 4.2, 0.9);
+      doc.text( 'Cliente: ', 4.2, 1.3);
       doc.setFont("QuicksandRegular");
-      doc.text( `${ datos.cliente }`, 5.2, 0.9 );
+      doc.text( `${ datos.cliente }`, 5.2, 1.3 );
 
       doc.setFont("QuicksandSemibold");
       doc.text( 'Detalle: ', 0.6, 1.6);
@@ -74,6 +80,7 @@ export const generateCotizacionVentaPdf = ( datos: datosPdf ) => {
       // -------------------- TABLA --------------------
       autoTable(doc, {
         startY: 1.9,
+        pageBreak:'auto',
         headStyles: { 
           fillColor: '#093D77', 
           lineWidth:0, 
@@ -99,8 +106,24 @@ export const generateCotizacionVentaPdf = ( datos: datosPdf ) => {
         },
         html: `#${datos.tableId}`
       });
+
+      // -------------------- PIE DE PAGINA --------------------
+      doc.setDrawColor(9, 61, 119); // COLOR PRIMARY
+      doc.setLineWidth(0.02); // Grosor de la línea
+      doc.line(0.5, 5.8, 8, 5.8);
+
+      doc.setFont("QuicksandSemibold");
+      doc.text( 'DIRECCION', 0.5, 6 );
+      doc.setFont("QuicksandRegular");
+      doc.text( datos.direccion, 0.5, 6.2 );
+      doc.setFont("QuicksandSemibold");
+      doc.text( 'CONTACTO', 6, 6 );
+      doc.setFont("QuicksandRegular");
+      doc.text( `${datos.contacto}`, 6, 6.2 );
+      // -------------------- FIN PIE DE PAGINA -------------------- 
+
       // -------------------- FIN TABLA --------------------         
-      doc.save(`${datos.fileName}`);
+      doc.save(`${datos.fileName}.pdf`);
 
 
     }else{

@@ -77,7 +77,7 @@ export default function OpcionesProductos() {
           <FaPlus /> <span className='ms-2' >Agregar nueva categoría</span>
         </button>
         <div className='border-[1px] border-secondary rounded mb-3'>
-          <Accordion tittle='CATEGORIAS' last>
+          <Accordion tittle='CATEGORÍAS' last>
             <DataTable<Categoria> data={listaCategorias} columns={categoriaColumns} details={{ name: 'MAS', action: openUpdateCategoria }} />
           </Accordion>
         </div>

@@ -28,7 +28,7 @@ interface ProductoDetalle {
 export default function ViewCotizacion({ closeButton, cotizacion, decrementProductos }: ViewCotizacionProp) {
     const tableRef = useRef<HTMLTableElement | null>(null);
 
-    const { logo, listUsers: users } = useSelector((s: RootState) => s.Sucursal);
+    const { logo, listUsers: users, data } = useSelector((s: RootState) => s.Sucursal);
     const { listaProductosTienda, opcionesVenta } = useSelector((s: RootState) => s.Ventas);
 
     const [responsable, setResponsable] = useState('');
@@ -69,7 +69,10 @@ export default function ViewCotizacion({ closeButton, cotizacion, decrementProdu
         const tableId = tableRef.current?.id;
 
         generateCotizacionVentaPdf({
-            fileName: `COTIZACION Nº${ cotizacion.numero }-${cotizacion.createdAt}.pdf`,
+            fileName: `COTIZACION Nº${ cotizacion.numero }-${cotizacion.createdAt}`,
+            type: 'COTIZACION',
+            contacto: data.contacto,
+            direccion: data.direccion,
             cliente: `${cotizacion.ClienteVenta.nombre.toUpperCase()} ${cotizacion.ClienteVenta.apellido.toUpperCase()}`,
             responsable: responsable.toUpperCase(),
             numero: cotizacion.numero.toString(),

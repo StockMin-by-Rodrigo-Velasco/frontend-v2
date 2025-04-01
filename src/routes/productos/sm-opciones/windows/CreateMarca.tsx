@@ -40,9 +40,10 @@ export default function CreateMarca({ closeButton }: UpdateMarcaProps) {
         </div>
         <InputText
           handleInputChange={handleInputChange}
-          placeholder="Nombre:"
+          placeholder="*Nombre:"
           name="nombre"
           value={data.nombre}
+          maxLenght={20}
           disabled={loadingData}
           required
         />
