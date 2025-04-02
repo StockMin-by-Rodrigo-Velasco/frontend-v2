@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router";
 import { AppDispatch, RootState } from "../../redux/store";
-import { getSucursalUsersAPI, logoutSucursalAPI, verifyTokenSucursalUsersByCookieAPI } from "../../redux/sucursal/sucursalThunk";
+import { getAllPermisosAPI, getSucursalUsersAPI, logoutSucursalAPI, verifyTokenSucursalUsersByCookieAPI } from "../../redux/sucursal/sucursalThunk";
 import logos from "../../assets/logos";
 import { selectSucursalUser } from "../../redux/sucursal/sucursalSlice";
 import LoadingApplication from "../../components/LoadingApplication";
@@ -30,24 +30,27 @@ export default function SucursalUsers() {
 
   useEffect(() => {
     if( sucursalId === '' ) dispatch(verifyTokenSucursalUsersByCookieAPI(navigate));
-    else dispatch(getSucursalUsersAPI(sucursalId));
+    else {
+      dispatch(getSucursalUsersAPI(sucursalId));
+      dispatch( getAllPermisosAPI() );
+    };
   }, [])
   return (
     <div className="w-full h-screen bg-light flex items-center justify-center" >
       {loadingApplication&& <LoadingApplication/>}
-      <div className="rounded-[20px] bg-white flex flex-col items-center justify-center">
+      <div className=" max-w-[450px] rounded-[20px] bg-white flex flex-col items-center justify-center">
         <img src={logo} alt="logoEmpresa" width={'400px'} className="m-8" />
 
         <div className="flex w-full px-9" >
           <p className="font-semibold">Elige tu usuario:</p>
         </div>
 
-        <div className="flex my-5">
+        <div className="flex flex-wrap justify-evenly my-5 w-full max-h-[300px] overflow-y-scroll scroll-custom">
           {users?.map(u => (
               <div
                 key={u.id}
                 style={{backgroundColor: perfilColor(u.imagen.split(' ')[1])}}
-                className='me-4 rounded-lg flex flex-col items-center border-2 border-transparent hover:border-primary transition-all cursor-pointer'
+                className='m-2 rounded-lg flex flex-col items-center border-2 border-transparent hover:border-primary transition-all cursor-pointer'
                 onClick={() => { openSucursalLoginUser(u.id, u.sucursalId) }}
               >
                 <img src={perfilImg(u.imagen.split(' ')[0])} width='100px'/>

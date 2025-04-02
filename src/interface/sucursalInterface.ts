@@ -1,4 +1,4 @@
-export interface LoginSucursalInterface {
+export interface LoginSucursalDto {
     nit: string;
     password: string;
 }
@@ -9,29 +9,31 @@ export interface LoginSucursalUserInterface {
     password: string;
 }
 
-export interface UpdateSucursalUserInterface {
+export interface Sucursal {
     id: string;
-    sucursalId: string;
-    nombre?: string;
-    apellido?: string;
-    ci?: string;
-    imagen?: string;
-    contacto?: string;
-    direccion?: string;
-    oldPassword?: string;
-    password?: string;
-    rePassword?: string;
+    nit: string;
+    password: string;
+    adminPassword: string;
+    nombre: string;
+    propietario: string;
+    logo: string;
+    direccion: string;
+    contacto: string;
+    deleted: boolean;
 }
 
 export interface User {
-    id: string;
-    sucursalId: string;
-    nombre: string;
-    contacto: string;
-    direccion: string;
-    apellido: string;
-    ci: string;
-    imagen: string;
+    id: string
+    sucursalId: string
+    nombre: string
+    apellido: string
+    ci: string
+    imagen: string
+    contacto: string
+    direccion: string
+    password: string
+    deleted: boolean
+    UsuarioPermiso: UsuarioPermiso[]
 }
 
 export interface Permiso {
@@ -59,4 +61,23 @@ export interface CreateSucursalUserDto {
     contacto: string;
     direccion: string;
     password: string;
+}
+
+export interface UpdateSucursalUserDto {
+    id: string;
+    sucursalId: string;
+    nombre?: string;
+    apellido?: string;
+    ci?: string;
+    imagen?: string;
+    contacto?: string;
+    direccion?: string;
+    oldPassword?: string;
+    password?: string;
+    rePassword?: string;
+}
+
+export interface HandlePermisoUserDto {
+    userId: string;
+    permisoId: string;
 }

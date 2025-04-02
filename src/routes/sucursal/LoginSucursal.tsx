@@ -4,7 +4,7 @@ import { InputLoginPassword, InputLoginText } from '../../components/Input';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { Notification } from '../../components/Notification';
-import { LoginSucursalInterface } from '../../interface';
+import { LoginSucursalDto } from '../../interface';
 import { loginSucursalAPI, verifyTokenSucursalByCookieAPI } from '../../redux/sucursal/sucursalThunk';
 import { useNavigate } from 'react-router';
 import logos from '../../assets/logos';
@@ -13,14 +13,14 @@ import { AiOutlineLoading } from 'react-icons/ai';
 
 export default function LoginSucursal() {
 
-    const formulario: LoginSucursalInterface = { nit: '', password: '' }
+    const formulario: LoginSucursalDto = { nit: '', password: '' }
     const dispatch = useDispatch<AppDispatch>();
     const { showNotification } = useSelector((s: RootState) => s.Notification);
     const { loadingData, loadingApplication } = useSelector((s: RootState) => s.Aplication);
     const { id: sucursalId } = useSelector((s: RootState) => s.Sucursal);
     const navigate = useNavigate();
 
-    const { data, handleInputChange } = useForm<LoginSucursalInterface>(formulario);
+    const { data, handleInputChange } = useForm<LoginSucursalDto>(formulario);
 
     const onSubmit = (e: FormEvent) => {
         e.preventDefault();

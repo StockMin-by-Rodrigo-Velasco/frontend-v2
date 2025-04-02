@@ -146,7 +146,7 @@ export default function CreateUsuario({ closeButton, getUsuario }: CreateUsuario
           </div>
 
           <h1 className="text-center text-secondary" >PERMISOS</h1>
-          <div>
+          <div className="my-2" >
             <h1 className="bg-secondary text-white rounded px-2" >Productos</h1>
             {listaPermisos.filter(p => p.modulo === 'productos').map(p => (
               <div key={p.id} className="ms-2" >
@@ -157,7 +157,7 @@ export default function CreateUsuario({ closeButton, getUsuario }: CreateUsuario
             }
           </div>
 
-          <div>
+          <div className="my-2" >
             <h1 className="bg-secondary text-white rounded px-2" >Almacenes</h1>
             {listaPermisos.filter(p => p.modulo === 'almacenes').map(p => (
               <div key={p.id} className="ms-2" >
@@ -168,7 +168,7 @@ export default function CreateUsuario({ closeButton, getUsuario }: CreateUsuario
             }
           </div>
 
-          <div>
+          <div className="my-2" >
             <h1 className="bg-secondary text-white rounded px-2" >Ventas</h1>
             {listaPermisos.filter(p => p.modulo === 'ventas').map(p => (
               <div key={p.id} className="ms-2" >
@@ -178,6 +178,21 @@ export default function CreateUsuario({ closeButton, getUsuario }: CreateUsuario
             ))
             }
           </div>
+
+          <div className="my-2" >
+            <h1 className="bg-secondary text-white rounded px-2" >Usuarios</h1>
+            {listaPermisos.filter(p => p.modulo === 'usuarios').map(p => (
+              <div key={p.id} className="ms-2" >
+                <input type="checkbox" id={p.codigo} />
+                <label className="ms-2" htmlFor={p.codigo}>{p.permiso}</label>
+              </div>
+            ))
+            }
+          </div>
+
+
+
+
         </div>
       </div>
     </Windows>

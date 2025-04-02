@@ -2,13 +2,14 @@ import { useDispatch, useSelector } from "react-redux";
 import Windows from "../../../../components/Windows";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { perfilColor, perfilImg } from "../../../../assets/perfil";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
 import { InputText, InputTextBlock } from "../../../../components/Input";
 import { useForm } from "../../../../hooks";
 import { FormEvent } from 'react';
-import { CreateSucursalUserDto, User } from "../../../../interface";
+import { HandlePermisoUserDto, UpdateSucursalUserDto, User } from "../../../../interface";
 import { FaEdit } from "react-icons/fa";
+import { handlePermisoToUserAPI, updateSucursalUserAPI } from "../../../../redux/sucursal/sucursalThunk";
 
 interface UpdateUsuarioProp {
   closeButton: () => void,
@@ -19,19 +20,20 @@ export default function UpdateUsuario({ closeButton, usuario }: UpdateUsuarioPro
   const { id: sucursalId, listaPermisos } = useSelector((s: RootState) => s.Sucursal);
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
 
+  const permisosUsuarioSet = new Set(usuario.UsuarioPermiso.map(p => p.permisoId));
   const dispatch = useDispatch<AppDispatch>();
 
-  const initialStateFormData: CreateSucursalUserDto = { 
+  const initialStateFormData: UpdateSucursalUserDto = { 
+    id: usuario.id,
     sucursalId, 
     nombre: usuario.nombre, 
     apellido: usuario.apellido, 
     contacto: usuario.contacto,
     direccion: usuario.direccion, 
-    password: '*****************', 
     ci: usuario.ci, 
     imagen: usuario.imagen, 
   };
-  const { data: formData, handleInputChange: handleInputChangeData } = useForm<CreateSucursalUserDto>(initialStateFormData);
+  const { data: formData, handleInputChange: handleInputChangeData } = useForm<UpdateSucursalUserDto>(initialStateFormData);
   const [imagen, setImagen] = useState(usuario.imagen);
   const [modeEditInfo, setModeEditInfo] = useState(false);
 
@@ -46,10 +48,16 @@ export default function UpdateUsuario({ closeButton, usuario }: UpdateUsuarioPro
     setImagen(`${newImg} ${color}`);
   }
 
+  const changePermiso = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id:permisoId } = e.target;
+    const permiso:HandlePermisoUserDto = {userId: usuario.id, permisoId} 
+    // console.log(permiso);
+    dispatch(handlePermisoToUserAPI(permiso));
+  }
+
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log({ ...formData, imagen });
-    // dispatch(updateSucursalUserAPI({ id: userData.id, sucursalId: userData.sucursalId, ...formData, ...formPassword }));
+    dispatch(updateSucursalUserAPI({ ...formData, imagen }));
   }
  
   return (
@@ -83,54 +91,49 @@ export default function UpdateUsuario({ closeButton, usuario }: UpdateUsuarioPro
               <InputText
                 className="w-full"
                 handleInputChange={handleInputChangeData}
-                name="nombre"
-                value={formData.nombre}
-                placeholder="*Nombre:"
-                required
-                disabled={loadingData || !modeEditInfo} />
+                name="password"
+                value={formData.nombre || ''}
+                placeholder="Nombre:"
+                disabled={loadingData || !modeEditInfo}/>
+              
 
               <InputText
                 className="w-full"
                 handleInputChange={handleInputChangeData}
                 name="apellido"
-                value={formData.apellido}
-                placeholder="*Apellido:"
-                required
+                value={formData.apellido || ''}
+                placeholder="Apellido:"
                 disabled={loadingData || !modeEditInfo} />
 
               <InputText
                 className="w-full"
                 handleInputChange={handleInputChangeData}
                 name="direccion"
-                value={formData.direccion}
-                placeholder="*Direccion:"
-                required
+                value={formData.direccion || ''}
+                placeholder="Direccion:"
                 disabled={loadingData || !modeEditInfo} />
 
               <InputText
                 className="w-full"
                 handleInputChange={handleInputChangeData}
                 name="ci"
-                value={formData.ci}
-                placeholder="*CI:"
-                required
+                value={formData.ci || ''}
+                placeholder="CI:"
                 disabled={loadingData || !modeEditInfo} />
 
               <InputText
                 className="w-full"
                 handleInputChange={handleInputChangeData}
                 name="contacto"
-                value={formData.contacto}
-                placeholder="*Contacto:"
-                required
+                value={formData.contacto || ''}
+                placeholder="Contacto:"
                 disabled={loadingData || !modeEditInfo} />
 
               <InputTextBlock
                 className="w-full"
                 name="password"
-                value={formData.password}
-                placeholder="*Contraseña:"
-                />
+                value='*************'
+                placeholder="Contraseña:"/>
             </div>
 
             <div className="mt-4 flex justify-center" >
@@ -145,39 +148,55 @@ export default function UpdateUsuario({ closeButton, usuario }: UpdateUsuarioPro
         </div>
         <div className="border border-secondary rounded m-2 p-2 relative">
 
-          <h1 className="text-center text-secondary" >PERMISOS</h1>
-          <div>
+              <div className="flex items-center justify-center text-secondary w-full" >
+                <h1 className="text-center" >PERMISOS </h1>
+                {loadingData&& <AiOutlineLoading className="ms-2 animate-spin h-[12px] w-[12px]"/>}
+              </div>
+          <div className="my-2" >
             <h1 className="bg-secondary text-white rounded px-2" >Productos</h1>
             {listaPermisos.filter(p => p.modulo === 'productos').map(p => (
               <div key={p.id} className="ms-2" >
-                <input type="checkbox" id={p.codigo} />
-                <label className="ms-2" htmlFor={p.codigo}>{p.permiso}</label>
+                <input type="checkbox" id={p.id} onChange={changePermiso} defaultChecked={permisosUsuarioSet.has(p.id)} disabled={loadingData}/>
+                <label className="ms-2" htmlFor={p.id}>{p.permiso}</label>
               </div>
             ))
             }
           </div>
 
-          <div>
+          <div className="my-2" >
             <h1 className="bg-secondary text-white rounded px-2" >Almacenes</h1>
             {listaPermisos.filter(p => p.modulo === 'almacenes').map(p => (
               <div key={p.id} className="ms-2" >
-                <input type="checkbox" id={p.codigo} />
-                <label className="ms-2" htmlFor={p.codigo}>{p.permiso}</label>
+                <input type="checkbox" id={p.id} onChange={changePermiso} defaultChecked={permisosUsuarioSet.has(p.id)} disabled={loadingData}/>
+                <label className="ms-2" htmlFor={p.id}>{p.permiso}</label>
               </div>
             ))
             }
           </div>
 
-          <div>
+          <div className="my-2" >
             <h1 className="bg-secondary text-white rounded px-2" >Ventas</h1>
             {listaPermisos.filter(p => p.modulo === 'ventas').map(p => (
               <div key={p.id} className="ms-2" >
-                <input type="checkbox" id={p.codigo} />
-                <label className="ms-2" htmlFor={p.codigo}>{p.permiso}</label>
+                <input type="checkbox" id={p.id} onChange={changePermiso} defaultChecked={permisosUsuarioSet.has(p.id)} disabled={loadingData}/>
+                <label className="ms-2" htmlFor={p.id}>{p.permiso}</label>
               </div>
             ))
             }
           </div>
+
+          <div className="my-2" >
+            <h1 className="bg-secondary text-white rounded px-2" >Usuarios</h1>
+            {listaPermisos.filter(p => p.modulo === 'usuarios').map(p => (
+              <div key={p.id} className="ms-2" >
+                <input type="checkbox" id={p.id} onChange={changePermiso} defaultChecked={permisosUsuarioSet.has(p.id)} disabled={loadingData}/>
+                <label className="ms-2" htmlFor={p.id}>{p.permiso}</label>
+              </div>
+            ))
+            }
+          </div>
+
+
         </div>
       </div>
     </Windows>

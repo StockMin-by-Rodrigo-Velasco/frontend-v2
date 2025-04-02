@@ -33,7 +33,7 @@ export default function ListaUsuarios() {
     const [openUpdateUsuario, setOpenUpdateUsuario] = useState(false);
   
   
-    const initialStateClienteVentaSelected: User = { id:'', sucursalId:'', nombre: '', apellido: '', ci: '', imagen:'', direccion:'', contacto:''};
+    const initialStateClienteVentaSelected: User = { id:'', sucursalId:'', nombre: '', apellido: '', ci: '', imagen:'', direccion:'', contacto:'',password:'', UsuarioPermiso:[], deleted:false};
     const [userSelected, setUserSelected] = useState<User>(initialStateClienteVentaSelected);
     const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   

@@ -26,10 +26,24 @@ import TiendaVentas from "./ventas/sm-tienda/TiendaVentas";
 import Usuarios from "./usuarios/Usuarios";
 import TraspasosAlmacenes from "./almacenes/sm-traspasos/TraspasosAlmacenes";
 
-
 export default function RoutesMain() {
-  const { id, userData } = useSelector((s:RootState) => s.Sucursal);
+  const { id, userData, listaPermisos } = useSelector((s:RootState) => s.Sucursal);
   const { selectedAlmacen } = useSelector((s:RootState) => s.Almacenes);
+  
+  const permisosProductos:Record<string, string> = {};
+  const permisosAlmacenes:Record<string, string> = {};
+  const permisosVentas:Record<string, string> = {};
+  const permisosUsuarios:Record<string, string> = {};
+  const permisosUsuarioSet = new Set(userData.UsuarioPermiso.map(p => p.permisoId));
+
+  for(const p of listaPermisos){
+    if(p.modulo === 'productos') permisosProductos[p.codigo] = p.id;
+    if(p.modulo === 'almacenes') permisosAlmacenes[p.codigo] = p.id;
+    if(p.modulo === 'ventas') permisosVentas[p.codigo] = p.id;
+    if(p.modulo === 'usuarios') permisosUsuarios[p.codigo] = p.id;
+  }
+
+ 
 
   return (
       <Routes>
@@ -40,33 +54,33 @@ export default function RoutesMain() {
         <Route path="main" element={ userData? <MainAplication/> : <Navigate to='/login-user'/> }>
         
           <Route path="productos" element={<Productos/>}>
-            <Route index element={<Navigate to='lista'/>}/>
-            <Route path="lista" element={<ListaProductos/>}/>
-            <Route path="opciones" element={<OpcionesProductos/>}/>
-            <Route path="historial" element={<HistorialProductos/>} />
+            {/* <Route index element={<Navigate to='lista'/>}/> */}
+            <Route path="lista" element={permisosUsuarioSet.has(permisosProductos['pr-01'])? <ListaProductos/>:<Navigate to='/main'/>}/>
+            <Route path="opciones" element={permisosUsuarioSet.has(permisosProductos['pr-02'])? <OpcionesProductos/>:<Navigate to='/main'/>}/>
+            <Route path="historial" element={permisosUsuarioSet.has(permisosProductos['pr-03'])?<HistorialProductos/>:<Navigate to='/main'/>} />
           </Route>
 
           <Route path="almacenes" element={<Almacenes/>}>
-            <Route index element={<Navigate to='lista'/>}/>
-            <Route path="lista" element={<ListaAlmacenes/>}>
+            {/* <Route index element={<Navigate to='lista'/>}/> */}
+            <Route path="lista" element={permisosUsuarioSet.has(permisosAlmacenes['al-01'])?<ListaAlmacenes/>:<Navigate to='/main'/>}>
               {selectedAlmacen.id&& <Route index element={<Navigate to={selectedAlmacen.id}/>} /> }
-              <Route path=":nombre" element={<SelectedAlmacen/>} />
+              <Route path=":nombre" element={permisosUsuarioSet.has(permisosAlmacenes['al-01'])?<SelectedAlmacen/>:<Navigate to='/main'/>} />
             </Route>
-            <Route path="traspasos" element={<TraspasosAlmacenes/>} />
-            <Route path="historial" element={<HistorialAlmacenes/>} />
+            <Route path="traspasos" element={permisosUsuarioSet.has(permisosAlmacenes['al-02'])?<TraspasosAlmacenes/>:<Navigate to='/main'/>} />
+            <Route path="historial" element={permisosUsuarioSet.has(permisosAlmacenes['al-03'])?<HistorialAlmacenes/>:<Navigate to='/main'/>} />
           </Route>
 
 
           <Route path="ventas" element={<Ventas/>}>
-            <Route index element={<Navigate to='tienda'/>}/>
-            <Route path="tienda" element={<TiendaVentas/>}/>
-            <Route path="clientes" element={<ClientesVentas/>}/>
-            <Route path="opciones" element={<OpcionesVentas/>}/>
-            <Route path="historial" element={<HistorialVentas/>} />
+            {/* <Route index element={<Navigate to='tienda'/>}/> */}
+            <Route path="tienda" element={permisosUsuarioSet.has(permisosVentas['ve-01'])?<TiendaVentas/>:<Navigate to='/main'/>}/>
+            <Route path="clientes" element={permisosUsuarioSet.has(permisosVentas['ve-02'])?<ClientesVentas/>:<Navigate to='/main'/>}/>
+            <Route path="opciones" element={permisosUsuarioSet.has(permisosVentas['ve-03'])?<OpcionesVentas/>:<Navigate to='/main'/>}/>
+            <Route path="historial" element={permisosUsuarioSet.has(permisosVentas['ve-04'])?<HistorialVentas/>:<Navigate to='/main'/>} />
           </Route>
           <Route path="usuarios" element={<Usuarios/>}>
-            <Route index element={<Navigate to='lista'/>}/>
-            <Route path="lista" element={<ListaUsuarios/>}/>
+            {/* <Route index element={<Navigate to='lista'/>}/> */}
+            <Route path="lista" element={ permisosUsuarioSet.has(permisosUsuarios['us-01'])? <ListaUsuarios/> : <Navigate to='/main'/>  }/>
           </Route>
         </Route>
       </Routes>
