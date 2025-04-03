@@ -40,7 +40,7 @@ export default function CreateUsuario({ closeButton, getUsuario }: CreateUsuario
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     console.log({ ...formData, imagen });
-    dispatch(createSucursalUserAPI({ ...formData, imagen }, getUsuario));
+    dispatch(createSucursalUserAPI({ ...formData, imagen }, getUsuario, "LOADING-DATA-COMPLETE"));
   }
 
   return (

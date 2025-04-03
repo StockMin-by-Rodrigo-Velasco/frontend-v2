@@ -16,11 +16,10 @@ export default function Almacenes() {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    dispatch(getAllAlmacenesAPI());
-
-    dispatch(getAllProductosAPI());
+    dispatch(getAllAlmacenesAPI("LOADING-APP-START"));
     dispatch(getAllMarcasAPI());
     dispatch(getAllCategoriasAPI());
+    dispatch(getAllProductosAPI("LOADING-APP-FINISH"));
   }, [id])
 
   return (

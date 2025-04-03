@@ -26,7 +26,7 @@ export default function NuevoAlmacenWindow({closeButton}: CreateAlmacenWindowPro
 
     const formSubmit = (e:FormEvent) => {
         e.preventDefault();
-        dispatch(createAlmacenAPI({ sucursalId,...data}));
+        dispatch(createAlmacenAPI({ sucursalId,...data}, "LOADING-DATA-COMPLETE"));
     }
 
   return (

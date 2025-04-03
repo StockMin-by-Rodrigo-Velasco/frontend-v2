@@ -15,7 +15,7 @@ export default function ListaAlmacenes() {
   const [openCreateAlmacenWindow, setOpenCreateAlmacenWindow] = useState(false);
 
   useEffect(() => {
-    if(selectedAlmacen.id) dispatch(getAllProductosAlmacenAPI());
+    if(selectedAlmacen.id) dispatch(getAllProductosAlmacenAPI("LOADING-APP-COMPLETE"));
     else navigate('/main/almacenes/lista');
   }, [selectedAlmacen.id])
   

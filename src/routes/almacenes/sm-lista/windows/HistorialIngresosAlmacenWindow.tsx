@@ -65,7 +65,7 @@ export default function HistorialIngresosAlmacenWindow({ closeButton }: Historia
     hastaStr.setHours(hastaStr.getHours() + 28); // Ajustamos a la hora de Bolivia
     const hasta = hastaStr.getTime().toString();
 
-    dispatch(getAllIngresosProductosAlmacenAPI(desde, hasta));
+    dispatch(getAllIngresosProductosAlmacenAPI(desde, hasta, "LOADING-DATA-COMPLETE"));
   }
 
   useEffect(() => {

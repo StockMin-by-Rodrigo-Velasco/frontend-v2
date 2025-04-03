@@ -40,12 +40,12 @@ export default function UpdateCategoria({ dataUpdate, closeButton }: UpdateCateg
   const submitUpdate = (e: FormEvent) => {
     e.preventDefault();
     const { deleted, ...res } = data;
-    dispatch(updateCategoriaAPI(res));
+    dispatch(updateCategoriaAPI(res, "LOADING-DATA-COMPLETE"));
   }
 
   const deleteCategoria = () => {
     if (typeNotification === 'WARNING' && showNotification) {
-      dispatch(deleteCategoriaAPI(dataUpdate.id));
+      dispatch(deleteCategoriaAPI(dataUpdate.id, "LOADING-DATA-COMPLETE"));
       dispatch(hideNotification());
     } else {
       dispatch(showNotificationWarning({ tittle: 'Eliminar categoría', description: 'Si deseas continuar vuelve a presionar el botón de eliminación, caso contrario cierra este mensaje' }))

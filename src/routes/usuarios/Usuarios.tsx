@@ -8,7 +8,7 @@ export default function Usuarios() {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    dispatch(getAllPermisosAPI());
+    dispatch(getAllPermisosAPI("LOADING-APP-COMPLETE"));
   }, [])
   return (
     <>

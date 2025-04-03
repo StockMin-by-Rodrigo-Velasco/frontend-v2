@@ -113,7 +113,7 @@ export default function TiendaVentas() {
             PrecioVenta: listaPrecioVentaObj[opcionesVenta.precioVentaId] || { codigo: '', id: '', sucursalId: '', deleted: false, }
         }));
         const { precioVentaId, almacenId } = newFilterOpciones;
-        dispatch(getAllProductosVentaAPI(precioVentaId, almacenId));
+        dispatch(getAllProductosVentaAPI(precioVentaId, almacenId, setFilterProductosTienda, "LOADING-APP-COMPLETE"));
     }
 
 
@@ -124,7 +124,7 @@ export default function TiendaVentas() {
             tipoMonedaVentaId: opcionesVenta.tipoMonedaVentaId,
             sucursalId
         });
-        dispatch(getAllProductosVentaAPI(opcionesVenta.precioVentaId, opcionesVenta.almacenId, setFilterProductosTienda));
+        dispatch(getAllProductosVentaAPI(opcionesVenta.precioVentaId, opcionesVenta.almacenId, setFilterProductosTienda, "LOADING-APP-COMPLETE"));
         // setCheckedProductos(0);
 
     }, [opcionesVenta])
@@ -203,7 +203,7 @@ export default function TiendaVentas() {
                         value={filterOpciones.almacenId}
                         className="mb-2"
                         name="almacenId"
-                        placeholder="Almacen de venta: "
+                        placeholder="Almacen: "
                         options={listaAlmacenes.map(a => ({ value: a.id, name: a.nombre }))}
                         handleInputChange={handleOpcionChange}
                         required
@@ -212,7 +212,7 @@ export default function TiendaVentas() {
                     <InputSelect
                         value={filterOpciones.precioVentaId}
                         name="precioVentaId"
-                        placeholder="Tipo de precio: "
+                        placeholder="Precio: "
                         options={listaPrecioVenta.map(pv => ({ value: pv.id, name: pv.codigo }))}
                         handleInputChange={handleOpcionChange}
                         required

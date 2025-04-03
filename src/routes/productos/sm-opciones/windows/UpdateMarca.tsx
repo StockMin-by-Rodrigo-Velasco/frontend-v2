@@ -39,12 +39,12 @@ export default function UpdateMarca({ dataUpdate, closeButton }: UpdateMarcaProp
   const submitUpdate = (e: FormEvent) => {
     e.preventDefault();
     const { deleted, ...res } = data;
-    dispatch(updateMarcaAPI(res));
+    dispatch(updateMarcaAPI(res, "LOADING-DATA-COMPLETE"));
   }
 
   const deleteMarca = () => {
     if (typeNotification === 'WARNING' && showNotification) {
-      dispatch(deleteMarcaAPI(dataUpdate.id));
+      dispatch(deleteMarcaAPI(dataUpdate.id, "LOADING-DATA-COMPLETE"));
       dispatch(hideNotification());
     } else {
       dispatch(showNotificationWarning({ tittle: 'Eliminar marca', description: 'Si deseas continuar vuelve a presionar el botón de eliminación, caso contrario cierra este mensaje' }))

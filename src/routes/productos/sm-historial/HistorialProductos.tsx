@@ -50,7 +50,7 @@ export default function HistorialProductos() {
     hastaStr.setHours(hastaStr.getHours() + 28); // Ajustamos a la hora de Bolivia
     const hasta = hastaStr.getTime().toString();
     
-    dispatch(getLogsProductosAPI(desde, hasta));
+    dispatch(getLogsProductosAPI(desde, hasta, "LOADING-APP-COMPLETE"));
   }
 
   useEffect(() => {

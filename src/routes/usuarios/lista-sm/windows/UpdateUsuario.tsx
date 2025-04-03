@@ -52,12 +52,12 @@ export default function UpdateUsuario({ closeButton, usuario }: UpdateUsuarioPro
     const { id:permisoId } = e.target;
     const permiso:HandlePermisoUserDto = {userId: usuario.id, permisoId} 
     // console.log(permiso);
-    dispatch(handlePermisoToUserAPI(permiso));
+    dispatch(handlePermisoToUserAPI(permiso, undefined, "LOADING-DATA-COMPLETE"));
   }
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    dispatch(updateSucursalUserAPI({ ...formData, imagen }));
+    dispatch(updateSucursalUserAPI({ ...formData, imagen }, undefined, "LOADING-DATA-COMPLETE"));
   }
  
   return (

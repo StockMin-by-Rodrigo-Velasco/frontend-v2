@@ -6,7 +6,7 @@ interface LoadingSectionPropInterface {
 
 export default function LoadingSection({ title }: LoadingSectionPropInterface) {
     return (
-        <div className="absolute top-0 left-0 bottom-0 right-0 bg-white flex justify-center items-center flex-col">
+        <div className="absolute top-0 left-0 bottom-0 right-0 bg-white flex justify-center items-center flex-col z-30">
         
             <img src={logos.logoColor} width={'100px'} />
             <div className="flex mt-3 items-center" >

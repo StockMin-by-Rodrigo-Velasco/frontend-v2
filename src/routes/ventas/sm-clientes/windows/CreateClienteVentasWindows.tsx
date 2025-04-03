@@ -25,7 +25,7 @@ export default function CreateClienteVentasWindows({ closeButton }: CreateClient
 
     const submitCreateCliente = (e: FormEvent) => {
         e.preventDefault();
-        dispatch(createClienteVentaAPI(data));
+        dispatch(createClienteVentaAPI(data, "LOADING-DATA-COMPLETE"));
     }
 
 

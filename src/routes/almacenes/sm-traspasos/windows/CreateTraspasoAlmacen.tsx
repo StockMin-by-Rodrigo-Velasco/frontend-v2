@@ -76,7 +76,7 @@ export default function CreateTraspasoAlmacen({ closeButton, getTraspaso }: Crea
       setTimeout(() => { setAlmacenesAlert(false); }, 5000);
     }
     else {
-      dispatch(getProductosOneAlmacenAPI(value, generateListProductosDestino));
+      dispatch(getProductosOneAlmacenAPI(value, generateListProductosDestino, "LOADING-DATA-COMPLETE"));
       setDestinoReady(true);
       onChangeTraspaso(e);
     }

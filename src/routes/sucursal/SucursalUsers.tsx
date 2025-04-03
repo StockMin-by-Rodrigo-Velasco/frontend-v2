@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router";
 import { AppDispatch, RootState } from "../../redux/store";
-import { getAllPermisosAPI, getSucursalUsersAPI, logoutSucursalAPI, verifyTokenSucursalUsersByCookieAPI } from "../../redux/sucursal/sucursalThunk";
+import { getAllPermisosAPI, getSucursalUsersAPI, logoutSucursalAPI, verifyTokenSucursalUserByCookieAPI } from "../../redux/sucursal/sucursalThunk";
 import logos from "../../assets/logos";
 import { selectSucursalUser } from "../../redux/sucursal/sucursalSlice";
 import LoadingApplication from "../../components/LoadingApplication";
@@ -14,7 +14,7 @@ import { TbLogout2 } from "react-icons/tb";
 export default function SucursalUsers() {
 
   const dispatch = useDispatch<AppDispatch>();
-  const { id: sucursalId, logo, listUsers: users } = useSelector((s: RootState) => s.Sucursal);
+  const { id: sucursalId, logo, listUsers: users, userData } = useSelector((s: RootState) => s.Sucursal);
   const { loadingApplication } = useSelector((s: RootState) => s.Aplication);
   const navigate = useNavigate();
 
@@ -29,15 +29,22 @@ export default function SucursalUsers() {
   }
 
   useEffect(() => {
-    if( sucursalId === '' ) dispatch(verifyTokenSucursalUsersByCookieAPI(navigate));
+    if(sucursalId === '') navigate('/');
+    else if( userData.id === '' ) {
+      dispatch(verifyTokenSucursalUserByCookieAPI(navigate, "LOADING-APP-START"));
+      dispatch(getAllPermisosAPI());
+      dispatch(getSucursalUsersAPI(sucursalId, "LOADING-APP-FINISH"));
+    }
     else {
-      dispatch(getSucursalUsersAPI(sucursalId));
-      dispatch( getAllPermisosAPI() );
+      dispatch(getAllPermisosAPI("LOADING-APP-START"));
+      dispatch(getSucursalUsersAPI(sucursalId, "LOADING-APP-FINISH"));
     };
   }, [])
   return (
     <div className="w-full h-screen bg-light flex items-center justify-center" >
+
       {loadingApplication&& <LoadingApplication/>}
+
       <div className=" max-w-[450px] rounded-[20px] bg-white flex flex-col items-center justify-center">
         <img src={logo} alt="logoEmpresa" width={'400px'} className="m-8" />
 

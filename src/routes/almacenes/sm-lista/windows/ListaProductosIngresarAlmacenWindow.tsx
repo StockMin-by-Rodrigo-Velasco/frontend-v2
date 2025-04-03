@@ -96,7 +96,7 @@ export default function ListaProductosIngresarAlmacenWindow({ closeButton, produ
 
     const registrarProducto = (productoId: string) => {
         if (typeNotification === 'INFO' && showNotification) {
-            dispatch(createProductoAlmacenAPI({ productoId, almacenId: selectedAlmacen.id }));
+            dispatch(createProductoAlmacenAPI({ productoId, almacenId: selectedAlmacen.id}, "LOADING-DATA-COMPLETE"));
             dispatch(hideNotification());
         } else {
             dispatch(showNotificationInfo({

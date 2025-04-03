@@ -72,7 +72,7 @@ export default function TraspasosAlmacenes() {
         hastaStr.setHours(hastaStr.getHours() + 28); // Ajustamos a la hora de Bolivia
         const hasta = hastaStr.getTime().toString();
 
-        dispatch(getAllTraspasosProductosAlmacenAPI(desde, hasta));
+        dispatch(getAllTraspasosProductosAlmacenAPI(desde, hasta, undefined, "LOADING-APP-COMPLETE"));
     }
 
     useEffect(() => {

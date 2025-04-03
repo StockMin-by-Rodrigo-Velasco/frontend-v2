@@ -95,8 +95,8 @@ export default function ListaVentasCotizaciones({ closeButton, decrementProducto
         hastaStr.setHours(hastaStr.getHours() + 28); // Ajustamos a la hora de Bolivia
         const hasta = hastaStr.getTime().toString();
 
-        dispatch(getCotizacionesVentaAPI({ desde, hasta, sucursalId }, setListaCotizacionesVenta));
-        dispatch(getVentasAPI({ desde, hasta, sucursalId }, setListaVenta));
+        dispatch(getCotizacionesVentaAPI({ desde, hasta, sucursalId }, setListaCotizacionesVenta, "LOADING-DATA-COMPLETE"));
+        dispatch(getVentasAPI({ desde, hasta, sucursalId }, setListaVenta, "LOADING-DATA-COMPLETE"));
     }
 
     useEffect(() => {

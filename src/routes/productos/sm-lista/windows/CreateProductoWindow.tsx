@@ -31,7 +31,7 @@ export default function CreateProductoWindow({ closeButton }: ProductoSelectedWi
 
     const createProducto = (e: FormEvent) => {
         e.preventDefault();    
-        dispatch( createProductoAPI(data, imagen) );
+        dispatch( createProductoAPI(data, imagen, "LOADING-DATA-COMPLETE") );
     }
     const cancelUpdateProducto = () => {
         resetData();

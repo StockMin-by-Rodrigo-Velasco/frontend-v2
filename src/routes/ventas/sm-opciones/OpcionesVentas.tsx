@@ -47,10 +47,8 @@ export default function OpcionesVentas() {
   const saveOpcionesVenta = (e: FormEvent) => {
     e.preventDefault();
     if(opcionesVenta.id === '') dispatch(createOpcionesVentaAPI(formOpcionesVenta)); 
-    else dispatch(updateOpcionesVentaAPI({ id: opcionesVenta.id, ...formOpcionesVenta}));
+    else dispatch(updateOpcionesVentaAPI({ id: opcionesVenta.id, ...formOpcionesVenta}, "LOADING-DATA-COMPLETE"));
   }
-
-  
 
   return (
     <>

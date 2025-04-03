@@ -24,7 +24,7 @@ export default function CreatePrecioVenta({ closeButton }: UpdatePrecioVentaProp
 
   const submitCreatePrecioVenta = (e: FormEvent) => {
     e.preventDefault();
-    dispatch(createPrecioVentaAPI(data));
+    dispatch(createPrecioVentaAPI(data, "LOADING-DATA-COMPLETE"));
   }
 
   

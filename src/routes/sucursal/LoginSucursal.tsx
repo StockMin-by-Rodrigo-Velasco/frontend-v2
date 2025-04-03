@@ -24,13 +24,12 @@ export default function LoginSucursal() {
 
     const onSubmit = (e: FormEvent) => {
         e.preventDefault();
-        dispatch(loginSucursalAPI(data, navigate));
+        dispatch(loginSucursalAPI(data, navigate, "LOADING-DATA-COMPLETE"));
     }
 
     useEffect(() => {
-        if (sucursalId === '') dispatch(verifyTokenSucursalByCookieAPI(navigate));
+        if (sucursalId === '') dispatch(verifyTokenSucursalByCookieAPI(navigate, "LOADING-APP-COMPLETE"));
     }, [])
-
 
     return (
         <div>

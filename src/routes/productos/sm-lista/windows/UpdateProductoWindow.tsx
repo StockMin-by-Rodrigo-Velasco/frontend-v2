@@ -52,7 +52,7 @@ export default function UpdateProductoWindow({ producto, closeButton }: Producto
         dispatch(updateProductoAPI({id: producto.id, ...data}))        
     }
     const updateProductoImagen = () => {
-        dispatch(updateProductoImagenAPI({id: producto.id, imagenUrl: producto.imagen, imagen}))
+        dispatch(updateProductoImagenAPI({id: producto.id, imagenUrl: producto.imagen, imagen}, "LOADING-DATA-COMPLETE"))
     }
     const cancelUpdateProducto = () => {
         resetData();
@@ -61,7 +61,7 @@ export default function UpdateProductoWindow({ producto, closeButton }: Producto
 
     const deleteProducto = () => {
         if( typeNotification === 'WARNING' && showNotification ){
-            dispatch(deleteProductoAPI(producto.id));
+            dispatch(deleteProductoAPI(producto.id, "LOADING-DATA-COMPLETE"));
             dispatch(hideNotification());
         }else{
             dispatch(showNotificationWarning({tittle: 'Eliminar producto', description: 'Si deseas continuar vuelve a presionar el botón de eliminación, caso contrario cierra este mensaje'}))

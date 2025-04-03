@@ -28,7 +28,7 @@ export default function CreateMarca({ closeButton }: UpdateMarcaProps) {
 
   const submitCreateMarca = (e: FormEvent) => {
     e.preventDefault();
-    dispatch(createMarcaAPI(data));
+    dispatch(createMarcaAPI(data, "LOADING-DATA-COMPLETE"));
   }
 
   return (

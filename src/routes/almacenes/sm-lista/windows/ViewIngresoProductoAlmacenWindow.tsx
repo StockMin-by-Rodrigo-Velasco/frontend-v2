@@ -66,17 +66,19 @@ interface ViewIngresoProductoAlmacenWindowProp {
   data: IngresoAlmacen
 }
 
+const initialUser:User = { id:'',sucursalId:'', nombre:'', apellido:'', ci:'', imagen:'', contacto:'', deleted:false, direccion:'', password:'', UsuarioPermiso:[] };
+
 export default function ViewIngresoProductoAlmacenWindow({ closeButton, data }: ViewIngresoProductoAlmacenWindowProp) {
   const { logo, listUsers: users } = useSelector((s: RootState) => s.Sucursal);
   const { listaProductos } = useSelector((s: RootState) => s.Productos);
 
   const [ingresoProductos, setIngresoProductos] = useState<ProductoForDataTable[]>([]);
-  const [userData, setUserData] = useState<User>({ id:'',sucursalId:'', nombre:'', apellido:'', ci:'', imagen:'' });
+  const [userData, setUserData] = useState<User>(initialUser);
 
   useEffect(() => {
     const productosSucursal = listaProductos.reduce((acc, producto) => { acc[producto.id] = producto; return acc; }, {} as Record<string, Producto>);
 
-    const newUserData: User = users.find(u => u.id === data.usuarioId) || { id:'',sucursalId:'', nombre:'', apellido:'', ci:'', imagen:'' };
+    const newUserData: User = users.find(u => u.id === data.usuarioId) || initialUser;
 
     const newIngresoProductos: ProductoForDataTable[] = data.IngresoProductosAlmacen
       .map(p =>

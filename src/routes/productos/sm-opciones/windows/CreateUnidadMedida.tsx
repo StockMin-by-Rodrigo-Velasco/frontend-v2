@@ -23,7 +23,7 @@ export default function CreateUnidadMedida({closeButton}: CreateUnidadMedidaProp
     const [listaUnidadesMedida, setListaUnidadMedida] = useState<DataUnidadMedida[]>([])
 
     const handleUnidadMedida = ( um: UnidadMedida ) => {
-        dispatch(handleUnidadMedidaAPI(um.id));
+        dispatch(handleUnidadMedidaAPI(um.id, "LOADING-DATA-COMPLETE"));
     }
 
     useEffect(() => {

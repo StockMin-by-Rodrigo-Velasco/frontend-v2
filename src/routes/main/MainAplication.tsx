@@ -13,7 +13,7 @@ export default function MainAplication() {
   const {showNotification} = useSelector((s: RootState) => s.Notification);
 
   useEffect(() => {
-    if( userData.id === '') dispatch(verifyTokenSucursalUserByCookieAPI(navigate));  
+    if( userData.id === '') dispatch(verifyTokenSucursalUserByCookieAPI(navigate, 'LOADING-APP-COMPLETE'));  
   }, [])
   return (
     <div className="w-screen h-screen bg-light p-2 flex" >

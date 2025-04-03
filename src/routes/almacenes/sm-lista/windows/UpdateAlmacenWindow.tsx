@@ -28,7 +28,7 @@ export default function UpdateAlmacenWindow({closeButton, almacen}: UpdateAlmace
 
     const formSubmit = (e:FormEvent) => {
         e.preventDefault();
-        dispatch(updateAlmacenAPI({sucursalId, almacenId:almacen.id, ...data}));
+        dispatch(updateAlmacenAPI({sucursalId, almacenId:almacen.id, ...data}, "LOADING-DATA-COMPLETE"));
     }
 
   return (

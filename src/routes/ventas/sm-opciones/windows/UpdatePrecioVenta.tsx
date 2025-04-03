@@ -37,12 +37,12 @@ export default function UpdatePrecioVenta({ dataUpdate, closeButton }: UpdatePre
 
   const submitUpdate = (e: FormEvent) => {
     e.preventDefault();
-    dispatch(updatePrecioVentaAPI({ precioVentaId: data.id, sucursalId: data.sucursalId, codigo: data.codigo, descripcion: data.descripcion }));
+    dispatch(updatePrecioVentaAPI({ precioVentaId: data.id, sucursalId: data.sucursalId, codigo: data.codigo, descripcion: data.descripcion }, "LOADING-DATA-COMPLETE"));
   }
 
   const deletePrecioVenta = () => {
     if (typeNotification === 'WARNING' && showNotification) {
-      dispatch(deletePrecioVentaAPI({ precioVentaId: dataUpdate.id, sucursalId }));
+      dispatch(deletePrecioVentaAPI({ precioVentaId: dataUpdate.id, sucursalId }, "LOADING-DATA-COMPLETE"));
       dispatch(hideNotification());
     } else {
       dispatch(showNotificationWarning({ tittle: 'Eliminar tipo de precio', description: 'Si deseas continuar vuelve a presionar el botón de eliminación, caso contrario cierra este mensaje' }))

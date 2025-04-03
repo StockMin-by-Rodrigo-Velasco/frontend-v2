@@ -38,7 +38,7 @@ export default function UpdateClienteVentasWindows({ closeButton, cliente }: Upd
 
     const submitCreateCliente = (e: FormEvent) => {
         e.preventDefault();
-        dispatch(updateClienteVentaAPI(data));
+        dispatch(updateClienteVentaAPI(data, "LOADING-DATA-COMPLETE"));
     }
 
 

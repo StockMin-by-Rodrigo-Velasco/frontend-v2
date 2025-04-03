@@ -137,7 +137,7 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
       clienteVentaId: clienteSelected.id,
       productoDetalleVenta
     }
-    dispatch(createCotizacionVentaAPI(cotizacionVenta, setUltimaCotizacion, setOpenViewCotizacion));
+    dispatch(createCotizacionVentaAPI(cotizacionVenta, setUltimaCotizacion, setOpenViewCotizacion, "LOADING-DATA-COMPLETE"));
   }
 
   const createVenta = () => {
@@ -183,7 +183,7 @@ export default function ProformaVentaWindow({ closeButton, checkProductosTienda,
     }
 
     decrementProductos(listDecrementProductos);
-    dispatch(createVentaAPI(venta, listDecrementProductos, setUltimaVenta, setOpenViewVenta));
+    dispatch(createVentaAPI(venta, listDecrementProductos, setUltimaVenta, setOpenViewVenta, "LOADING-DATA-COMPLETE"));
   }
 
   useEffect(() => {

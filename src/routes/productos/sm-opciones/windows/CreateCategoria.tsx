@@ -28,7 +28,7 @@ export default function CreateCategoria({ closeButton }: UpdateMarcaProps) {
 
   const submitCreateCategoria = (e: FormEvent) => {
     e.preventDefault();
-    dispatch(createCategoriaAPI(data));
+    dispatch(createCategoriaAPI(data, "LOADING-DATA-COMPLETE"));
   }
 
   return (

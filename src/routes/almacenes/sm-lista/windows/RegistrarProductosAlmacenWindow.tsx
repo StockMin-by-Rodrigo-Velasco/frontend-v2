@@ -74,7 +74,7 @@ export default function RegistarProductosAlmacenWindow({ closeButton }: CreateMa
         cantidadMinima: isNaN(cantidadMinimaInt)? 0: cantidadMinimaInt
       }}
     );
-    dispatch( createManyProductosAlmacenAPI({almacenNombre: selectedAlmacen.nombre, almacenId: selectedAlmacen.id, productosAlmacen }) );
+    dispatch( createManyProductosAlmacenAPI({almacenNombre: selectedAlmacen.nombre, almacenId: selectedAlmacen.id, productosAlmacen }, "LOADING-DATA-COMPLETE") );
   }
 
   useEffect(() => {

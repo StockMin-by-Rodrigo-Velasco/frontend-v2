@@ -10,11 +10,11 @@ export default function Productos() {
 
 
   useEffect(() => {
-    dispatch( getAllProductosAPI());
-    dispatch( getAllMarcasAPI());
+    dispatch( getAllMarcasAPI("LOADING-APP-START"));
     dispatch( getAllCategoriasAPI());
     dispatch( getAllUnidadesMedidaAPI());
     dispatch( getAllUnidadesMedidaSucursalAPI());
+    dispatch( getAllProductosAPI("LOADING-APP-FINISH"));
   }, [id])
   
   return (

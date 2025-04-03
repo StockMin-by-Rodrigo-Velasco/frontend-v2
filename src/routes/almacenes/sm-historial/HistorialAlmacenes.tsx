@@ -51,7 +51,7 @@ export default function HistorialAlmacenes() {
     hastaStr.setHours(hastaStr.getHours() + 28); // Ajustamos a la hora de Bolivia
     const hasta = hastaStr.getTime().toString();
     
-    dispatch(getLogsAlmacenesAPI(desde, hasta));
+    dispatch(getLogsAlmacenesAPI(desde, hasta, "LOADING-APP-COMPLETE"));
   }
 
   useEffect(() => {

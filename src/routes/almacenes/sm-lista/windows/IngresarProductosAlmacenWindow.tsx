@@ -81,7 +81,7 @@ export default function IngresarProductosAlmacenWindow({ closeButton }: CreateMa
       almacenId:selectedAlmacen.id,
       detalle:formIngreso.detalle,
       ingresoProductosAlmacen: productosAlmacen
-    }));
+    }, "LOADING-DATA-COMPLETE"));
   }
 
   useEffect(() => {

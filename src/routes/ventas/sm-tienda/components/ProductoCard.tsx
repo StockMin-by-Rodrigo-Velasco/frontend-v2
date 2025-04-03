@@ -42,7 +42,7 @@ export default function ProductoCard({ producto, checkProducto, setLista }: Prod
         }
 
         if( producto.precio === '-' ){
-            dispatch(createProductoVentaAPI(newProducto, setLista));
+            dispatch(createProductoVentaAPI(newProducto, setLista, "LOADING-DATA-COMPLETE"));
         }else{
             const updateProducto: UpdateProductoVentaDto = {
                 id: producto.id,
@@ -50,9 +50,8 @@ export default function ProductoCard({ producto, checkProducto, setLista }: Prod
                 sucursalId,
                 codigoProducto: producto.codigo
             }
-            dispatch(updateProductoVentaAPI(updateProducto, setLista));
+            dispatch(updateProductoVentaAPI(updateProducto, setLista, "LOADING-DATA-COMPLETE"));
         }
-
     }
 
     return (

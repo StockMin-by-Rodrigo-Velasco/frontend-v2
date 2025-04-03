@@ -16,16 +16,16 @@ export default function Ventas() {
 
 
   useEffect(() => {
-    dispatch(getAllProductosAPI());
-    dispatch(getAllCategoriasAPI());
-    dispatch(getAllMarcasAPI());
-
-    dispatch(getAllAlmacenesAPI());
-
+    dispatch(getAllAlmacenesAPI("LOADING-APP-START"));
+    
     dispatch(getOpcionesVentaAPI(navigate));
     dispatch(getAllClientesVentaAPI());
     dispatch(getAllTipoMonedaVentaAPI());
     dispatch(getAllPrecioVentaAPI());
+
+    dispatch(getAllCategoriasAPI());
+    dispatch(getAllMarcasAPI());
+    dispatch(getAllProductosAPI("LOADING-APP-FINISH"));
   }, [id])
 
   return (
