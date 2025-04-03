@@ -51,7 +51,7 @@ export default function RoutesMain() {
         <Route path="login-user" element={id? <SucursalUsers/> : <Navigate to='/'/>}>
           <Route path=":id" element={ <LoginSucursalUser/> } />
         </Route>
-        <Route path="main" element={ userData? <MainAplication/> : <Navigate to='/login-user'/> }>
+        <Route path="main" element={ userData.id !== ''? <MainAplication/> : <Navigate to='/login-user'/> }>
         
           <Route path="productos" element={<Productos/>}>
             {/* <Route index element={<Navigate to='lista'/>}/> */}

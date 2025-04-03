@@ -7,29 +7,42 @@ import { hideNotification, showNotificationError, showNotificationSuccess, showN
 import { CreateIngresoAlmacenDto, CreateManyProductosAlmacenDto, CreateProductoAlmacenDto, IngresoAlmacen, ProductoAlmacenDetallado, ProductoAlmacen, CreateAlmacenDto, Almacen, UpdateAlmacenDto, Producto, ListTransactionProductosAlmacenDto, CreateDocTraspasoAlmacenDto, DocTraspasoProductoAlmacen } from '../../interface';
 
 
-export const getAllAlmacenesAPI = () => {
+export const getAllAlmacenesAPI = (
+    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
+) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: sucursalId } = getState().Sucursal;
         if (!sucursalId) return;
         try {
-            dispatch(startLoadingAplication());
+            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
+            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
+
             const responce: AxiosResponse = await api.get(`almacenes-ms/get-all-almacenes/${sucursalId}`);
-            // console.log(responce.data)
+
             dispatch(getAllAlmacenes(responce.data));
-            dispatch(finishLoadingAplication());
+
+            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         } catch (error) {
             console.log(error);
-            dispatch(finishLoadingAplication());
+
+            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         }
     };
 }
 
-export const createAlmacenAPI = (createAlmacenDto: CreateAlmacenDto) => {
+export const createAlmacenAPI = (
+    createAlmacenDto: CreateAlmacenDto,
+    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
+) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: sucursalId, userData } = getState().Sucursal;
         if (!sucursalId) return;
         try {
-            dispatch(startLoadingData());
+            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
+            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
+
             const response: AxiosResponse = await api.post('almacenes-ms/create-almacen',
                 createAlmacenDto, { headers: { "X-User-Id": userData.id } }
             );
@@ -38,45 +51,59 @@ export const createAlmacenAPI = (createAlmacenDto: CreateAlmacenDto) => {
 
             dispatch(showNotificationSuccess({ tittle: 'CREACIÓN DE ALMACÉN', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
-            dispatch(finishLoadingData());
+
+            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'CREACIÓN DE ALMACÉN', description: data.message }));
-                dispatch(finishLoadingData());
                 setTimeout(() => dispatch(hideNotification()), 5000);
+
+                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
             } else console.log(error);
         }
     }
 }
 
-export const updateAlmacenAPI = (updateCategoriaDto: UpdateAlmacenDto) => {
+export const updateAlmacenAPI = (
+    updateCategoriaDto: UpdateAlmacenDto,
+    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
+) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: sucursalId, userData } = getState().Sucursal;
         if (!sucursalId) return;
         try {
-            dispatch(startLoadingData());
+            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
+            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
+
             const response: AxiosResponse = await api.patch('almacenes-ms/update-almacen',
                 updateCategoriaDto, { headers: { "X-User-Id": userData.id } }
             );
             const { data, message } = response.data;
             dispatch(updateAlmacen(data));
-
             dispatch(showNotificationSuccess({ tittle: 'MODIFICACIÓN DE ALMACÉN', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
-            dispatch(finishLoadingData());
+
+            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'MODIFICACIÓN DE ALMACÉN', description: data.message }));
-                dispatch(finishLoadingData());
+
+                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
                 setTimeout(() => dispatch(hideNotification()), 5000);
             } else console.log(error);
         }
     }
 }
 
-export const getAllProductosAlmacenAPI = () => {
+export const getAllProductosAlmacenAPI = (
+    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
+) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { selectedAlmacen } = getState().Almacenes;
         const { listaProductos } = getState().Productos;
@@ -85,7 +112,9 @@ export const getAllProductosAlmacenAPI = () => {
 
         if (!selectedAlmacen.id) return;
         try {
-            dispatch(startLoadingAplication());
+            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
+            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
+
             const responce: AxiosResponse = await api.get(`almacenes-ms/get-all-productos-almacen/${selectedAlmacen.id}`);
             const productosAlmacen: ProductoAlmacen[] = responce.data.data;
 
@@ -109,19 +138,28 @@ export const getAllProductosAlmacenAPI = () => {
                 }));
 
             dispatch(getAllProductosAlmacen(productosAlmacenDetallado));
-            dispatch(finishLoadingAplication());
+
+            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         } catch (error) {
             console.log(error);
-            dispatch(finishLoadingAplication());
+            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         }
     };
 }
 
-export const getProductosOneAlmacenAPI = (almacenId: string, functionReturn?: (lista: ProductoAlmacen[]) => void) => {
+export const getProductosOneAlmacenAPI = (
+    almacenId: string,
+    functionReturn?: (lista: ProductoAlmacen[]) => void,
+    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
+) => {
     return async (dispatch: AppDispatch) => {
         if (almacenId === '') return;
         try {
-            dispatch(startLoadingAplication());
+            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
+            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
+
             const responce: AxiosResponse = await api.get(`almacenes-ms/get-all-productos-almacen/${almacenId}`);
             const productosAlmacen: ProductoAlmacen[] = responce.data.data;
             if (productosAlmacen.length <= 0) {
@@ -129,15 +167,21 @@ export const getProductosOneAlmacenAPI = (almacenId: string, functionReturn?: (l
                 setTimeout(() => dispatch(hideNotification()), 5000);
             }
             if (functionReturn) functionReturn(productosAlmacen);
-            dispatch(finishLoadingAplication());
+
+            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         } catch (error) {
             console.log(error);
-            dispatch(finishLoadingAplication());
+            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         }
     };
 }
 
-export const createProductoAlmacenAPI = (createProductoAlmacenDto: CreateProductoAlmacenDto) => {
+export const createProductoAlmacenAPI = (
+    createProductoAlmacenDto: CreateProductoAlmacenDto,
+    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
+) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: sucursalId, userData } = getState().Sucursal;
         const { selectedAlmacen } = getState().Almacenes
@@ -147,7 +191,9 @@ export const createProductoAlmacenAPI = (createProductoAlmacenDto: CreateProduct
 
         if (!userData) return;
         try {
-            dispatch(startLoadingData());
+            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
+            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
+
             const response: AxiosResponse = await api.post('almacenes-ms/create-producto-almacen', { almacenNombre: selectedAlmacen.nombre, ...createProductoAlmacenDto },
                 { headers: { "X-User-Id": userData.id, "X-Sucursal-Id": sucursalId } }
             );
@@ -175,47 +221,65 @@ export const createProductoAlmacenAPI = (createProductoAlmacenDto: CreateProduct
 
             dispatch(showNotificationSuccess({ tittle: 'NUEVO PRODUCTO', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
-            dispatch(finishLoadingData());
+
+            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         } catch (error) {
             // console.log(error);
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'NUEVO PRODUCTO', description: data?.message || 'Internal server error' }));
-                dispatch(finishLoadingData());
+
+                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
                 setTimeout(() => dispatch(hideNotification()), 5000);
             } else console.log(error);
         }
     }
 }
 
-export const createOneProductoAlmacenAPI = (createProductoAlmacenDto: CreateProductoAlmacenDto, almacenNombre: string, functionReturn: (producto: ProductoAlmacen) => void) => {
+export const createOneProductoAlmacenAPI = (
+    createProductoAlmacenDto: CreateProductoAlmacenDto,
+    almacenNombre: string,
+    functionReturn?: (producto: ProductoAlmacen) => void,
+    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
+) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: sucursalId, userData } = getState().Sucursal;
         if (!userData) return;
         try {
-            dispatch(startLoadingData());
+            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
+            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
+
             const response: AxiosResponse = await api.post('almacenes-ms/create-producto-almacen', { almacenNombre, ...createProductoAlmacenDto },
                 { headers: { "X-User-Id": userData.id, "X-Sucursal-Id": sucursalId } }
             );
 
             const { data, message }: { data: ProductoAlmacen, message: string } = response.data;
-            functionReturn(data);
+            if (functionReturn) functionReturn(data);
 
             dispatch(showNotificationSuccess({ tittle: 'NUEVO PRODUCTO', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
-            dispatch(finishLoadingData());
+
+            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'NUEVO PRODUCTO', description: data?.message || 'Internal server error' }));
-                dispatch(finishLoadingData());
+
+                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
                 setTimeout(() => dispatch(hideNotification()), 5000);
             } else console.log(error);
         }
     }
 }
 
-export const createManyProductosAlmacenAPI = (createManyProductosAlmacenDto: CreateManyProductosAlmacenDto) => {
+export const createManyProductosAlmacenAPI = (
+    createManyProductosAlmacenDto: CreateManyProductosAlmacenDto,
+    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
+) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: sucursalId, userData } = getState().Sucursal;
         const { listaProductos } = getState().Productos;
@@ -224,7 +288,9 @@ export const createManyProductosAlmacenAPI = (createManyProductosAlmacenDto: Cre
 
         if (!userData) return;
         try {
-            dispatch(startLoadingData());
+            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
+            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
+
             const response: AxiosResponse = await api.post('almacenes-ms/create-many-productos-almacen', createManyProductosAlmacenDto, {
                 headers: { "X-User-Id": userData.id, "X-Sucursal-Id": sucursalId }
             });
@@ -251,27 +317,36 @@ export const createManyProductosAlmacenAPI = (createManyProductosAlmacenDto: Cre
 
             dispatch(showNotificationSuccess({ tittle: 'NUEVOS PRODUCTOS', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
-            dispatch(finishLoadingData());
+
+            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'NUEVOS PRODUCTOS', description: data.message }));
-                dispatch(finishLoadingData());
                 setTimeout(() => dispatch(hideNotification()), 5000);
+
+                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
             } else console.log(error);
         }
 
     }
 }
 
-export const updateProductoAlmacenAPI = (updateProducto: { almacenProductoNombre: string, productoAlmacenId: string, cantidadMinima: number }) => {
+export const updateProductoAlmacenAPI = (
+    updateProducto: { almacenProductoNombre: string, productoAlmacenId: string, cantidadMinima: number },
+    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
+) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: sucursalId, userData } = getState().Sucursal;
         const { selectedAlmacen } = getState().Almacenes;
 
         if (!userData) return;
         try {
-            dispatch(startLoadingData());
+            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
+            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
+
             const response: AxiosResponse = await api.patch('almacenes-ms/update-producto-almacen', { almacenNombre: selectedAlmacen.nombre, ...updateProducto }, {
                 headers: { "X-User-Id": userData.id, "X-Sucursal-Id": sucursalId }
             });
@@ -281,19 +356,27 @@ export const updateProductoAlmacenAPI = (updateProducto: { almacenProductoNombre
 
             dispatch(showNotificationSuccess({ tittle: 'ACTUALIZACIÓN DE PRODUCTOS', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
-            dispatch(finishLoadingData());
+
+            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'ACTUALIZACIÓN DE PRODUCTOS', description: data.message }));
-                dispatch(finishLoadingData());
                 setTimeout(() => dispatch(hideNotification()), 5000);
+
+                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
             } else console.log(error);
         }
     }
 }
 
-export const getAllIngresosProductosAlmacenAPI = (desde: string, hasta: string) => {
+export const getAllIngresosProductosAlmacenAPI = (
+    desde: string,
+    hasta: string,
+    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
+) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { selectedAlmacen } = getState().Almacenes;
         const { id: almacenId } = selectedAlmacen;
@@ -302,24 +385,33 @@ export const getAllIngresosProductosAlmacenAPI = (desde: string, hasta: string) 
             setTimeout(() => dispatch(hideNotification()), 5000);
             return;
         }
-        dispatch(startLoadingData());
         try {
+            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
+            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
+
             const response: AxiosResponse = await api.post(`almacenes-ms/get-all-ingresos-productos-almacen`, { almacenId, desde, hasta });
             const data: IngresoAlmacen[] = response.data.data;
             dispatch(getAllIngresosProductosAlmacen(data));
-            dispatch(finishLoadingData());
+
+            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'HISTORIAL DE INGRESOS', description: data.message }));
-                dispatch(finishLoadingData());
                 setTimeout(() => dispatch(hideNotification()), 5000);
+
+                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
             } else console.log(error);
         }
     }
 }
 
-export const createIngresoProductosAlmacenAPI = (createIngresoProductosAlmacenDto: CreateIngresoAlmacenDto) => {
+export const createIngresoProductosAlmacenAPI = (
+    createIngresoProductosAlmacenDto: CreateIngresoAlmacenDto,
+    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
+) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: sucursalId, userData } = getState().Sucursal;
         if (!userData.id) {
@@ -334,7 +426,9 @@ export const createIngresoProductosAlmacenAPI = (createIngresoProductosAlmacenDt
         }
 
         try {
-            dispatch(startLoadingData());
+            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
+            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
+
             const response: AxiosResponse = await api.post('almacenes-ms/create-ingreso-productos-almacen', createIngresoProductosAlmacenDto, {
                 headers: { "X-User-Id": userData.id, "X-Sucursal-Id": sucursalId }
             });
@@ -346,64 +440,91 @@ export const createIngresoProductosAlmacenAPI = (createIngresoProductosAlmacenDt
 
             dispatch(showNotificationSuccess({ tittle: 'INGRESO DE PRODUCTOS', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
-            dispatch(finishLoadingData());
+
+            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'INGRESO DE PRODUCTOS', description: data.message }));
-                dispatch(finishLoadingData());
                 setTimeout(() => dispatch(hideNotification()), 5000);
+
+                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
             } else console.log(error);
         }
     }
 }
 
-export const createTraspasoProductosAlmacenAPI = (createDocTraspasoAlmacenDto: CreateDocTraspasoAlmacenDto, functionReturn?: (data: DocTraspasoProductoAlmacen) => void) => {
+export const createTraspasoProductosAlmacenAPI = (
+    createDocTraspasoAlmacenDto: CreateDocTraspasoAlmacenDto,
+    functionReturn?: (data: DocTraspasoProductoAlmacen) => void,
+    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
+) => {
     return async (dispatch: AppDispatch) => {
         try {
-            dispatch(startLoadingData());
+            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
+            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
+
             const response: AxiosResponse = await api.post('almacenes-ms/create-traspaso-productos-almacen', createDocTraspasoAlmacenDto);
             const { data, message }: { data: DocTraspasoProductoAlmacen, message: string } = response.data;
             dispatch(showNotificationSuccess({ tittle: 'TRASPASO DE PRODUCTOS', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
 
-            if(functionReturn) functionReturn(data);
+            if (functionReturn) functionReturn(data);
             dispatch(createTraspasoProductosAlmacen(data));
-            dispatch(finishLoadingData());
+
+            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'TRASPASO DE PRODUCTOS', description: data.message }));
-                dispatch(finishLoadingData());
                 setTimeout(() => dispatch(hideNotification()), 50000);
+
+                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
             } else console.log(error);
         }
     }
 }
 
-export const getAllTraspasosProductosAlmacenAPI = (desde: string, hasta: string, functionReturn?:( data: DocTraspasoProductoAlmacen[] )=>void) => {
+export const getAllTraspasosProductosAlmacenAPI = (
+    desde: string,
+    hasta: string,
+    functionReturn?: (data: DocTraspasoProductoAlmacen[]) => void,
+    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
+) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: sucursalId } = getState().Sucursal;
-        if(!sucursalId) return;
-        dispatch(startLoadingData());
+        if (!sucursalId) return;
         try {
+            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
+            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
+
             const response: AxiosResponse = await api.post(`almacenes-ms/get-all-traspasos-productos-almacen`, { sucursalId, desde, hasta });
-            const traspasos:DocTraspasoProductoAlmacen[] = response.data;
-            if(functionReturn) functionReturn(traspasos);
+            const traspasos: DocTraspasoProductoAlmacen[] = response.data;
+            if (functionReturn) functionReturn(traspasos);
             dispatch(getAllTraspasosProductosAlmacen(traspasos));
-            dispatch(finishLoadingData());
+
+            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'HISTORIAL DE TRASPASOS', description: data.message }));
-                dispatch(finishLoadingData());
                 setTimeout(() => dispatch(hideNotification()), 5000);
+
+                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
             } else console.log(error);
         }
     }
 }
 
-export const incrementProdutosAlmacenAPI = (listIncrementProductosAlmacenDto: ListTransactionProductosAlmacenDto) => {
+export const incrementProdutosAlmacenAPI = (
+    listIncrementProductosAlmacenDto: ListTransactionProductosAlmacenDto,
+) => {
     return async () => {
         try {
             await api.post(`almacenes-ms/increment-productos-almacen`, listIncrementProductosAlmacenDto);
@@ -423,18 +544,27 @@ export const decrementProdutosAlmacenAPI = (listDecrementProductosAlmacenDto: Li
     }
 }
 
-export const getLogsAlmacenesAPI = (desde: string, hasta: string) => {
+export const getLogsAlmacenesAPI = (
+    desde: string,
+    hasta: string,
+    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
+) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: sucursalId } = getState().Sucursal;
         if (!sucursalId) return;
         try {
-            dispatch(startLoadingAplication());
+            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
+            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
+
             const response: AxiosResponse = await api.post(`almacenes-ms/get-logs`, { sucursalId, desde, hasta });
-            dispatch(getLogsAlmacenes(response.data))
-            dispatch(finishLoadingAplication());
+            dispatch(getLogsAlmacenes(response.data));
+
+            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         } catch (error) {
             console.log(error);
-            dispatch(finishLoadingAplication());
+            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
+            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         }
     }
 }
