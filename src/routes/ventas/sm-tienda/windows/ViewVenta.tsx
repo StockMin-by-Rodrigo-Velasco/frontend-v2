@@ -112,7 +112,7 @@ export default function ViewVenta({ closeButton, venta }: ViewVentaProp) {
                                     <td>{p.unidadMedida.toUpperCase()}</td>
                                     <td>{p.cantidad}</td>
                                     <td>{p.precio}</td>
-                                    <td className="text-end pe-2" >{p.subTotal} <span>{opcionesVenta.TipoMonedaVenta.abreviatura.toUpperCase()}</span></td>
+                                    <td className="text-end pe-2" >{parseFloat(p.subTotal || '0').toFixed(2)} <span>{opcionesVenta.TipoMonedaVenta.abreviatura.toUpperCase()}</span></td>
                                 </tr>
                             ))}
                         </tbody>}

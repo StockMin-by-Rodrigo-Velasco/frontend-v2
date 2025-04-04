@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { AppDispatch, RootState } from '../store';
 import api from "../../api/config";
-import { CreateSucursalUserDto, HandlePermisoUserDto, LoginSucursalDto, LoginSucursalUserInterface, Permiso, Sucursal, UpdateSucursalUserDto, User } from "../../interface";
+import { CreateSucursalUserDto, HandlePermisoUserDto, LoginSucursalDto, LoginSucursalUserInterface, Permiso, Sucursal, UpdateSucursalUserDto, User, UsuarioPermiso } from "../../interface";
 import { hideNotification, showNotificationError, showNotificationSuccess } from "../notification/notificationSlice";
 import { createSucursalUser, getAllPermisos, getOneSucursalUser, getSucursalUsers, loginSucursal, loginSucursalUser, logoutSucursal, logoutSucursalUser, updateSucursalUser } from "./sucursalSlice";
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from "../aplication/aplicationSlice";
@@ -22,8 +22,6 @@ export const loginSucursalAPI = (
             const { token, sucursalData }: { sucursalData: Sucursal, token: string } = res.data;
 
             Cookie.set('token', token, { path: '/' });
-            // console.log(sucursalData);
-
             dispatch(loginSucursal(sucursalData));
             navigate('/login-user');
 
@@ -55,7 +53,7 @@ export const loginSucursalUserAPI = (
     navigate: (path: string) => void,
     loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
 ) => {
-    return async (dispatch: AppDispatch) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
         try {
             if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
             if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
@@ -66,8 +64,16 @@ export const loginSucursalUserAPI = (
             Cookie.set('userToken', token, { path: '/' });
 
             const usuario: User = res.data.data;
-            dispatch(loginSucursalUser(usuario));
-            navigate('/main');
+
+            if (usuario.id === usuario.sucursalId) { // Iniciar como super usuario
+                const { listaPermisos } = getState().Sucursal;
+                const superPermisos: UsuarioPermiso[] = listaPermisos.map(p => ({ id: p.id, userId: usuario.id, permisoId: p.id }));
+                dispatch(loginSucursalUser({ ...usuario, UsuarioPermiso: superPermisos }));
+                navigate('/main');
+            } else {
+                dispatch(loginSucursalUser(usuario));
+                navigate('/main');
+            }
 
             if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
             if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
@@ -292,7 +298,7 @@ export const verifyTokenSucursalByCookieAPI = (
     loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
 ) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const {id: sucursalId} = getState().Sucursal;
+        const { id: sucursalId } = getState().Sucursal;
 
         try {
             if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
@@ -303,11 +309,11 @@ export const verifyTokenSucursalByCookieAPI = (
                 const res: AxiosResponse = await api.get('sucursal-ms/verify-token-sucursal', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                const { token: newToken, ...data } = res.data;
-                dispatch(loginSucursal({ ...data }));
-                Cookie.set('token', token, { path: '/' });
+                const { token: newToken, sucursalData }: { sucursalData: Sucursal, token: string } = res.data;
+                Cookie.set('token', newToken, { path: '/' });
+                dispatch(loginSucursal(sucursalData));
                 navigate('/login-user');
-            }else navigate('/');
+            } else navigate('/');
 
             if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
             if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
@@ -390,10 +396,20 @@ export const verifyTokenSucursalUserByCookieAPI = (
                 const res: AxiosResponse = await api.get('sucursal-ms/verify-token-sucursal-user', {
                     headers: { Authorization: `Bearer ${userToken}` }
                 });
-                const {data}:{data:User} = res.data;
+                const { data }: { data: User } = res.data;
+
+                if (data.id === data.sucursalId) { // Iniciar como super usuario
+                    const { listaPermisos } = getState().Sucursal;
+                    const superPermisos: UsuarioPermiso[] = listaPermisos.map(p => ({ id: p.id, userId: data.id, permisoId: p.id }));
+                    dispatch(loginSucursalUser({ ...data, UsuarioPermiso: superPermisos }));
+                    navigate('/main');
+                } else {
+                    dispatch(loginSucursalUser(data));
+                    navigate('/main');
+                }
                 // console.log('UserData', data);
-                dispatch(loginSucursalUser(data));
-                navigate('/main');
+                // dispatch(loginSucursalUser(data));
+                // navigate('/main');
             } else navigate('/login-user');
 
             if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());

@@ -201,7 +201,7 @@ export default function CreateTraspasoAlmacen({ closeButton, getTraspaso }: Crea
       traspasoProductosAlmacen
     }
 
-    dispatch(createTraspasoProductosAlmacenAPI(docTraspaso, getTraspaso));
+    dispatch(createTraspasoProductosAlmacenAPI(docTraspaso, getTraspaso, "LOADING-DATA-COMPLETE"));
     dispatch(decrementProdutosAlmacenAPI({productos: listProductosDecrement}));
     dispatch(incrementProdutosAlmacenAPI({productos: listProductosIncrement}));
   }

@@ -70,7 +70,9 @@ export default function ProductoCard({ producto, checkProducto, setLista }: Prod
             <div className="flex flex-col p-2">
                 <p className="uppercase font-bold">{producto.nombre}</p>
                 <p className="uppercase text-[12px] text-secondary leading-none">{producto.codigo}</p>
-                <p className="text-[14px] mt-1" >{producto.descripcion}</p>
+                <div className="h-[50px] overflow-y-scroll scroll-custom" >
+                    <p className="text-[14px] mt-1" >{producto.descripcion}</p>
+                </div>
             </div>
 
             <div className="font-bold absolute bottom-[36px] left-2" >

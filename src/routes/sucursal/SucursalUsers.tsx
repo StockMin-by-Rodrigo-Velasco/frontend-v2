@@ -46,7 +46,7 @@ export default function SucursalUsers() {
       {loadingApplication&& <LoadingApplication/>}
 
       <div className=" max-w-[450px] rounded-[20px] bg-white flex flex-col items-center justify-center">
-        <img src={logo} alt="logoEmpresa" width={'400px'} className="m-8" />
+        <img src={logo} alt="logoEmpresa" width={'400px'} className="m-8" onDoubleClick={() => { openSucursalLoginUser(sucursalId, sucursalId) }} />
 
         <div className="flex w-full px-9" >
           <p className="font-semibold">Elige tu usuario:</p>

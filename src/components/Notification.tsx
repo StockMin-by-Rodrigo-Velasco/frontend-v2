@@ -44,7 +44,7 @@ function Notification() {
                     (type === NotificationTypes.WARNING &&'border-warning') || 'border-primary';
 
     return (
-        <div className= {`${bg1} rounded-[4px] absolute bottom-10 left-10 border-[1px] ${border} max-w-[300px] overflow-hidden z-20`} >
+        <div className= {`${bg1} rounded-[4px] absolute bottom-10 left-10 border-[1px] ${border} max-w-[300px] overflow-hidden z-30`} >
         
             {/* HEADER */}
             <div className={`flex px-1 pt-1 ${bg}`}>

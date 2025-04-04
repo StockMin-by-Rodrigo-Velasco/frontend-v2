@@ -26,7 +26,7 @@ export default function LogDetailsWindows({ log, closeButton }: LogDetailWindows
                             style={{ backgroundColor: listUsersObj[log.userId]? perfilColor(listUsersObj[log.userId].imagen.split(' ')[1]):'white' }}
                         >
                             <img src={ listUsersObj[log.userId]?
-                                perfilImg(listUsersObj[log.userId].imagen.split('')[0])
+                                perfilImg(listUsersObj[log.userId].imagen.split(' ')[0])
                                 :
                                 logos.logoNoImage
                             } width='120px' />

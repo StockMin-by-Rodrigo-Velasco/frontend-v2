@@ -49,7 +49,7 @@ export default function UpdateProductoWindow({ producto, closeButton }: Producto
 
     const updateProducto = (e: FormEvent) => {
         e.preventDefault();
-        dispatch(updateProductoAPI({id: producto.id, ...data}))        
+        dispatch(updateProductoAPI({id: producto.id, ...data}, "LOADING-DATA-COMPLETE"));       
     }
     const updateProductoImagen = () => {
         dispatch(updateProductoImagenAPI({id: producto.id, imagenUrl: producto.imagen, imagen}, "LOADING-DATA-COMPLETE"))

@@ -44,7 +44,7 @@ export default function OpcionesProductos() {
     setWindowsUpdateCategoria(true);
   }
   const quitarUnidadMedida = (data: UnidadMedidaSucursal) => {
-    dispatch(handleUnidadMedidaAPI(data.unidadMedidaId));
+    dispatch(handleUnidadMedidaAPI(data.unidadMedidaId, "LOADING-DATA-COMPLETE"));
   }
 
   return (

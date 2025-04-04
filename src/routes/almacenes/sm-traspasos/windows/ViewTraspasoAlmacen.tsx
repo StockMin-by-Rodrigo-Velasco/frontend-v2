@@ -6,6 +6,7 @@ import { InputTextareaBlock, InputTextBlock } from "../../../../components/Input
 import { dateLocal } from "../../../../helpers";
 import logos from "../../../../assets/logos";
 
+
 interface ViewTraspasoAlmacenProp {
     closeButton: () => void;
     traspaso: DocTraspasoProductoAlmacen;
@@ -16,6 +17,7 @@ export default function ViewTraspasoAlmacen({ closeButton, traspaso }: ViewTrasp
     const { listUsersObj, logo } = useSelector((s: RootState) => s.Sucursal);
     const { listaAlmacenesObj } = useSelector((s: RootState) => s.Almacenes);
     const { listaProductosObj } = useSelector((s: RootState) => s.Productos);
+  
 
     return (
         <Windows closeButton={closeButton} tittle="DATOS DE TRASPASO">

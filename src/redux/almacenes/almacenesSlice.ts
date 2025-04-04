@@ -46,10 +46,13 @@ const AlmacenesSlice = createSlice({
             state.selectedAlmacen = initialState.selectedAlmacen;
         },
         createAlmacen: (state, action: PayloadAction<Almacen>) => {
-            state.listaAlmacenes = [action.payload, ...state.listaAlmacenes]
+            state.listaAlmacenes = [action.payload, ...state.listaAlmacenes];
+            state.listaAlmacenesObj[action.payload.id] = action.payload;
+
         },
         updateAlmacen: (state, action: PayloadAction<Almacen>) => {
             state.listaAlmacenes = current(state.listaAlmacenes).map(a => (a.id === action.payload.id) ? action.payload : a);
+            state.listaAlmacenesObj[action.payload.id] = action.payload;
         },
         deleteAlmacen: (state, action: PayloadAction<string>) => {
             state.listaAlmacenes = state.listaAlmacenes.filter(a => a.id !== action.payload);
