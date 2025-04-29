@@ -1,86 +1,78 @@
 import { Navigate, Route, Routes } from "react-router";
 
-import LoginSucursal from "./sucursal/LoginSucursal";
-import SucursalUsers from "./sucursal/SucursalUsers";
-import LoginSucursalUser from "./sucursal/LoginSucursalUser";
+import LoginBranch from "./branch/LoginBranch";
+import ListUsers from "./branch/ListUsers";
+import LoginUser from "./branch/windows/LoginUser";
 import MainAplication from "./main/MainAplication";
-import Ventas from "./ventas/Ventas";
-import ListaUsuarios from "./usuarios/lista-sm/ListaUsuarios";
+import Ventas from "./sales/Ventas";
+import ListaUsuarios from "./users/lista-sm/ListaUsuarios";
 
-import Productos from "./productos/Productos";
-import ListaProductos from "./productos/sm-lista/ListaProductos";
-import OpcionesProductos from "./productos/sm-opciones/OpcionesProductos";
-import HistorialProductos from "./productos/sm-historial/HistorialProductos";
+import Products from "./products/Products";
+import ProductsList from "./products/pr-list/ProductsList";
+import ProductsOptions from "./products/pr-options/ProductsOptions";
+import ProductsHistory from "./products/pr-history/ProductsHistory";
 
-import Almacenes from "./almacenes/Almancenes";
-import ListaAlmacenes from "./almacenes/sm-lista/ListaAlmacenes";
-import HistorialAlmacenes from "./almacenes/sm-historial/HistorialAlmacenes";
+import Warehouses from "./warehouses/Warehouses";
+import ListaAlmacenes from "./warehouses/sm-lista/ListaAlmacenes";
+import HistorialAlmacenes from "./warehouses/sm-historial/HistorialAlmacenes";
 
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import SelectedAlmacen from "./almacenes/sm-lista/SelectedAlmacen";
-import ClientesVentas from "./ventas/sm-clientes/ClientesVentas";
-import HistorialVentas from "./ventas/sm-historial/HistorialVentas";
-import OpcionesVentas from "./ventas/sm-opciones/OpcionesVentas";
-import TiendaVentas from "./ventas/sm-tienda/TiendaVentas";
-import Usuarios from "./usuarios/Usuarios";
-import TraspasosAlmacenes from "./almacenes/sm-traspasos/TraspasosAlmacenes";
+import SelectedAlmacen from "./warehouses/sm-lista/SelectedAlmacen";
+import ClientesVentas from "./sales/sm-clientes/ClientesVentas";
+import HistorialVentas from "./sales/sm-historial/HistorialVentas";
+import OpcionesVentas from "./sales/sm-opciones/OpcionesVentas";
+import TiendaVentas from "./sales/sm-tienda/TiendaVentas";
+import Usuarios from "./users/Usuarios";
+import TraspasosAlmacenes from "./warehouses/sm-traspasos/TraspasosAlmacenes";
 
 export default function RoutesMain() {
-  const { id, userData, listaPermisos } = useSelector((s:RootState) => s.Sucursal);
+  // const { id, userData, listPermissions: listaPermisos } = useSelector((s:RootState) => s.Branch);
   const { selectedAlmacen } = useSelector((s:RootState) => s.Almacenes);
   
   const permisosProductos:Record<string, string> = {};
   const permisosAlmacenes:Record<string, string> = {};
   const permisosVentas:Record<string, string> = {};
   const permisosUsuarios:Record<string, string> = {};
-  const permisosUsuarioSet = new Set(userData.UsuarioPermiso.map(p => p.permisoId));
+  // const permisosUsuarioSet = new Set(userData.UserPermission.map(p => p.permissionId));
 
-  for(const p of listaPermisos){
-    if(p.modulo === 'productos') permisosProductos[p.codigo] = p.id;
-    if(p.modulo === 'almacenes') permisosAlmacenes[p.codigo] = p.id;
-    if(p.modulo === 'ventas') permisosVentas[p.codigo] = p.id;
-    if(p.modulo === 'usuarios') permisosUsuarios[p.codigo] = p.id;
-  }
+  // for(const p of listaPermisos){
+  //   if(p.module === 'productos') permisosProductos[p.code] = p.id;
+  //   if(p.module === 'almacenes') permisosAlmacenes[p.code] = p.id;
+  //   if(p.module === 'ventas') permisosVentas[p.code] = p.id;
+  //   if(p.module === 'usuarios') permisosUsuarios[p.code] = p.id;
+  // }
 
  
 
   return (
       <Routes>
-        <Route index element={<LoginSucursal/> }/>
-        <Route path="login-user" element={id? <SucursalUsers/> : <Navigate to='/'/>}>
-          <Route path=":id" element={ <LoginSucursalUser/> } />
-        </Route>
-        <Route path="main" element={ userData.id !== ''? <MainAplication/> : <Navigate to='/login-user'/> }>
+        <Route index element={<LoginBranch/> }/>
+        <Route path="list-users" element={<ListUsers/>}/>
+        <Route path="main" element={<MainAplication/>}>
         
-          <Route path="productos" element={<Productos/>}>
-            {/* <Route index element={<Navigate to='lista'/>}/> */}
-            <Route path="lista" element={permisosUsuarioSet.has(permisosProductos['pr-01'])? <ListaProductos/>:<Navigate to='/main'/>}/>
-            <Route path="opciones" element={permisosUsuarioSet.has(permisosProductos['pr-02'])? <OpcionesProductos/>:<Navigate to='/main'/>}/>
-            <Route path="historial" element={permisosUsuarioSet.has(permisosProductos['pr-03'])?<HistorialProductos/>:<Navigate to='/main'/>} />
+          <Route path="products" element={<Products/>}>
+            <Route path="list" element={<ProductsList/>}/>
+            <Route path="options" element={<ProductsOptions/>}/>
+            <Route path="history" element={<ProductsHistory/>} />
           </Route>
 
-          <Route path="almacenes" element={<Almacenes/>}>
-            {/* <Route index element={<Navigate to='lista'/>}/> */}
-            <Route path="lista" element={permisosUsuarioSet.has(permisosAlmacenes['al-01'])?<ListaAlmacenes/>:<Navigate to='/main'/>}>
+          <Route path="warehouses" element={<Warehouses/>}>
+            <Route path="list" element={<ListaAlmacenes/>}>
               {selectedAlmacen.id&& <Route index element={<Navigate to={selectedAlmacen.id}/>} /> }
-              <Route path=":nombre" element={permisosUsuarioSet.has(permisosAlmacenes['al-01'])?<SelectedAlmacen/>:<Navigate to='/main'/>} />
+              <Route path=":name" element={<SelectedAlmacen/>} />
             </Route>
-            <Route path="traspasos" element={permisosUsuarioSet.has(permisosAlmacenes['al-02'])?<TraspasosAlmacenes/>:<Navigate to='/main'/>} />
-            <Route path="historial" element={permisosUsuarioSet.has(permisosAlmacenes['al-03'])?<HistorialAlmacenes/>:<Navigate to='/main'/>} />
+            <Route path="transfers" element={<TraspasosAlmacenes/>} />
+            <Route path="history" element={<HistorialAlmacenes/>} />
           </Route>
-
-
-          <Route path="ventas" element={<Ventas/>}>
-            {/* <Route index element={<Navigate to='tienda'/>}/> */}
-            <Route path="tienda" element={permisosUsuarioSet.has(permisosVentas['ve-01'])?<TiendaVentas/>:<Navigate to='/main'/>}/>
-            <Route path="clientes" element={permisosUsuarioSet.has(permisosVentas['ve-02'])?<ClientesVentas/>:<Navigate to='/main'/>}/>
-            <Route path="opciones" element={permisosUsuarioSet.has(permisosVentas['ve-03'])?<OpcionesVentas/>:<Navigate to='/main'/>}/>
-            <Route path="historial" element={permisosUsuarioSet.has(permisosVentas['ve-04'])?<HistorialVentas/>:<Navigate to='/main'/>} />
+          <Route path="sales" element={<Ventas/>}>
+            <Route path="store" element={<TiendaVentas/>}/>
+            <Route path="customers" element={<ClientesVentas/>}/>
+            <Route path="options" element={<OpcionesVentas/>}/>
+            <Route path="history" element={<HistorialVentas/>} />
           </Route>
-          <Route path="usuarios" element={<Usuarios/>}>
-            {/* <Route index element={<Navigate to='lista'/>}/> */}
-            <Route path="lista" element={ permisosUsuarioSet.has(permisosUsuarios['us-01'])? <ListaUsuarios/> : <Navigate to='/main'/>  }/>
+          <Route path="users" element={<Usuarios/>}>
+            <Route path="list" element={<ListaUsuarios/>}/>
           </Route>
         </Route>
       </Routes>

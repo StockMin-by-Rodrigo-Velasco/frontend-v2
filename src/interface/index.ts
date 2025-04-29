@@ -1,5 +1,5 @@
-export * from './sucursalInterface';
-export * from './almacenesInterfaces';
-export * from './productosInterface';
+export * from './branchInterfaces';
+export * from './wareHousesInterfaces';
+export * from './productsInterface';
 export * from './logInterface';
-export * from './ventasInterfaces';
+// export * from './salesInterfaces';

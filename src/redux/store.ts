@@ -1,17 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit';
 import NotificationSlice from './notification/notificationSlice';
-import SucursalSlice from './sucursal/sucursalSlice';
+import BranchSlice from './branch/branchSlice';
 import AplicationSlice from './aplication/aplicationSlice';
-import ProductosSlice from './productos/productosSlice';
-import AlmacenesSlice from './almacenes/almacenesSlice';
-import VentasSlice from './ventas/ventasSlice';
+import ProductosSlice from './products/productosSlice';
+import AlmacenesSlice from './warehouses/almacenesSlice';
+import VentasSlice from './sales/ventasSlice';
 
 
 export const store = configureStore({
     reducer: {
         Aplication: AplicationSlice,
         Notification: NotificationSlice,
-        Sucursal: SucursalSlice,
+        Branch: BranchSlice,
         Productos: ProductosSlice,
         Almacenes: AlmacenesSlice,
         Ventas: VentasSlice,
