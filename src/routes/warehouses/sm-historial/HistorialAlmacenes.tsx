@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../redux/store";
-import LoadingSection from "../../../components/LoadingSection";
+import LoadingModule from "../../../components/LoadingModule";
 import { useEffect, useState } from "react";
 import HeaderSection from "../../../components/HeaderSection";
 import BodySection from "../../../components/BodySection";
@@ -60,7 +60,7 @@ export default function HistorialAlmacenes() {
 
   return (
     <>
-      {loadingApplication&& <LoadingSection title="Cargando historial" />}
+      {loadingApplication&& <LoadingModule title="Cargando historial" />}
       {logDetailsWindows&& <LogDetailsWindows log={logDetails} closeButton={() => {setlogDetailsWindows(false)}} />  }
       <HeaderSection>
         <InputDateSearch 

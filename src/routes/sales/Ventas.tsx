@@ -4,7 +4,7 @@ import { Outlet, useNavigate } from "react-router";
 import { AppDispatch, RootState } from "../../redux/store";
 import { getAllClientesVentaAPI, getAllPrecioVentaAPI, getAllTipoMonedaVentaAPI, getOpcionesVentaAPI } from "../../redux/sales/ventasThunk";
 import { getAllAlmacenesAPI } from "../../redux/warehouses/almacenThunks";
-import LoadingSection from "../../components/LoadingSection";
+import LoadingModule from "../../components/LoadingModule";
 import { getAllCategoriasAPI, getAllMarcasAPI, getAllProductosAPI } from "../../redux/products/productosThunk";
 
 export default function Ventas() {
@@ -30,7 +30,7 @@ export default function Ventas() {
 
   return (
     <>
-      { loadingApplication&& <LoadingSection title="Cargando datos de la tienda" />}
+      { loadingApplication&& <LoadingModule title="Cargando datos de la tienda" />}
       <Outlet />
 
     </>

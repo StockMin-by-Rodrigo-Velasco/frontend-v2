@@ -29,8 +29,8 @@ export default function LoginSuperUser({ branchId, closeButton }: LoginUserProp)
 
   return (
     <div className="absolute bg-black/80 w-full h-full flex items-center justify-center z-30" >
-      <button onClick={closeButton}>
-        <IoCloseSharp className="text-5xl absolute top-16 right-16" />
+      <button onClick={closeButton}  className="text-white">
+        <IoCloseSharp className="text-5xl absolute top-16 right-16"/>
       </button>
       <form
         className="text-white flex flex-col justify-center items-center"

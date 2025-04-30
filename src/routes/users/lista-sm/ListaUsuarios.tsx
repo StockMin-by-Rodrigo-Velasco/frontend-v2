@@ -52,7 +52,9 @@ export default function ListaUsuarios() {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
       const { value, name } = e.target;
       const newFilter = { ...filter, [name]: value };
-      const newData = users.filter(i => (i.name.includes(newFilter.buscar) || i.lastName.includes(newFilter.buscar)));
+      const newData = users.filter(i => (
+        i.name.toLocaleLowerCase().includes(newFilter.buscar.toLocaleLowerCase()) || 
+        i.lastName.toLocaleLowerCase().includes(newFilter.buscar.toLocaleLowerCase())));
   
       setFilteredUsers([...newData]);
       setFilter(newFilter);
@@ -66,8 +68,7 @@ export default function ListaUsuarios() {
 
     useEffect(() => {
         setFilteredUsers(users);
-      }, [users])
-
+    }, [users])
 
   return (
     <>

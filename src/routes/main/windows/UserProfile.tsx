@@ -16,8 +16,6 @@ interface UserProfileProp {
   closeButton: () => void
 }
 
-
-
 export default function UserProfile({ closeButton }: UserProfileProp) {
   
   const { userData } = useSelector((s: RootState) => s.Branch);
@@ -60,7 +58,7 @@ export default function UserProfile({ closeButton }: UserProfileProp) {
   }
 
   const saveProfile = () => {
-    dispatch(updateUserAPI({ id: userData.id, branchId: userData.branchId, profile: profile }));
+    dispatch(updateUserAPI({ id: userData.id, branchId: userData.branchId, profile }));
     setModeEditProfile(false);
   }
 
@@ -89,9 +87,8 @@ export default function UserProfile({ closeButton }: UserProfileProp) {
   //* ----- SUBMIT -----
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    
-    // console.log({ id: userData.id, sucursalId: userData.sucursalId, ...formData, ...formPassword })
-    dispatch(updateUserAPI( formData ));
+    // console.log({...formData, profile});
+    dispatch(updateUserAPI( {...formData, profile} ));
   }
 
   const cancelSaveData = () => {
@@ -186,7 +183,7 @@ export default function UserProfile({ closeButton }: UserProfileProp) {
             <InputText 
               className="w-full" 
               handleInputChange={handleInputChange} 
-              name="lastname" 
+              name="lastName" 
               value={formData.lastName||''} 
               placeholder="Apellido" 
               required 

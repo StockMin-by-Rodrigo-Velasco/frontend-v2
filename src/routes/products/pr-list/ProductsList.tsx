@@ -6,7 +6,7 @@ import { RootState } from "../../../redux/store";
 import { useEffect, useState } from "react";
 import { InputSearch, InputSelectSearch } from "../../../components/Input";
 import UpdateProduct from "./windows/UpdateProduct";
-import LoadingSection from "../../../components/LoadingSection";
+import LoadingModule from "../../../components/LoadingModule";
 import { FaPlus } from "react-icons/fa";
 import CreateProduct from "./windows/CreateProduct";
 import { Producto } from "../../../interface";
@@ -118,7 +118,7 @@ export default function ProductsList() {
       {openCreateProducto&&
         <CreateProduct closeButton={() => {setOpenCreateProducto(s => !s)}} />
       }
-      {loadingApplication&& <LoadingSection title="Cargando lista de productos"/>}
+      {loadingApplication&& <LoadingModule title="Cargando lista de productos"/>}
 
       <HeaderSection>
         <InputSearch

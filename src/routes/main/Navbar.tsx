@@ -19,6 +19,19 @@ import { FiUsers } from "react-icons/fi";
 import { GrTransaction } from "react-icons/gr";
 
 
+interface SubTitle{
+    title: string;
+    path: string;
+    icon: JSX.Element;
+    access: boolean;
+}
+interface Module{
+    title: string;
+    path: string;
+    icon:JSX.Element;
+    subTitles: SubTitle[];
+}
+
 export default function Navbar() {
     const { pathname } = useLocation();
     const { userData, listPermissions: listaPermisos } = useSelector((s: RootState) => s.Branch);
@@ -26,49 +39,110 @@ export default function Navbar() {
     const navigate = useNavigate();
     const [viewPerfil, setViewPerfil] = useState(false);
 
-    // const permisosProductos: Record<string, string> = {};
-    // const permisosAlmacenes: Record<string, string> = {};
-    // const permisosVentas: Record<string, string> = {};
-    // const permisosUsuarios: Record<string, string> = {};
-    // const permisosUsuarioSet = new Set(userData.UsuarioPermiso.map(p => p.permisoId));
+    const productsModulePermissions: Record<string, string> = {};
+    const warehousesPermissionsModule: Record<string, string> = {};
+    const salesModulePermissions: Record<string, string> = {};
+    const userModulePermissions: Record<string, string> = {};
+    const userPermissionsSet = new Set(userData.UserPermission.map(p => p.permissionId));
 
-    // for (const p of listaPermisos) {
-    //     if (p.modulo === 'productos') permisosProductos[p.codigo] = p.id;
-    //     if (p.modulo === 'almacenes') permisosAlmacenes[p.codigo] = p.id;
-    //     if (p.modulo === 'ventas') permisosVentas[p.codigo] = p.id;
-    //     if (p.modulo === 'usuarios') permisosUsuarios[p.codigo] = p.id;
-    // }
+    for (const p of listaPermisos) {
+        if (p.module === 'products') productsModulePermissions[p.code] = p.id;
+        if (p.module === 'warehouses') warehousesPermissionsModule[p.code] = p.id;
+        if (p.module === 'sales') salesModulePermissions[p.code] = p.id;
+        if (p.module === 'users') userModulePermissions[p.code] = p.id;
+    }
 
-    const menu = [
+    const modules: Module[] = [
         {
             title: 'Productos', path: '/main/products', icon: <BiObjectsHorizontalLeft size='20px' className="me-2" />,
             subTitles: [
-                { title: 'Lista', path: '/main/products/list', icon: <CiCircleList size='14px' />},
-                { title: 'Opciones', path: '/main/products/options', icon: <LuSettings size='14px' />},
-                { title: 'Historial', path: '/main/products/history', icon: <TbHistory size='14px' />},
+                { 
+                    title: 'Lista', 
+                    path: '/main/products/list', 
+                    icon: <CiCircleList size='14px'/>, 
+                    access: userPermissionsSet.has(productsModulePermissions['pr-01'])
+                },
+                { 
+                    title: 'Opciones', 
+                    path: '/main/products/options', 
+                    icon: <LuSettings size='14px'/>,
+                    access: userPermissionsSet.has(productsModulePermissions['pr-02'])
+                },   
+                { 
+                    title: 'Historial', 
+                    path: '/main/products/history', 
+                    icon: <TbHistory size='14px'/>,
+                    access: userPermissionsSet.has(productsModulePermissions['pr-03'])
+                },
             ]
         },
         {
             title: 'Almacenes', path: '/main/warehouses', icon: <LuWarehouse size='20px' className="me-2"/>,
             subTitles: [
-                { title: 'Lista de almacenes', path: '/main/warehouses/list', icon: <CiBoxes size='14px'/>},
-                { title: 'Traspasos', path: '/main/warehouses/transfers', icon: <GrTransaction size='14px'/>},
-                { title: 'Historial', path: '/main/warehouses/history', icon: <TbHistory size='14px'/>},
+                { 
+                    title: 'Lista de almacenes', 
+                    path: '/main/warehouses/list', 
+                    icon: <CiBoxes size='14px'/>,
+                    access: userPermissionsSet.has(warehousesPermissionsModule['wh-01'])
+
+                },
+                { 
+                    title: 'Traspasos', 
+                    path: '/main/warehouses/transfers', 
+                    icon: <GrTransaction size='14px'/>,
+                    access: userPermissionsSet.has(warehousesPermissionsModule['wh-02'])
+
+                },
+                { 
+                    title: 'Historial', 
+                    path: '/main/warehouses/history', 
+                    icon: <TbHistory size='14px'/>,
+                    access: userPermissionsSet.has(warehousesPermissionsModule['wh-03'])
+                },
             ]
         },
         {
             title: 'Ventas', path: '/main/sales', icon: <MdOutlineShoppingCart size='20px' className="me-2"/>,
             subTitles: [
-                { title: 'Tienda', path: '/main/sales/store', icon: <AiOutlineShop size='14px'/>},
-                { title: 'Clientes', path: '/main/sales/customers', icon: <FaRegUser size='14px'/>},
-                { title: 'Opciones', path: '/main/sales/options', icon: <LuSettings size='14px'/>},
-                { title: 'Historial', path: '/main/sales/history', icon: <TbHistory size='14px'/>},
+                { 
+                    title: 'Tienda', 
+                    path: '/main/sales/store', 
+                    icon: <AiOutlineShop size='14px'/>,
+                    access: userPermissionsSet.has(salesModulePermissions['sa-01'])
+
+                },
+                { 
+                    title: 'Clientes', 
+                    path: '/main/sales/customers', 
+                    icon: <FaRegUser size='14px'/>,
+                    access: userPermissionsSet.has(salesModulePermissions['sa-02'])
+
+                },
+                { 
+                    title: 'Opciones', 
+                    path: '/main/sales/options', 
+                    icon: <LuSettings size='14px'/>,
+                    access: userPermissionsSet.has(salesModulePermissions['sa-03'])
+
+                },
+                { 
+                    title: 'Historial', 
+                    path: '/main/sales/history', 
+                    icon: <TbHistory size='14px'/>,
+                    access: userPermissionsSet.has(salesModulePermissions['sa-04'])
+
+                },
             ]
         },
         {
             title: 'Usuarios', path: '/main/users', icon: <FaRegUser size='20px' className="me-2"/>,
             subTitles: [
-                { title: 'Lista de usuarios', path: '/main/users/list', icon: <FiUsers size='14px'/>, }
+                { 
+                    title: 'Lista de usuarios', 
+                    path: '/main/users/list', 
+                    icon: <FiUsers size='14px'/>,
+                    access: userPermissionsSet.has(userModulePermissions['us-01'])
+                }
             ]
         },
     ]
@@ -84,7 +158,7 @@ export default function Navbar() {
 
 
             <img src={logos.logoVerticalWhite} width={'150px'} className="mt-3 mb-10" />
-            {menu.map(i => (
+            {modules.map(i => (
                 <div key={i.path} className="mb-2" >
                     <NavLink
                         to={i.path}
@@ -96,6 +170,7 @@ export default function Navbar() {
                         {i.title}
                     </NavLink>
                     {(pathname.includes(i.path)) && i.subTitles.map(subI => (
+                        subI.access?
                         <NavLink to={subI.path} key={subI.title}
                             className={({ isActive }) =>
                                 `${isActive && 'bg-white bg-opacity-15'} flex font-thin text-sm ms-5 border-b-2 rounded-tl rounded-tr border-info items-center py-[2px] px-1 cursor-pointer hover:bg-white hover:bg-opacity-15`
@@ -104,6 +179,13 @@ export default function Navbar() {
                             {subI.icon}
                             <span className="ms-2" >{subI.title} </span>
                         </NavLink>
+                        :
+                        <div key={subI.title}
+                            className={`flex font-thin text-white/50 text-sm ms-5 border-b-2 rounded-tl rounded-tr border-info items-center py-[2px] px-1 cursor-not-allowed`}
+                        >
+                            <TbLock/>
+                            <span className="ms-2" >{subI.title} </span>
+                        </div>
                     ))}
                 </div>
             ))}

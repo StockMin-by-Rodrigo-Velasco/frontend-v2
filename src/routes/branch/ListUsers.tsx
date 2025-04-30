@@ -9,6 +9,7 @@ import LoadingApplication from "../../components/LoadingApplication";
 import { perfilColor, perfilImg } from "../../assets/profile";
 import { TbLogout2 } from "react-icons/tb";
 import LoginSuperUser from "./windows/LoginSuperUser";
+import LoginUser from "./windows/LoginUser";
 
 
 export default function ListUsers() {
@@ -19,9 +20,15 @@ export default function ListUsers() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
+  const [userIdSelected, setUserIdSelected] = useState('');
   const [openLoginSuperUser, setOpenLoginSuperUser] = useState(false);
+  const [openLoginUser, setOpenLoginUser] = useState(false);
 
-
+  const getUserData = (userId:string)=>{
+    setUserIdSelected(userId);
+    setOpenLoginUser(true);
+  }
+  
   const logout = () => {
     dispatch(logoutBranchAPI());
     navigate('/');
@@ -35,6 +42,7 @@ export default function ListUsers() {
 
       {loadingApplication&& <LoadingApplication/>}
       {openLoginSuperUser&& <LoginSuperUser  branchId={branchId} closeButton={()=>{setOpenLoginSuperUser(false)}} />}
+      {openLoginUser&& <LoginUser branchId={branchId} userId={userIdSelected}  closeButton={()=>{setOpenLoginUser(false)}} />}
 
       <div className=" max-w-[450px] rounded-[20px] bg-white flex flex-col items-center justify-center">
         <img src={logo} alt="logoEmpresa" width={'400px'} className="m-8" onDoubleClick={()=>{setOpenLoginSuperUser(true)}} />
@@ -49,7 +57,7 @@ export default function ListUsers() {
                 key={u.id}
                 style={{backgroundColor: perfilColor(u.profile.split(' ')[1])}}
                 className='m-2 rounded-lg flex flex-col items-center border-2 border-transparent hover:border-primary transition-all cursor-pointer'
-                onClick={() => { console.log('Open User') }}
+                onClick={() => { getUserData(u.id) }}
               >
                 <img src={perfilImg(u.profile.split(' ')[0])} width='100px'/>
                 <p className="uppercase font-semibold" >{u.name}</p>

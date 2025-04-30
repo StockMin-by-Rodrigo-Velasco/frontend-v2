@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
 import { useEffect } from "react";
 
-import LoadingSection from "../../components/LoadingSection";
+import LoadingModule from "../../components/LoadingModule";
 
 import { getAllCategoriasAPI, getAllMarcasAPI, getAllProductosAPI } from "../../redux/products/productosThunk";
 
@@ -24,7 +24,7 @@ export default function Warehouses() {
 
   return (
     <>
-      {loadingApplication && <LoadingSection title="Cargando la lista de almacenes…" />}
+      {loadingApplication && <LoadingModule title="Cargando la lista de almacenes…" />}
       <Outlet />
     </>
   );

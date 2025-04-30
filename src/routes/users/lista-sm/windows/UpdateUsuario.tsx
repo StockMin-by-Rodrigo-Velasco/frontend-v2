@@ -7,7 +7,7 @@ import { AiOutlineLoading } from "react-icons/ai";
 import { InputText, InputTextBlock } from "../../../../components/Input";
 import { useForm } from "../../../../hooks";
 import { FormEvent } from 'react';
-import { HandlePermissionUserDto, UpdateUserDto, User } from "../../../../interface";
+import { ToggleUserPermissionDto, UpdateUserDto, User } from "../../../../interface";
 import { FaEdit } from "react-icons/fa";
 import { handlePermisoToUserAPI, updateUserAPI } from "../../../../redux/branch/branchThunk";
 
@@ -49,14 +49,15 @@ export default function UpdateUsuario({ closeButton, user }: UpdateUsuarioProp) 
   }
 
   const changePermiso = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id:permisoId } = e.target;
-    const permiso:HandlePermissionUserDto = {userId: user.id, permisoId} 
+    const { id:permissionId } = e.target;
+    const permiso:ToggleUserPermissionDto = {userId: user.id, permissionId} 
     // console.log(permiso);
     dispatch(handlePermisoToUserAPI(permiso));
   }
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
+    // console.log({ ...formData, profile });
     dispatch(updateUserAPI({ ...formData, profile }));
   }
  

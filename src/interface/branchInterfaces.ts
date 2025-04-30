@@ -86,7 +86,7 @@ export interface UpdateUserDto {
     oldPassword?: string;
 }
 
-export interface HandlePermissionUserDto {
+export interface ToggleUserPermissionDto {
     userId: string;
-    permisoId: string;
+    permissionId: string;
 }

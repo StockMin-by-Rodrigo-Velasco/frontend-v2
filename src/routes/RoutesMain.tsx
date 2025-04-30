@@ -2,7 +2,6 @@ import { Navigate, Route, Routes } from "react-router";
 
 import LoginBranch from "./branch/LoginBranch";
 import ListUsers from "./branch/ListUsers";
-import LoginUser from "./branch/windows/LoginUser";
 import MainAplication from "./main/MainAplication";
 import Ventas from "./sales/Ventas";
 import ListaUsuarios from "./users/lista-sm/ListaUsuarios";
@@ -27,24 +26,8 @@ import Usuarios from "./users/Usuarios";
 import TraspasosAlmacenes from "./warehouses/sm-traspasos/TraspasosAlmacenes";
 
 export default function RoutesMain() {
-  // const { id, userData, listPermissions: listaPermisos } = useSelector((s:RootState) => s.Branch);
   const { selectedAlmacen } = useSelector((s:RootState) => s.Almacenes);
   
-  const permisosProductos:Record<string, string> = {};
-  const permisosAlmacenes:Record<string, string> = {};
-  const permisosVentas:Record<string, string> = {};
-  const permisosUsuarios:Record<string, string> = {};
-  // const permisosUsuarioSet = new Set(userData.UserPermission.map(p => p.permissionId));
-
-  // for(const p of listaPermisos){
-  //   if(p.module === 'productos') permisosProductos[p.code] = p.id;
-  //   if(p.module === 'almacenes') permisosAlmacenes[p.code] = p.id;
-  //   if(p.module === 'ventas') permisosVentas[p.code] = p.id;
-  //   if(p.module === 'usuarios') permisosUsuarios[p.code] = p.id;
-  // }
-
- 
-
   return (
       <Routes>
         <Route index element={<LoginBranch/> }/>

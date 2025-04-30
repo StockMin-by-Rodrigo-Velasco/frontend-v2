@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { Notification } from '../../components/Notification';
 import { LoginBranchDto } from '../../interface';
-import { loginBranchAPI, verifyTokens } from '../../redux/branch/branchThunk';
+import { loginBranchAPI, getBranchModuleDataAPI } from '../../redux/branch/branchThunk';
 import { useNavigate } from 'react-router';
 import logos from '../../assets/logos';
 import LoadingApplication from '../../components/LoadingApplication';
@@ -28,7 +28,7 @@ export default function LoginBranch() {
     }
 
     useEffect(() => {
-        if (branchId === '') dispatch(verifyTokens(navigate));
+        if (branchId === '') dispatch(getBranchModuleDataAPI(navigate));
     }, [])
 
     return (
