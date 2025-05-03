@@ -5,7 +5,7 @@ import { AppDispatch, RootState } from "../../redux/store";
 import { getAllClientesVentaAPI, getAllPrecioVentaAPI, getAllTipoMonedaVentaAPI, getOpcionesVentaAPI } from "../../redux/sales/ventasThunk";
 import { getAllAlmacenesAPI } from "../../redux/warehouses/almacenThunks";
 import LoadingModule from "../../components/LoadingModule";
-import { getAllCategoriasAPI, getAllMarcasAPI, getAllProductosAPI } from "../../redux/products/productosThunk";
+import { getCategoriesAPI, getBrandsAPI, getProductsAPI } from "../../redux/products/productosThunk";
 
 export default function Ventas() {
   const { id } = useSelector((s: RootState) => s.Branch);
@@ -23,9 +23,9 @@ export default function Ventas() {
     dispatch(getAllTipoMonedaVentaAPI());
     dispatch(getAllPrecioVentaAPI());
 
-    dispatch(getAllCategoriasAPI());
-    dispatch(getAllMarcasAPI());
-    dispatch(getAllProductosAPI("LOADING-APP-FINISH"));
+    dispatch(getCategoriesAPI());
+    dispatch(getBrandsAPI());
+    dispatch(getProductsAPI("LOADING-APP-FINISH"));
   }, [id])
 
   return (

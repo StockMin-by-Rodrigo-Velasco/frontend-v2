@@ -13,25 +13,26 @@ import LogDetails from "../../../components/LogDetails";
 import { Log } from "../../../interface";
 
 const columns: DataTableColumnInterface<Log>[] = [
-  { name: 'ACCIÓN', type: DataTableColumnTypes.P, key: "titulo" },
+  { name: 'ACCIÓN', type: DataTableColumnTypes.P, key: "title" },
   { name: 'FECHA', type: DataTableColumnTypes.DATE, key: "createdAt" },
 ];
 
 interface DateRange{
-  desde: string,
-  hasta: string
+  from: string,
+  to: string
 }
 
 const initDateRange: DateRange = {
-  desde: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0],
-  hasta: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split("T")[0],
+  from: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0],
+  to: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split("T")[0],
 }
 
 export default function ProductsHistory() {
+  const { id: branchId } = useSelector((s: RootState) => s.Branch);
   const { loadingApplication } = useSelector((s: RootState) => s.Aplication);
-  const { listaLogs } = useSelector((s: RootState) => s.Productos);
+  const { logs } = useSelector((s: RootState) => s.Products);
   const dispatch = useDispatch<AppDispatch>();
-  const [logDetails, setLogDetails] = useState<Log>({id:'', sucursalId:'', titulo:'', descripcion:'', createdAt:'', userId:''});
+  const [logDetails, setLogDetails] = useState<Log>({id:'', branchId:'', title:'', module:'', description:'', createdAt:'', userId:''});
   const [logDetailsWindows, setlogDetailsWindows] = useState(false);
 
   const { data: dateRange, handleInputChange} = useForm<DateRange>(initDateRange);
@@ -42,15 +43,15 @@ export default function ProductsHistory() {
   }
 
   const filterLogs = () => {
-    const desdeStr = new Date(dateRange.desde);
-    desdeStr.setHours(desdeStr.getHours() + 4); // Ajustamos a la hora de Bolivia
-    const desde = desdeStr.getTime().toString();
+    const fromStr = new Date(dateRange.from);
+    fromStr.setHours(fromStr.getHours() + 4); // Ajustamos a la hora de Bolivia
+    const from = fromStr.getTime().toString();
 
-    const hastaStr = new Date(dateRange.hasta);
-    hastaStr.setHours(hastaStr.getHours() + 28); // Ajustamos a la hora de Bolivia
-    const hasta = hastaStr.getTime().toString();
+    const toStr = new Date(dateRange.to);
+    toStr.setHours(toStr.getHours() + 28); // Ajustamos a la hora de Bolivia
+    const to = toStr.getTime().toString();
     
-    dispatch(getLogsProductosAPI(desde, hasta, "LOADING-APP-COMPLETE"));
+    dispatch(getLogsProductosAPI({from, to, branchId, module:'product'}));
   }
 
   useEffect(() => {
@@ -64,16 +65,16 @@ export default function ProductsHistory() {
       <HeaderSection>
         <InputDateSearch 
           placeholder="Desde: " 
-          name="desde"
+          name="from"
           handleInputChange={handleInputChange}
-          value={dateRange.desde}
+          value={dateRange.from}
         />
         <InputDateSearch 
           className="ms-3"
           placeholder="Hasta: " 
-          name="hasta"
+          name="to"
           handleInputChange={handleInputChange}
-          value={dateRange.hasta}
+          value={dateRange.to}
         />
 
         <div className="ms-3 flex items-center" >
@@ -83,15 +84,9 @@ export default function ProductsHistory() {
             className="me-2 w-7 h-7 bg-primary bg-opacity-80 text-white flex justify-center items-center rounded-full hover:bg-opacity-100"
           ><IoSearch/></button>
         </div>
-
-        {/* <button
-          onClick={refreshLogs}
-          type="button"
-          className=" ms-auto me-2 w-7 h-7 text-primary flex justify-center items-center rounded-full hover:bg-secondary-1"
-        ><HiRefresh /></button> */}
       </HeaderSection>
       <BodySection>
-        <DataTable<Log> columns={columns} data={listaLogs} details={{ name: 'MAS', action: getLog }} />
+        <DataTable<Log> columns={columns} data={logs} details={{ name: 'MAS', action: getLog }} />
       </BodySection>
     </>
   );

@@ -50,11 +50,11 @@ export default function LogDetailsWindows({ log, closeButton }: LogDetailWindows
 
                     <div className="bg-secondary-1 rounded overflow-hidden mb-2 flex flex-col" > 
                         <span className="bg-secondary px-2 text-white text-[14px]" >Accion:</span> 
-                        <span className="px-2" >{log.titulo}</span>
+                        <span className="px-2" >{log.title}</span>
                     </div>
                     <div className="bg-secondary-1 rounded overflow-hidden mb-2 flex flex-col" > 
                         <span className="bg-secondary px-2 text-white text-[14px]" >Descripcion:</span> 
-                        <span className="px-2" >{log.descripcion}</span>
+                        <span className="px-2" >{log.description}</span>
                     </div>
                     <div className="bg-secondary-1 rounded overflow-hidden mb-2 flex flex-col" > 
                         <span className="bg-secondary px-2 text-white text-[14px]" >Fecha:</span> 

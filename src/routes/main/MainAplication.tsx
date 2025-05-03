@@ -8,14 +8,13 @@ import { getBranchModuleDataAPI } from "../../redux/branch/branchThunk";
 import LoadingApplication from "../../components/LoadingApplication";
 
 export default function MainAplication() {
-  const { id: branchId } = useSelector((s: RootState) => s.Branch);
   const { showNotification } = useSelector((s: RootState) => s.Notification);
   const { loadingApplication } = useSelector((s: RootState) => s.Aplication);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (branchId === '') dispatch(getBranchModuleDataAPI(navigate));
+    dispatch(getBranchModuleDataAPI(navigate));
   }, [])
   return (
     <div className="w-screen h-screen bg-light p-2 flex" >

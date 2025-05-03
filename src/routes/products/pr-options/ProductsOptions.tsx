@@ -10,80 +10,83 @@ import { FaPlus } from 'react-icons/fa';
 import CreateBrand from './windows/CreateBrand';
 import CreateCategory from './windows/CreateCategory';
 import AddUnitMeasure from './windows/AddUnitMeasure';
-import { Categoria, Marca, UnidadMedidaSucursal } from '../../../interface';
-import { handleUnidadMedidaAPI } from '../../../redux/products/productosThunk';
+import { Category, Brand } from '../../../interface';
+import { toggleUnitMeasureAPI } from '../../../redux/products/productosThunk';
 
 
-const marcaColumns: DataTableColumnInterface<Marca>[] = [
-  { name: 'NOMBRE', type: DataTableColumnTypes.P, key: "nombre" },
-  { name: 'ORIGEN', type: DataTableColumnTypes.P, key: "origen" },
+const marcaColumns: DataTableColumnInterface<Brand>[] = [
+  { name: 'NOMBRE', type: DataTableColumnTypes.P, key: "name" },
+  { name: 'ORIGEN', type: DataTableColumnTypes.P, key: "origin" },
 ]
 
-const categoriaColumns: DataTableColumnInterface<Categoria>[] = [
-  { name: 'NOMBRE', type: DataTableColumnTypes.P, key: "nombre" },
-  { name: 'DETALLE', type: DataTableColumnTypes.P, key: "detalle" },
+const categoriaColumns: DataTableColumnInterface<Category>[] = [
+  { name: 'NOMBRE', type: DataTableColumnTypes.P, key: "name" },
+  { name: 'DETALLE', type: DataTableColumnTypes.P, key: "details" },
 ]
 
 export default function ProductsOptions() {
   const dispatch = useDispatch<AppDispatch>();
-  const { listaMarcas, listaCategorias, listaUnidadesMedidaSucursal } = useSelector((s: RootState) => s.Productos);
-  const [windowsUpdateMarca, setWindowsUpdateMarca] = useState(false);
-  const [windowsUpdateCategoria, setWindowsUpdateCategoria] = useState(false);
-  const [windowsCreateMarca, setWindowsCreateMarca] = useState(false);
-  const [windowsCreateCategoria, setWindowsCreateCategoria] = useState(false);
-  const [openCreateUnidadMedida, setOpenCreateUnidadMedida] = useState(false);
-  const [updateCategoria, setUpdateCategoria] = useState<Categoria>({ id: '', sucursalId: '', nombre: '', detalle: '', deleted: false })
-  const [updateMarca, setUpdateMarca] = useState<Marca>({ id: '', sucursalId: '', nombre: '', origen: '', deleted: false })
+  const { id:branchId } = useSelector((s: RootState) => s.Branch);
+  const { brands, categories, unitMeasuresBranch } = useSelector((s: RootState) => s.Products);
 
-  const openUpdateMarca = (data: Marca) => {
+  const [openUpdateBrand, setOpenUpdateMarca] = useState(false);
+  const [openUpdateCategory, setOpenUpdateCategory] = useState(false);
+  const [openCreateBrand, setOpenCreateBrand] = useState(false);
+  const [openCreateCategory, setOpenCreateCategory] = useState(false);
+  const [openCreateUnitMeasure, setOpenCreateUnitMeasure] = useState(false);
+
+  const [updateCategoria, setUpdateCategoria] = useState<Category>({ id: '', branchId: '', name: '', details: '', deleted: false })
+  const [updateMarca, setUpdateMarca] = useState<Brand>({ id: '', branchId: '', name: '', origin: '', deleted: false })
+
+  const updateBrand = (data: Brand) => {
     setUpdateMarca(data);
-    setWindowsUpdateMarca(true);
+    setOpenUpdateMarca(true);
   }
-  const openUpdateCategoria = (data: Categoria) => {
+  const updateCategory = (data: Category) => {
     setUpdateCategoria(data)
-    setWindowsUpdateCategoria(true);
+    setOpenUpdateCategory(true);
   }
-  const quitarUnidadMedida = (data: UnidadMedidaSucursal) => {
-    dispatch(handleUnidadMedidaAPI(data.unidadMedidaId, "LOADING-DATA-COMPLETE"));
+  const removeUnitMeasure = (unitMeasureId: string) => {
+    dispatch(toggleUnitMeasureAPI({branchId, unitMeasureId}));
   }
 
   return (
     <>
       <BodySection>
 
-        {windowsUpdateCategoria && <UpdateCategory dataUpdate={updateCategoria} closeButton={() => { setWindowsUpdateCategoria(false) }} />}
-        {windowsUpdateMarca && <UpdateBrand dataUpdate={updateMarca} closeButton={() => { setWindowsUpdateMarca(false) }} />}
+        {openUpdateCategory && <UpdateCategory dataUpdate={updateCategoria} closeButton={() => { setOpenUpdateCategory(false) }} />}
+        {openUpdateBrand && <UpdateBrand dataUpdate={updateMarca} closeButton={() => { setOpenUpdateMarca(false) }} />}
 
-        {windowsCreateMarca && <CreateBrand closeButton={() => { setWindowsCreateMarca(false) }} />}
-        {windowsCreateCategoria && <CreateCategory closeButton={() => { setWindowsCreateCategoria(false) }} />}
+        {openCreateBrand && <CreateBrand closeButton={() => { setOpenCreateBrand(false) }} />}
+        {openCreateCategory && <CreateCategory closeButton={() => { setOpenCreateCategory(false) }} />}
 
-        {openCreateUnidadMedida && <AddUnitMeasure closeButton={() => { setOpenCreateUnidadMedida(false) }} />}
+        {openCreateUnitMeasure && <AddUnitMeasure closeButton={() => { setOpenCreateUnitMeasure(false) }} />}
 
 
 
         <button className='mt-3 flex justify-center items-center bg-primary/80 mb-1 rounded text-white hover:bg-primary'
-          onClick={() => { setWindowsCreateMarca(true) }}>
+          onClick={() => { setOpenCreateBrand(true) }}>
           <FaPlus /> <span className='ms-2' >Agregar nueva marca</span>
         </button>
         <div className='border-[1px] border-secondary rounded mb-3' >
           <Accordion tittle='MARCAS' last>
-            <DataTable<Marca> data={listaMarcas} columns={marcaColumns} details={{ name: 'MAS', action: openUpdateMarca }} />
+            <DataTable<Brand> data={brands} columns={marcaColumns} details={{ name: 'MAS', action: updateBrand }} />
           </Accordion>
         </div>
 
 
         <button className='flex justify-center items-center bg-primary/80 mb-1 rounded text-white hover:bg-primary'
-          onClick={() => { setWindowsCreateCategoria(true) }}>
+          onClick={() => { setOpenCreateCategory(true) }}>
           <FaPlus /> <span className='ms-2' >Agregar nueva categoría</span>
         </button>
         <div className='border-[1px] border-secondary rounded mb-3'>
           <Accordion tittle='CATEGORÍAS' last>
-            <DataTable<Categoria> data={listaCategorias} columns={categoriaColumns} details={{ name: 'MAS', action: openUpdateCategoria }} />
+            <DataTable<Category> data={categories} columns={categoriaColumns} details={{ name: 'MAS', action: updateCategory }} />
           </Accordion>
         </div>
 
         <button className='flex justify-center items-center bg-primary/80 mb-1 rounded text-white hover:bg-primary'
-          onClick={() => { setOpenCreateUnidadMedida(true) }}>
+          onClick={() => { setOpenCreateUnitMeasure(true) }}>
           <FaPlus /> <span className='ms-2' >Agregar nueva unidad de medida</span>
         </button>
         <div className='border-[1px] border-secondary rounded'>
@@ -98,14 +101,14 @@ export default function ProductsOptions() {
                 </tr>
               </thead>
               <tbody>
-                {listaUnidadesMedidaSucursal.map(um => (
+                {unitMeasuresBranch.map(um => (
                   <tr key={um.id} className="border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase" >
-                    <td className='py-2 text-center'>{um.UnidadMedida.nombre}</td>
-                    <td className='py-2 text-center'>{um.UnidadMedida.abreviatura}</td>
-                    <td className='py-2 text-center'>{um.UnidadMedida.detalle}</td>
+                    <td className='py-2 text-center'>{um.UnitMeasure.name}</td>
+                    <td className='py-2 text-center'>{um.UnitMeasure.abbreviation}</td>
+                    <td className='py-2 text-center'>{um.UnitMeasure.details}</td>
                     <td className='py-2 text-center'>
                       <button 
-                        onClick={() => {quitarUnidadMedida(um)}}
+                        onClick={() => {removeUnitMeasure(um.id)}}
                         type='button' 
                         className='text-[10px] border border-danger rounded-full px-2 text-danger hover:bg-danger hover:text-white'
                       >QUITAR</button>
@@ -116,7 +119,6 @@ export default function ProductsOptions() {
             </table>
           </Accordion>
         </div>
-
       </BodySection>
     </>
   );

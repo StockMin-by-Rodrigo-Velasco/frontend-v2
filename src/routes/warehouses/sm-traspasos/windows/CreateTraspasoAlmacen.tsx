@@ -5,7 +5,7 @@ import { InputSelect, InputTextarea } from "../../../../components/Input";
 import { dateLocal } from "../../../../helpers";
 import { useForm, useFormArray } from "../../../../hooks";
 import { useState } from "react";
-import { CreateDocTraspasoAlmacenDto, CreateProductoAlmacenDto, CreateTraspasoProductoAlmacenDto, DocTraspasoProductoAlmacen, Producto, ProductoAlmacen, TransactionProductoAlmacenDto } from "../../../../interface";
+import { CreateDocTraspasoAlmacenDto, CreateProductoAlmacenDto, CreateTraspasoProductoAlmacenDto, DocTraspasoProductoAlmacen, Product, ProductoAlmacen, TransactionProductoAlmacenDto } from "../../../../interface";
 import { getProductosOneAlmacenAPI, createOneProductoAlmacenAPI, createTraspasoProductosAlmacenAPI, decrementProdutosAlmacenAPI, incrementProdutosAlmacenAPI } from '../../../../redux/warehouses/almacenThunks';
 import { FaCheckCircle, FaLongArrowAltRight, FaPlus, FaWarehouse } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
@@ -51,7 +51,7 @@ export default function CreateTraspasoAlmacen({ closeButton, getTraspaso }: Crea
   const { type: typeNotification, showNotification } = useSelector((s: RootState) => s.Notification);
   const { id: sucursalId, logo, userData } = useSelector((s: RootState) => s.Branch);
   const { listaAlmacenes } = useSelector((s: RootState) => s.Almacenes);
-  const { listaProductos } = useSelector((s: RootState) => s.Productos);
+  const { products: listaProductos } = useSelector((s: RootState) => s.Products);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -111,17 +111,17 @@ export default function CreateTraspasoAlmacen({ closeButton, getTraspaso }: Crea
 
   const generateListProductosOrigen = (listaAlmacen: ProductoAlmacen[]) => {
     //* Genera una lista de productos con los campos nesesarios para el ArrayForm
-    const listaProductosObj = listaProductos.reduce((acc, p) => { acc[p.id] = p; return acc }, {} as Record<string, Producto>)
+    const listaProductosObj = listaProductos.reduce((acc, p) => { acc[p.id] = p; return acc }, {} as Record<string, Product>)
     const productosAlmacenDetallado: ArrayForm[] = listaAlmacen.map((p: ProductoAlmacen) => (
       {
         id: p.id,
         productoId: p.productoId,
-        imagen: listaProductosObj[p.productoId].imagen,
-        codigo: listaProductosObj[p.productoId].codigo,
-        nombre: listaProductosObj[p.productoId].nombre,
-        marca: listaProductosObj[p.productoId].Marca.nombre,
-        categoria: listaProductosObj[p.productoId].Categoria.nombre,
-        unidadMedidaAbreviada: listaProductosObj[p.productoId].UnidadMedida.abreviatura,
+        imagen: listaProductosObj[p.productoId].image,
+        codigo: listaProductosObj[p.productoId].code,
+        nombre: listaProductosObj[p.productoId].name,
+        marca: listaProductosObj[p.productoId].Marca.name,
+        categoria: listaProductosObj[p.productoId].Categoria.name,
+        unidadMedidaAbreviada: listaProductosObj[p.productoId].UnidadMedida.abbreviation,
         cantidad: p.cantidad.toString(),
         cantidadTraspaso: '1',
         show: true,

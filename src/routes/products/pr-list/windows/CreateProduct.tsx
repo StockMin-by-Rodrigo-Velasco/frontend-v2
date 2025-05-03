@@ -4,7 +4,7 @@ import Windows from "../../../../components/Windows";
 import { useForm } from "../../../../hooks";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { FormEvent, useState } from "react";
-import { createProductoAPI } from "../../../../redux/products/productosThunk";
+import { createProductAPI } from "../../../../redux/products/productosThunk";
 import { Button, ButtonColors, ButtonSubmit } from "../../../../components/Buttons";
 import logos from "../../../../assets/logos";
 
@@ -24,14 +24,14 @@ interface FormProducto {
 export default function CreateProduct({ closeButton }: ProductoSelectedWindowsPropInterface) {
 
     const { loadingData } = useSelector((s: RootState) => s.Aplication);
-    const { listaCategorias, listaMarcas, listaUnidadesMedidaSucursal } = useSelector((s: RootState) => s.Productos);
+    const { categories: listaCategorias, brands: listaMarcas, unitMeasuresBranch: listaUnidadesMedidaSucursal } = useSelector((s: RootState) => s.Products);
     const dispatch = useDispatch<AppDispatch>();
     const { data, handleInputChange, resetData } = useForm<FormProducto>({ codigo:'', nombre:'', descripcion:'', categoriaId:'', marcaId:'', unidadMedidaId:''});
     const [imagen, setImagen] = useState<File|undefined>(undefined);
 
     const createProducto = (e: FormEvent) => {
         e.preventDefault();    
-        dispatch( createProductoAPI(data, imagen, "LOADING-DATA-COMPLETE") );
+        dispatch( createProductAPI(data, imagen, "LOADING-DATA-COMPLETE") );
     }
     const cancelUpdateProducto = () => {
         resetData();
@@ -79,7 +79,7 @@ export default function CreateProduct({ closeButton }: ProductoSelectedWindowsPr
                                     value={data.categoriaId}
                                     name='categoriaId'
                                     placeholder="*Categoría:"
-                                    options={listaCategorias.map(c => ({name: c.nombre, value: c.id}))}
+                                    options={listaCategorias.map(c => ({name: c.name, value: c.id}))}
                                     optionDefault="Sin categoría"
                                     required
                                 />
@@ -88,7 +88,7 @@ export default function CreateProduct({ closeButton }: ProductoSelectedWindowsPr
                                     value={data.marcaId}
                                     name='marcaId'
                                     placeholder="*Marca:"
-                                    options={listaMarcas.map(m => ({ name: m.nombre, value: m.id }))}
+                                    options={listaMarcas.map(m => ({ name: m.name, value: m.id }))}
                                     optionDefault="Sin Marca"
                                     required
                                 />
@@ -97,7 +97,7 @@ export default function CreateProduct({ closeButton }: ProductoSelectedWindowsPr
                                     value={data.unidadMedidaId}
                                     name='unidadMedidaId'
                                     placeholder="*U. Medida:"
-                                    options={listaUnidadesMedidaSucursal.map(um => ({ name: um.UnidadMedida.nombre, value: um.unidadMedidaId }))}
+                                    options={listaUnidadesMedidaSucursal.map(um => ({ name: um.UnidadMedida.nombre, value: um.unitMeasureId }))}
                                     optionDefault="Sin U/M"
                                     required
                                 />

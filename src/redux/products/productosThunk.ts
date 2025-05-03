@@ -1,96 +1,110 @@
 import axios, { AxiosResponse } from "axios";
-import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from "../aplication/aplicationSlice";
+import { finishLoadingData, finishLoadingModule, startLoadingData, startLoadingModule } from "../aplication/aplicationSlice";
 import { AppDispatch, RootState } from "../store";
 import api from "../../api/config";
-import { createCategoria, createMarca, createProducto, deleteCategoria, deleteMarca, deleteProducto, getAllCategorias, getLogsProductos, getAllMarcas, getAllProductos, getAllUnidadesMedida, updateCategoria, updateMarca, updateProducto, getAllUnidadesMedidaSucursal, handleUnidadMedida } from "./productosSlice";
-import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from "../notification/notificationSlice";
-import { UnidadMedidaSucursal } from "../../interface";
+import {
+    hideNotification,
+    showNotificationError,
+    showNotificationSuccess,
+    showNotificationWarning
+} from "../notification/notificationSlice";
+import {
+    Brand,
+    Category,
+    CreateBrandDto,
+    CreateCategoryDto,
+    CreateProductDto,
+    GetLogsDto,
+    Log,
+    Product,
+    ToggleUnitMeasureDto,
+    UnitMeasure,
+    UnitMeasureBranch,
+    UpdateBrandDto,
+    UpdateCategoryDto,
+    UpdateProductDto
+} from "../../interface";
+import {
+    createCategories,
+    createBrand,
+    createProduct,
+    deleteCategory,
+    deleteBrand,
+    deleteProduct,
+    getCategories,
+    getProductLogs,
+    getBrands,
+    getProducts,
+    getUnitMeasures,
+    updateCategory,
+    updateBrand,
+    updateProduct,
+    toggleUnitMeasure,
+    getUnitMeasuresBranch
+} from "./productosSlice";
 
-interface UpdateProductoInterface {
-    id: string;
-    codigo?: string;
-    nombre?: string;
-    descripcion?: string;
-    categoriaId?: string;
-    marcaId?: string;
-    unidadMedidaId?: string;
-}
-interface UpdateProductoImagenInterface {
-    id: string;
-    imagenUrl: string;
-    imagen: File | undefined
-}
-interface CreateProductoInterface {
-    codigo: string;
-    nombre: string;
-    descripcion?: string;
-    categoriaId: string;
-    marcaId: string;
-    unidadMedidaId: string;
-}
-
-interface CreateMarcaInterface {
-    nombre: string,
-    origen?: string
-}
-interface UpdateMarcaInterface extends CreateMarcaInterface {
-    id: string
-}
-interface CreateCategoriaInterface {
-    nombre: string,
-    detalle?: string
-}
-interface UpdateCategoriaInterface extends CreateCategoriaInterface {
-    id: string
-}
-
-export const getAllProductosAPI = (
-    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
-) => {
+export const getProductModuleDataAPI = () => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { id } = getState().Branch;
-        if (!id) return;
+        const { id: branchId } = getState().Branch;
         try {
-            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
-            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
+            dispatch(startLoadingModule());
 
-            const response: AxiosResponse = await api.get(`productos-ms/get-all-productos/${id}`);
-            dispatch(getAllProductos(response.data));
+            const resProduct: AxiosResponse = await api.get(`product/get-products/${branchId}`);
+            const {data:products}:{data:Product[]} = resProduct.data;
+            dispatch(getProducts(products));
 
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
+            const resBrand: AxiosResponse = await api.get(`brand/get-brands/${branchId}`);
+            const { data:brands }: { data: Brand[] } = resBrand.data;
+            dispatch(getBrands(brands));
+
+            const resCategory: AxiosResponse = await api.get(`category/get-categories/${branchId}`);
+            const { data:categories }: { data: Category[] } = resCategory.data;
+            dispatch(getCategories(categories));
+
+            const resUnitMeasure: AxiosResponse = await api.get(`unit-measure/get-unit-measures`);
+            const { data:unitMeasures }: { data: UnitMeasure[] } = resUnitMeasure.data;
+            dispatch(getUnitMeasures(unitMeasures));
+
+            const resUnitMeasureBranch: AxiosResponse = await api.get(`unit-measure/get-unit-measures-branch/${branchId}`);
+            const { data:unitMeasuresBranch }: { data: UnitMeasureBranch[] } = resUnitMeasureBranch.data;
+            dispatch(getUnitMeasuresBranch(unitMeasuresBranch));
+
+            dispatch(finishLoadingModule());
         } catch (error) {
             console.log(error);
-
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
+            dispatch(finishLoadingModule());
         }
     }
 }
-export const createProductoAPI = (
-    data: CreateProductoInterface,
-    file: File | undefined,
-    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
-) => {
-    return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { id: sucursalId, userData } = getState().Branch;
-        if (!sucursalId) return;
-        const newProducto = new FormData();
-        newProducto.append('sucursalId', sucursalId);
-        newProducto.append('codigo', data.codigo);
-        newProducto.append('nombre', data.nombre);
-        newProducto.append('descripcion', data.descripcion as string);
-        newProducto.append('categoriaId', data.categoriaId);
-        newProducto.append('marcaId', data.marcaId);
-        newProducto.append('unidadMedidaId', data.unidadMedidaId);
 
-        if (file) newProducto.append('imagen', file);
+export const getProductsAPI = () => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const { id: branchId } = getState().Branch;
+        try {
+            const resProduct: AxiosResponse = await api.get(`product/get-products/${branchId}`);
+            const {data:products}:{data:Product[]} = resProduct.data;
+            dispatch(getProducts(products));
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+export const createProductAPI = (createProductDto: CreateProductDto, image: File | undefined) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const { id: branchId, userData } = getState().Branch;
+        const newProducto = new FormData();
+        newProducto.append('branchId', branchId);
+        newProducto.append('code', createProductDto.code);
+        newProducto.append('name', createProductDto.name);
+        newProducto.append('description', createProductDto.description || '');
+        newProducto.append('categoryId', createProductDto.categoryId);
+        newProducto.append('brandId', createProductDto.branchId);
+        newProducto.append('unitMeasureId', createProductDto.unitMeasureId);
+        if (image) newProducto.append('imagen', image);
 
         try {
-            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
-            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
-
-            const response: AxiosResponse = await api.post('productos-ms/create-producto',
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.post('product/create-product',
                 newProducto,
                 {
                     headers: {
@@ -98,118 +112,78 @@ export const createProductoAPI = (
                         "X-User-Id": userData.id
                     }
                 }
-
             );
-            const { data, message } = response.data;
-            dispatch(createProducto(data));
-            dispatch(showNotificationSuccess({ tittle: 'PRODUCTO CREADO', description: message }));
+            const { data, message }: { data: Product, message: string } = response.data;
+            dispatch(createProduct(data));
+            dispatch(showNotificationSuccess({ tittle: 'CREACIÓN DE PRODUCTO', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
-
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
-
+            dispatch(finishLoadingData());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'CREACIÓN DE PRODUCTO', description: data.message }));
                 setTimeout(() => dispatch(hideNotification()), 5000);
-
-                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-                if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
             } else console.log(error);
+            dispatch(finishLoadingData());
         }
-
     }
 }
-export const deleteProductoAPI = (
-    id: string,
-    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
-) => {
+export const deleteProductAPI = (productId: string) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { id: sucursalId, userData } = getState().Branch;
-        if (!sucursalId) return;
+        const { userData } = getState().Branch;
         try {
-            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
-            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
-
-            const response: AxiosResponse = await api.delete('productos-ms/delete-producto',
-                {
-                    headers: { "X-User-Id": userData.id },
-                    params: { id, sucursalId }
-                }
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.delete(`product/delete-product/${productId}`,
+                { headers: { "X-User-Id": userData.id } }
             );
-            const { data, message } = response.data;
-            dispatch(deleteProducto(data.id));
+            const { data, message }: { data: Product, message: string } = response.data;
+            dispatch(deleteProduct(data.id));
             dispatch(showNotificationSuccess({ tittle: 'ELIMINACIÓN DE PRODUCTO', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
-
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
+            dispatch(finishLoadingData());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'ELIMINACIÓN DE PRODUCTO', description: data.message }));
                 setTimeout(() => dispatch(hideNotification()), 5000);
-
-                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-                if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
             } else console.log(error);
+            dispatch(finishLoadingData());
         }
     }
 }
-export const updateProductoAPI = (
-    updateData: UpdateProductoInterface,
-    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
-) => {
+export const updateProductAPI = (updateProductDto: UpdateProductDto) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { id: sucursalId, userData } = getState().Branch;
-        if (!sucursalId) return;
+        const { userData } = getState().Branch;
         try {
-            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
-            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
-
-            const response: AxiosResponse = await api.patch('productos-ms/update-producto',
-                { sucursalId, ...updateData }, { headers: { "X-User-Id": userData.id } }
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.patch('product/update-product', updateProductDto,
+                { headers: { "X-User-Id": userData.id } }
             );
-            const { data, message } = response.data;
-            dispatch(updateProducto(data));
-            dispatch(showNotificationSuccess({ tittle: 'PRODUCTO ACTUALIZADO', description: message }));
+            const { data, message }: { data: Product, message: string } = response.data;
+            dispatch(updateProduct(data));
+            dispatch(showNotificationSuccess({ tittle: 'ACTUALIZACIÓN DE PRODUCTO', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
-
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
+            dispatch(finishLoadingData());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'ACTUALIZACIÓN DE PRODUCTO', description: data.message }));
                 setTimeout(() => dispatch(hideNotification()), 5000);
-                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-                if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
             } else console.log(error);
+            dispatch(finishLoadingData());
         }
     }
 }
-export const updateProductoImagenAPI = (
-    data: UpdateProductoImagenInterface,
-    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
-) => {
+export const updateProductImageAPI = (productId: string, image: File | undefined) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        if (data.imagen) {
-            const { id: sucursalId, userData } = getState().Branch;
-            if (!sucursalId) return;
-
-            const updatedProductoImagen = new FormData();
-            updatedProductoImagen.append('id', data.id);
-            updatedProductoImagen.append('sucursalId', sucursalId);
-            updatedProductoImagen.append('imagen', data.imagen);
-            updatedProductoImagen.append('imagenUrl', data.imagenUrl);
-
+        if (image) {
+            const { userData } = getState().Branch;
+            const updateProductImage = new FormData();
+            updateProductImage.append('image', image);
             try {
-                if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
-                if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
-
-                const response: AxiosResponse = await api.patch('productos-ms/update-producto-imagen',
-                    updatedProductoImagen,
+                dispatch(startLoadingData());
+                const response: AxiosResponse = await api.patch(`product/update-product-image/${productId}`,
+                    updateProductImage,
                     {
                         headers: {
                             "Content-Type": "multipart/form-data",
@@ -217,22 +191,18 @@ export const updateProductoImagenAPI = (
                         }
                     }
                 );
-                const { data, message } = response.data;
-                dispatch(updateProducto(data));
+                const { data, message }: { data: Product, message: string } = response.data;
+                dispatch(updateProduct(data));
                 dispatch(showNotificationSuccess({ tittle: 'MODIFICACIÓN DE IMAGEN', description: message }));
                 setTimeout(() => dispatch(hideNotification()), 5000);
-
-                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-                if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
+                dispatch(finishLoadingData());
             } catch (error) {
                 if (axios.isAxiosError(error) && error.response) {
                     const { data } = error.response;
                     dispatch(showNotificationError({ tittle: 'MODIFICACIÓN DE IMAGEN', description: data.message }));
                     setTimeout(() => dispatch(hideNotification()), 5000);
-
-                    if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-                    if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
                 } else console.log(error);
+                dispatch(finishLoadingData());
             }
         } else {
             dispatch(showNotificationWarning({ tittle: 'MODIFICACIÓN DE IMAGEN', description: 'La imagen original no fue modificada' }));
@@ -240,373 +210,222 @@ export const updateProductoImagenAPI = (
         }
     }
 }
-export const getAllMarcasAPI = (
-    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
-) => {
+//* ----------------------- BRAND -------------------------
+export const getBrandsAPI = () => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { id } = getState().Branch;
-        if (!id) return;
+        const { id: branchId } = getState().Branch;
         try {
-            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
-            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
-
-            const response: AxiosResponse = await api.get(`productos-ms/get-all-marcas/${id}`);
-            dispatch(getAllMarcas(response.data));
-
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
+            const response: AxiosResponse = await api.get(`brand/get-brands/${branchId}`);
+            const { data }: { data: Brand[] } = response.data;
+            dispatch(getBrands(data));
         } catch (error) {
             console.log(error);
-
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         }
     }
 }
-export const createMarcaAPI = (
-    createMarcaData: CreateMarcaInterface,
-    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
-) => {
+export const createBrandAPI = (createBrandDto: CreateBrandDto) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { id: sucursalId, userData } = getState().Branch;
-        if (!sucursalId) return;
+        const { userData } = getState().Branch;
         try {
-            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
-            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
-
-            const response: AxiosResponse = await api.post('productos-ms/create-marca',
-                { sucursalId, ...createMarcaData }, { headers: { "X-User-Id": userData.id } }
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.post('brand/create-brand', createBrandDto,
+                { headers: { "X-User-Id": userData.id } }
             );
-            const { data, message } = response.data;
-            dispatch(createMarca(data));
+            const { data, message }: { data: Brand, message: string } = response.data;
+            dispatch(createBrand(data));
             dispatch(showNotificationSuccess({ tittle: 'CREACIÓN DE MARCA', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
-
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
+            dispatch(finishLoadingData());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'CREACIÓN DE MARCA', description: data.message }));
                 setTimeout(() => dispatch(hideNotification()), 5000);
-
-                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-                if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
             } else console.log(error);
+            dispatch(finishLoadingData());
         }
     }
 }
-export const deleteMarcaAPI = (
-    id: string,
-    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
-) => {
+export const deleteBrandAPI = (brandId: string) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { id: sucursalId, userData } = getState().Branch;
-        if (!sucursalId) return;
+        const { userData } = getState().Branch;
         try {
-            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
-            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
-
-            const response: AxiosResponse = await api.delete('productos-ms/delete-marca',
-                { headers: { "X-User-Id": userData.id }, params: { id, sucursalId } }
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.delete(`brand/delete-brand/${brandId}`,
+                { headers: { "X-User-Id": userData.id } }
             );
-            const { data, message } = response.data;
-            dispatch(deleteMarca(data.id));
+            const { data, message }: { data: Brand, message: string } = response.data;
+            dispatch(deleteBrand(data.id));
             dispatch(showNotificationSuccess({ tittle: 'ELIMINACIÓN DE MARCA', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
-
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
+            dispatch(finishLoadingData());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'ELIMINACIÓN DE MARCA', description: data.message }));
                 setTimeout(() => dispatch(hideNotification()), 5000);
-
-                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-                if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
             } else console.log(error);
+            dispatch(finishLoadingData());
         }
 
     }
 }
-export const updateMarcaAPI = (
-    updateMarcaData: UpdateMarcaInterface,
-    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
-) => {
+export const updateBrandAPI = (updateBrandDto: UpdateBrandDto) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { id: sucursalId, userData } = getState().Branch;
-        if (!sucursalId) return;
+        const { userData } = getState().Branch;
         try {
-            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
-            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
-
-            const response: AxiosResponse = await api.patch('productos-ms/update-marca',
-                { sucursalId, ...updateMarcaData }, { headers: { "X-User-Id": userData.id } }
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.patch('brand/update-brand', updateBrandDto,
+                { headers: { "X-User-Id": userData.id } }
             );
-            const { data, message } = response.data;
-            dispatch(updateMarca(data));
+            const { data, message }: { data: Brand, message: string } = response.data;
+            dispatch(updateBrand(data));
             dispatch(showNotificationSuccess({ tittle: 'ACTUALIZACIÓN DE MARCA', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
-
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
+            dispatch(finishLoadingData());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'ACTUALIZACIÓN DE MARCA', description: data.message }));
                 setTimeout(() => dispatch(hideNotification()), 5000);
-
-                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-                if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
             } else console.log(error);
+            dispatch(finishLoadingData());
         }
     }
 }
-export const getAllCategoriasAPI = (
-    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
-) => {
+
+//* ---------------------------------- CATEGORY ---------------------------------------
+export const getCategoriesAPI = () => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { id } = getState().Branch;
-        if (!id) return;
+        const { id: branchId } = getState().Branch;
         try {
-            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
-            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
-
-            const response: AxiosResponse = await api.get(`productos-ms/get-all-categorias/${id}`);
-            dispatch(getAllCategorias(response.data));
-
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
+            const response: AxiosResponse = await api.get(`productos-ms/get-all-categorias/${branchId}`);
+            dispatch(getCategories(response.data));
         } catch (error) {
             console.log(error);
-
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         }
     }
 }
-export const createCategoriaAPI = (
-    createCategoriaData: CreateCategoriaInterface,
-    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
-) => {
+export const createCategoryAPI = (createCategoryDto: CreateCategoryDto) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { id: sucursalId, userData } = getState().Branch;
-        if (!sucursalId) return;
+        const { userData } = getState().Branch;
         try {
-            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
-            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
-
-            const response: AxiosResponse = await api.post('productos-ms/create-categoria',
-                { sucursalId, ...createCategoriaData }, { headers: { "X-User-Id": userData.id } }
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.post('category/create-category', createCategoryDto,
+                { headers: { "X-User-Id": userData.id } }
             );
-            const { data, message } = response.data;
-            dispatch(createCategoria(data));
+            const { data, message }: { data: Category, message: string } = response.data;
+            dispatch(createCategories(data));
             dispatch(showNotificationSuccess({ tittle: 'CREACIÓN DE CATEGORÍA', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
-
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
+            dispatch(finishLoadingData());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'CREACIÓN DE CATEGORÍA', description: data.message }));
                 setTimeout(() => dispatch(hideNotification()), 5000);
-
-                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-                if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
             } else console.log(error);
+            dispatch(finishLoadingData());
         }
     }
 }
-export const deleteCategoriaAPI = (
-    id: string,
-    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
-) => {
+export const deleteCategoryAPI = (categoryId: string) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { id: sucursalId, userData } = getState().Branch;
-        if (!sucursalId) return;
+        const { userData } = getState().Branch;
         try {
-            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
-            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
-
-            const response: AxiosResponse = await api.delete('productos-ms/delete-categoria',
-                { headers: { "X-User-Id": userData.id }, params: { id, sucursalId } }
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.delete(`category/delete-category/${categoryId}`,
+                { headers: { "X-User-Id": userData.id } }
             );
-            const { data, message } = response.data;
-            dispatch(deleteCategoria(data.id));
+            const { data, message }: { data: Category, message: string } = response.data;
+            dispatch(deleteCategory(data.id));
             dispatch(showNotificationSuccess({ tittle: 'ELIMINACIÓN DE CATEGORÍA', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
-
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
+            dispatch(finishLoadingData());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'ELIMINACIÓN DE CATEGORÍA', description: data.message }));
                 setTimeout(() => dispatch(hideNotification()), 5000);
-
-                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-                if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
             } else console.log(error);
+            dispatch(finishLoadingData());
         }
     }
 }
-export const updateCategoriaAPI = (
-    updateCategoriaData: UpdateCategoriaInterface,
-    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
-) => {
+export const updateCategoryAPI = (updateCategoryDto: UpdateCategoryDto) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { id: sucursalId, userData } = getState().Branch;
-        if (!sucursalId) return;
+        const { userData } = getState().Branch;
         try {
-            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
-            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
-
-            const response: AxiosResponse = await api.patch('productos-ms/update-categoria',
-                { sucursalId, ...updateCategoriaData }, { headers: { "X-User-Id": userData.id } }
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.patch('category/update-category', updateCategoryDto,
+                { headers: { "X-User-Id": userData.id } }
             );
-            const { data, message } = response.data;
-            dispatch(updateCategoria(data));
+            const { data, message }: { data: Category, message: string } = response.data;
+            dispatch(updateCategory(data));
             dispatch(showNotificationSuccess({ tittle: 'ACTUALIZACIÓN DE CATEGORÍA', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
-
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
+            dispatch(finishLoadingData());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'ACTUALIZACIÓN DE CATEGORÍA', description: data.message }));
                 setTimeout(() => dispatch(hideNotification()), 5000);
-
-                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-                if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
             } else console.log(error);
+            dispatch(finishLoadingData());
         }
     }
 }
-export const getAllUnidadAPI = (
-    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
-) => {
-    return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { id } = getState().Branch;
-        if (!id) return;
+export const getUnitMeasuresAPI = () => {
+    return async (dispatch: AppDispatch) => {
         try {
-            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
-            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
-
-            const response: AxiosResponse = await api.get(`productos-ms/get-all-logs/${id}`);
-            dispatch(getLogsProductos(response.data));
-
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
+            const response: AxiosResponse = await api.get(`unit-measure/get-unit-measures`);
+            dispatch(getProductLogs(response.data));
         } catch (error) {
             console.log(error);
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         }
     }
 }
-export const getLogsProductosAPI = (
-    desde: string,
-    hasta: string,
-    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
-) => {
+
+export const getUnitMeasuresBranchAPI = () => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { id: sucursalId } = getState().Branch;
-        if (!sucursalId) return;
+        const { id: branchId } = getState().Branch;
         try {
-            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
-            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
-
-            const response: AxiosResponse = await api.post(`productos-ms/get-logs`, { sucursalId, desde, hasta });
-            dispatch(getLogsProductos(response.data));
-
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
+            const response: AxiosResponse = await api.get(`unit-measure/get-unit-measures-branch/${branchId}`);
+            dispatch(getUnitMeasures(response.data));
         } catch (error) {
             console.log(error);
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         }
     }
 }
 
-export const getAllUnidadesMedidaAPI = (
-    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
-) => {
-    return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { id } = getState().Branch;
-        if (!id) return;
+export const toggleUnitMeasureAPI = (toggleUnitMeasureDto: ToggleUnitMeasureDto) => {
+    return async (dispatch: AppDispatch) => {
         try {
-            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
-            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
-
-            const response: AxiosResponse = await api.get(`productos-ms/get-all-unidades-medida`);
-            dispatch(getAllUnidadesMedida(response.data));
-
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
-        } catch (error) {
-            console.log(error);
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
-        }
-    }
-}
-
-export const getAllUnidadesMedidaSucursalAPI = (
-    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
-) => {
-    return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { id: sucursalId } = getState().Branch;
-        if (!sucursalId) return;
-        try {
-            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
-            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
-
-            const response: AxiosResponse = await api.get(`productos-ms/get-all-unidades-medida-sucursal/${sucursalId}`);
-            dispatch(getAllUnidadesMedidaSucursal(response.data));
-
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
-        } catch (error) {
-            console.log(error);
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
-        }
-    }
-}
-
-export const handleUnidadMedidaAPI = (
-    unidadMedidaId: string,
-    loading?: 'LOADING-DATA-START' | 'LOADING-DATA-FINISH' | 'LOADING-DATA-COMPLETE' | 'LOADING-APP-START' | 'LOADING-APP-FINISH' | 'LOADING-APP-COMPLETE',
-) => {
-    return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const { id: sucursalId } = getState().Branch;
-        if (!sucursalId) return;
-        try {
-            if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
-            if ((loading === 'LOADING-APP-START') || (loading === 'LOADING-APP-COMPLETE')) dispatch(startLoadingAplication());
-
-            const response: AxiosResponse = await api.post(`productos-ms/handle-unidad-medida`, { sucursalId, unidadMedidaId });
-            const { message, data }: { message: string, data: UnidadMedidaSucursal } = response.data;
-            dispatch(handleUnidadMedida(data));
+            const response: AxiosResponse = await api.post(`unit-measure/toggle-unit-measure`, toggleUnitMeasureDto);
+            const { data, message }: { data: UnitMeasureBranch, message: string } = response.data;
+            dispatch(toggleUnitMeasure(data));
 
             dispatch(showNotificationSuccess({ tittle: 'ACTUALIZACIÓN DE UNIDADES DE MEDIDA', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
-
-            if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-            if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'ACTUALIZACIÓN DE UNIDADES DE MEDIDA', description: data.message }));
                 setTimeout(() => dispatch(hideNotification()), 5000);
-
-                if ((loading === 'LOADING-DATA-FINISH') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(finishLoadingData());
-                if ((loading === 'LOADING-APP-FINISH') || (loading === 'LOADING-APP-COMPLETE')) dispatch(finishLoadingAplication());
             } else console.log(error);
+        }
+    }
+}
+
+export const getLogsProductosAPI = (getLogsDto: GetLogsDto) => {
+    return async (dispatch: AppDispatch) => {
+        dispatch(startLoadingData());
+        try {
+            const response: AxiosResponse = await api.post(`log/get-logs`, getLogsDto);
+            const {data}:{data:Log[]} = response.data;
+            dispatch(getProductLogs(data));
+        } catch (error) {
+            console.log(error);
         }
     }
 }

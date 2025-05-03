@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import Windows from "../../../../components/Windows";
-import { Producto, Venta } from "../../../../interface";
+import { Product, Venta } from "../../../../interface";
 import { RootState } from "../../../../redux/store";
 import { dateLocal } from "../../../../helpers";
 import { useEffect, useRef, useState } from "react";
@@ -26,7 +26,7 @@ interface ProductoDetalle {
 export default function ViewVenta({ closeButton, venta }: ViewVentaProp) {
     const tableRef = useRef<HTMLTableElement | null>(null);
     const { logo, listUsers: users, data } = useSelector((s: RootState) => s.Branch);
-    const { listaProductos } = useSelector((s: RootState) => s.Productos);
+    const { products: listaProductos } = useSelector((s: RootState) => s.Products);
     const { opcionesVenta } = useSelector((s: RootState) => s.Ventas);
 
     const [responsable, setResponsable] = useState('');
@@ -53,16 +53,16 @@ export default function ViewVenta({ closeButton, venta }: ViewVentaProp) {
     useEffect(() => {
         const usuarioResponsable = users.find(u => u.id === venta?.usuarioId);
         if (usuarioResponsable) setResponsable(`${usuarioResponsable.nombre} ${usuarioResponsable.apellido}`);
-        const listaProductosObj = listaProductos.reduce((acc, p) => { acc[p.id] = p; return acc; }, {} as Record<string, Producto>);
+        const listaProductosObj = listaProductos.reduce((acc, p) => { acc[p.id] = p; return acc; }, {} as Record<string, Product>);
 
         if (venta) {
             const productosDetalle: ProductoDetalle[] = venta.ProductoDetalleVenta.map(p => ({
                 cantidad: p.cantidad,
-                codigo: listaProductosObj[p.productoId].codigo,
-                nombre: listaProductosObj[p.productoId].nombre,
+                codigo: listaProductosObj[p.productoId].code,
+                nombre: listaProductosObj[p.productoId].name,
                 precio: p.precio,
                 productoId: p.productoId,
-                unidadMedida: listaProductosObj[p.productoId].UnidadMedida.abreviatura,
+                unidadMedida: listaProductosObj[p.productoId].UnidadMedida.abbreviation,
                 subTotal: (parseFloat(p.precio) * p.cantidad).toString(),
 
             }))

@@ -16,7 +16,7 @@ interface ViewTraspasoAlmacenProp {
 export default function ViewTraspasoAlmacen({ closeButton, traspaso }: ViewTraspasoAlmacenProp) {
     const { listUsersObj, logo } = useSelector((s: RootState) => s.Branch);
     const { listaAlmacenesObj } = useSelector((s: RootState) => s.Almacenes);
-    const { listaProductosObj } = useSelector((s: RootState) => s.Productos);
+    const { listaProductosObj } = useSelector((s: RootState) => s.Products);
   
 
     return (

@@ -1,8 +1,9 @@
 export interface Log {
     id: string;
-    sucursalId: string;
+    branchId: string;
     userId: string;
-    titulo: string;
-    descripcion: string;
+    module: string;
+    title: string;
+    description: string;
     createdAt: string;
 }

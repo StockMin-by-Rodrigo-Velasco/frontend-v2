@@ -3,32 +3,26 @@ import Windows from "../../../../components/Windows";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { useForm } from "../../../../hooks";
 import { FormEvent } from "react";
-import { createCategoriaAPI } from "../../../../redux/products/productosThunk";
+import { createCategoryAPI } from "../../../../redux/products/productosThunk";
 
 import { InputText, InputTextarea } from "../../../../components/Input";
 import { ButtonColors, ButtonSubmit } from "../../../../components/Buttons";
+import { CreateCategoryDto } from "../../../../interface";
 
-interface DataCreateMarcaInterface {
-  nombre: string;
-  detalle: string;
-}
-interface UpdateMarcaProps {
+interface UpdateCategoryProps {
   closeButton: () => void;
 }
 
-const initialStateMarca: DataCreateMarcaInterface = {
-  nombre: '',
-  detalle:''
-}
-
-export default function CreateCategory({ closeButton }: UpdateMarcaProps) {
+export default function CreateCategory({ closeButton }: UpdateCategoryProps) {
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
+  const { id: branchId } = useSelector((s: RootState) => s.Branch);
+
   const dispatch = useDispatch<AppDispatch>()
-  const { data, handleInputChange } = useForm<DataCreateMarcaInterface>(initialStateMarca);
+  const { data, handleInputChange } = useForm<CreateCategoryDto>({ branchId, name:'', details:'' });
 
   const submitCreateCategoria = (e: FormEvent) => {
     e.preventDefault();
-    dispatch(createCategoriaAPI(data, "LOADING-DATA-COMPLETE"));
+    dispatch(createCategoryAPI(data));
   }
 
   return (
@@ -41,8 +35,8 @@ export default function CreateCategory({ closeButton }: UpdateMarcaProps) {
         <InputText
           handleInputChange={handleInputChange}
           placeholder="*Nombre:"
-          name="nombre"
-          value={data.nombre}
+          name="name"
+          value={data.name}
           disabled={loadingData}
           maxLenght={20}
           required
@@ -50,8 +44,8 @@ export default function CreateCategory({ closeButton }: UpdateMarcaProps) {
         <InputTextarea
           handleInputChange={handleInputChange}
           placeholder="Detalle:"
-          name="detalle"
-          value={data.detalle}
+          name="details"
+          value={data.details||''}
           disabled={loadingData}
         />
 

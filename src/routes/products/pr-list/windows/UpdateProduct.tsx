@@ -6,90 +6,83 @@ import { AppDispatch, RootState } from "../../../../redux/store";
 import { FaEdit } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
 import { FormEvent, useState } from "react";
-import { deleteProductoAPI, updateProductoAPI, updateProductoImagenAPI } from "../../../../redux/products/productosThunk";
+import { deleteProductAPI, updateProductAPI, updateProductImageAPI } from "../../../../redux/products/productosThunk";
 import { Button, ButtonColors, ButtonSubmit } from "../../../../components/Buttons";
 import { BsFillTrashFill } from "react-icons/bs";
 import { hideNotification, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
 import { IoCheckmark, IoClose } from "react-icons/io5";
-import { Producto } from "../../../../interface";
+import { Product, UpdateProductDto } from "../../../../interface";
 import logos from "../../../../assets/logos";
 import { dateLocalWhitTime } from "../../../../helpers";
 
-interface ProductoForDataTable extends Producto {
-  unidadMedida: string;
-  marca: string;
-  categoria: string;
+
+interface ProductoForDataTable extends Product {
+    unitMeasure: string;
+    brand: string;
+    category: string;
 }
-interface ProductoSelectedWindowsPropInterface {
-    producto: ProductoForDataTable,
+interface UpdateProductProp {
+    product: ProductoForDataTable,
     closeButton: () => void
 }
-interface FormUpdateProducto {
-    codigo: string;
-    nombre: string;
-    descripcion: string;
-    categoriaId: string;
-    marcaId: string;
-    unidadMedidaId: string;
-}
 
 
-export default function UpdateProduct({ producto, closeButton }: ProductoSelectedWindowsPropInterface) {
+export default function UpdateProduct({ product, closeButton }: UpdateProductProp) {
 
     const { loadingData } = useSelector((s: RootState) => s.Aplication);
     const { type: typeNotification, showNotification } = useSelector((s: RootState) => s.Notification);
-    const { idUltimoProductoEliminado, listaCategorias, listaMarcas, listaUnidadesMedida } = useSelector((s: RootState) => s.Productos);
+    const { idDeletedProduct, categories, brands, unitMeasures } = useSelector((s: RootState) => s.Products);
     const dispatch = useDispatch<AppDispatch>();
-    const { codigo, nombre, descripcion, categoriaId, marcaId, unidadMedidaId } = producto;
-    const { data, handleInputChange, resetData } = useForm<FormUpdateProducto>({ codigo, nombre, descripcion, categoriaId, marcaId, unidadMedidaId });
+    // const { code, name, description, categoryId, brandId, unitMeasureId } = producto;
+    const { data: dataUpdate, handleInputChange, resetData } = useForm<UpdateProductDto>(product);
     const [editMode, setEditMode] = useState(false);
     const [editModeImagen, setEditModeImagen] = useState(false);
-    const [imagen, setImagen] = useState<File|undefined>(undefined);
+    const [image, setImage] = useState<File | undefined>(undefined);
 
-    const updateProducto = (e: FormEvent) => {
+    const updateProduct = (e: FormEvent) => {
         e.preventDefault();
-        dispatch(updateProductoAPI({id: producto.id, ...data}, "LOADING-DATA-COMPLETE"));       
+        dispatch(updateProductAPI(dataUpdate));
     }
-    const updateProductoImagen = () => {
-        dispatch(updateProductoImagenAPI({id: producto.id, imagenUrl: producto.imagen, imagen}, "LOADING-DATA-COMPLETE"))
+    const updateProductImage = () => {
+        dispatch(updateProductImageAPI(product.id, image));
     }
-    const cancelUpdateProducto = () => {
+    const cancelUpdateProduct = () => {
         resetData();
         setEditMode(false);
     }
 
-    const deleteProducto = () => {
-        if( typeNotification === 'WARNING' && showNotification ){
-            dispatch(deleteProductoAPI(producto.id, "LOADING-DATA-COMPLETE"));
+    const deleteProduct = () => {
+        if (typeNotification === 'WARNING' && showNotification) {
+            dispatch(deleteProductAPI(product.id));
             dispatch(hideNotification());
-        }else{
-            dispatch(showNotificationWarning({tittle: 'Eliminar producto', description: 'Si deseas continuar vuelve a presionar el botón de eliminación, caso contrario cierra este mensaje'}))
+        } else {
+            dispatch(showNotificationWarning({ tittle: 'Eliminar producto', description: 'Si deseas continuar vuelve a presionar el botón de eliminación, caso contrario cierra este mensaje' }))
         }
     }
 
     return (
-        <Windows tittle={producto.nombre} closeButton={closeButton} 
-            footer={`Creación: ${dateLocalWhitTime(producto.createdAt)} - Ultima actualización: ${dateLocalWhitTime(producto.updatedAt)}`} 
+        <Windows tittle={product.name} closeButton={closeButton}
+            footer={`Creación: ${dateLocalWhitTime(product.createdAt)} - Ultima actualización: ${dateLocalWhitTime(product.updatedAt)}`}
         >
             <div className="p-4 flex relative">
-                {(idUltimoProductoEliminado === producto.id)&&
+                {(idDeletedProduct === product.id) &&
                     <div className="bg-black/20 absolute top-0 right-0 left-0 bottom-0 z-10 flex justify-center items-center backdrop-blur-[2px]" >
                         <h1 className="text-danger text-[50px] font-bold" >ELIMINADO</h1>
                     </div>
                 }
                 <div className="flex items-center relative" >
-                    {editModeImagen?
+                    {editModeImagen ?
                         <div className="absolute top-1 right-1 flex text-white">
-                            <button 
-                                onClick={updateProductoImagen}
-                                className="bg-success bg-opacity-80 rounded-full w-5 h-5 flex justify-center items-center me-2 hover:bg-opacity-100" 
+                            <button
+                                onClick={updateProductImage}
+                                className="bg-success bg-opacity-80 rounded-full w-5 h-5 flex justify-center items-center me-2 hover:bg-opacity-100"
                                 type="button"
                             >
                                 <IoCheckmark />
                             </button>
-                            <button 
+                            <button
                                 onClick={() => setEditModeImagen(false)}
-                                className="bg-danger bg-opacity-80 rounded-full w-5 h-5 flex justify-center items-center hover:bg-opacity-100" 
+                                className="bg-danger bg-opacity-80 rounded-full w-5 h-5 flex justify-center items-center hover:bg-opacity-100"
                                 type="button"
                             >
                                 <IoClose />
@@ -97,27 +90,27 @@ export default function UpdateProduct({ producto, closeButton }: ProductoSelecte
                         </div>
                         :
                         <div className="absolute top-1 right-1 flex text-white">
-                            <button 
+                            <button
                                 onClick={() => setEditModeImagen(true)}
-                                className="bg-secondary bg-opacity-80 rounded-full w-7 h-7 flex justify-center items-center hover:bg-opacity-100" 
+                                className="bg-secondary bg-opacity-80 rounded-full w-7 h-7 flex justify-center items-center hover:bg-opacity-100"
                                 type="button"
                             >
-                                <FaEdit/>
+                                <FaEdit />
                             </button>
                         </div>
                     }
-                    <InputFileImage name="file" imageDefault={producto.imagen === ''? logos.logoNoImage:producto.imagen} placeholder="Subir imagen..." setFileValue={setImagen} disabled={!editModeImagen} />
+                    <InputFileImage name="file" imageDefault={product.image === '' ? logos.logoNoImage : product.image} placeholder="Subir imagen..." setFileValue={setImage} disabled={!editModeImagen} />
                 </div>
 
                 <div className="ms-3" >
-                    <form className="flex flex-col" onSubmit={updateProducto} >
+                    <form className="flex flex-col" onSubmit={updateProduct} >
                         <div className="flex items-center text-center border-b-[1px] border-secondary mb-2 text-secondary">
                             <span className="me-3" >INFORMACIÓN</span>
                             <button
                                 type="button"
                                 className="disabled:cursor-not-allowed"
                                 disabled={loadingData}
-                                onClick={() => {setEditMode(s=> !s)}}
+                                onClick={() => { setEditMode(s => !s) }}
                             >
                                 {!loadingData && <FaEdit />}
                                 {loadingData && <AiOutlineLoading className="ms-2 animate-spin" />}
@@ -127,24 +120,24 @@ export default function UpdateProduct({ producto, closeButton }: ProductoSelecte
                             <div>
                                 <InputText
                                     handleInputChange={handleInputChange}
-                                    value={data.codigo}
-                                    name="codigo"
+                                    value={dataUpdate.code || ''}
+                                    name="code"
                                     placeholder="*Código:"
                                     disabled={!editMode}
 
                                 />
                                 <InputText
                                     handleInputChange={handleInputChange}
-                                    value={data.nombre}
-                                    name="nombre"
+                                    value={dataUpdate.name || ''}
+                                    name="name"
                                     placeholder="*Nombre:"
                                     disabled={!editMode}
 
                                 />
                                 <InputTextarea
                                     handleInputChange={handleInputChange}
-                                    value={data.descripcion}
-                                    name="descripcion"
+                                    value={dataUpdate.description || ''}
+                                    name="description"
                                     placeholder="Descripción"
                                     disabled={!editMode}
                                 />
@@ -152,47 +145,47 @@ export default function UpdateProduct({ producto, closeButton }: ProductoSelecte
                             <div className="flex flex-col ms-3" >
                                 <InputSelect
                                     handleInputChange={handleInputChange}
-                                    value={data.categoriaId}
-                                    name='categoriaId'
+                                    value={dataUpdate.categoryId || ''}
+                                    name='categoryId'
                                     placeholder="*Categoría:"
-                                    options={listaCategorias.map(c => ({name: c.nombre, value: c.id}))}
+                                    options={categories.map(c => ({ name: c.name, value: c.id }))}
                                     disabled={!editMode}
                                 />
                                 <InputSelect
                                     handleInputChange={handleInputChange}
-                                    value={data.marcaId}
-                                    name='marcaId'
+                                    value={dataUpdate.branchId || ''}
+                                    name='branchId'
                                     placeholder="*Marca:"
-                                    options={listaMarcas.map(m => ({ name: m.nombre, value: m.id }))}
+                                    options={brands.map(m => ({ name: m.name, value: m.id }))}
                                     disabled={!editMode}
                                 />
                                 <InputSelect
                                     handleInputChange={handleInputChange}
-                                    value={data.unidadMedidaId}
-                                    name='unidadMedidaId'
+                                    value={dataUpdate.unitMeasureId || ''}
+                                    name='unitMeasureId'
                                     placeholder="*U. Medida:"
-                                    options={listaUnidadesMedida.map(m => ({ name: m.nombre, value: m.id }))}
+                                    options={unitMeasures.map(m => ({ name: m.name, value: m.id }))}
                                     disabled={!editMode}
                                 />
                             </div>
                         </div>
 
                         <div className="border-t-[1px] border-secondary mt-2 pt-2 flex" >
-                            <ButtonSubmit label="Guardar" color={ButtonColors.success} className="me-3" disabled={!editMode} loading={loadingData} spinner/>
-                            <Button label="Cancelar" color={ButtonColors.danger} disabled={!editMode} loading={loadingData} onClick={cancelUpdateProducto}/>
-                            {/* {editMode&& 
-                            <button 
-                                onClick={deleteProducto}
-                                type="button"
-                                disabled= {!editMode || loadingData}
-                                // disabled
-                                className="bg-warning bg-opacity-80 flex justify-center items-center text-white rounded-full w-7 h-7 ms-auto hover:bg-opacity-100 disabled:bg-secondary disabled:cursor-not-allowed"> 
-                                {loadingData?
-                                    <AiOutlineLoading className="animate-spin"/>
-                                    :
-                                    <BsFillTrashFill/> 
-                                }
-                            </button>} */}
+                            <ButtonSubmit label="Guardar" color={ButtonColors.success} className="me-3" disabled={!editMode} loading={loadingData} spinner />
+                            <Button label="Cancelar" color={ButtonColors.danger} disabled={!editMode} loading={loadingData} onClick={cancelUpdateProduct} />
+                            {editMode &&
+                                <button
+                                    onClick={deleteProduct}
+                                    type="button"
+                                    disabled={!editMode || loadingData}
+                                    // disabled
+                                    className="bg-warning bg-opacity-80 flex justify-center items-center text-white rounded-full w-7 h-7 ms-auto hover:bg-opacity-100 disabled:bg-secondary disabled:cursor-not-allowed">
+                                    {loadingData ?
+                                        <AiOutlineLoading className="animate-spin" />
+                                        :
+                                        <BsFillTrashFill />
+                                    }
+                                </button>}
                         </div>
                     </form>
                 </div>

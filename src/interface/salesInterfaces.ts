@@ -1,4 +1,4 @@
-import { Categoria, Marca, UnidadMedida } from "./productsInterface";
+import { Category, Brand, UnitMeasure } from "./productsInterface";
 
 export interface ProductoTienda {
 
@@ -14,9 +14,9 @@ export interface ProductoTienda {
     cantidadCotizacion?: number;
     precio: string;
 
-    Marca: Marca;
-    Categoria: Categoria;
-    UnidadMedida: UnidadMedida;
+    Marca: Brand;
+    Categoria: Category;
+    UnidadMedida: UnitMeasure;
 
     createdAt?: string | undefined;
     updatedAt?: string | undefined;

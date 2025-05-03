@@ -53,7 +53,7 @@ const columns: FormTableColumn<FormTable>[] = [
 
 export default function RegistarProductosAlmacenWindow({ closeButton }: CreateManyProductosAlmacenProp) {
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
-  const { listaProductos } = useSelector((s: RootState) => s.Productos);
+  const { products: listaProductos } = useSelector((s: RootState) => s.Products);
   const { selectedAlmacen, listaProductosAlmacen } = useSelector((s: RootState) => s.Almacenes);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -84,15 +84,15 @@ export default function RegistarProductosAlmacenWindow({ closeButton }: CreateMa
     const newProductosOutAlmacen: ProductosOutAlmacen[] = listaProductos
     .map(p => ({
         productoId: p.id,
-        codigo: p.codigo,
-        nombre: p.nombre,
-        imagen: p.imagen,
+        codigo: p.code,
+        nombre: p.name,
+        imagen: p.image,
         categoriaId: p.Categoria.id,
-        categoria: p.Categoria.nombre,
-        marcaId: p.marcaId,
-        marca: p.Marca.nombre,
-        unidadMedidaId: p.unidadMedidaId,
-        unidadMedidaAbreviada: p.UnidadMedida.abreviatura,
+        categoria: p.Categoria.name,
+        marcaId: p.brandId,
+        marca: p.Marca.name,
+        unidadMedidaId: p.unitMeasureId,
+        unidadMedidaAbreviada: p.UnidadMedida.abbreviation,
         registered: idsRegistered.has(p.id),
         selected: idsSelected.has(p.id),
         show: true

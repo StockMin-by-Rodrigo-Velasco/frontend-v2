@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 import LoadingModule from "../../components/LoadingModule";
 
-import { getAllCategoriasAPI, getAllMarcasAPI, getAllProductosAPI } from "../../redux/products/productosThunk";
+import { getCategoriesAPI, getBrandsAPI, getProductsAPI } from "../../redux/products/productosThunk";
 
 import { getAllAlmacenesAPI } from "../../redux/warehouses/almacenThunks";
 
@@ -17,9 +17,9 @@ export default function Warehouses() {
 
   useEffect(() => {
     dispatch(getAllAlmacenesAPI("LOADING-APP-START"));
-    dispatch(getAllMarcasAPI());
-    dispatch(getAllCategoriasAPI());
-    dispatch(getAllProductosAPI("LOADING-APP-FINISH"));
+    dispatch(getBrandsAPI());
+    dispatch(getCategoriesAPI());
+    dispatch(getProductsAPI("LOADING-APP-FINISH"));
   }, [id])
 
   return (

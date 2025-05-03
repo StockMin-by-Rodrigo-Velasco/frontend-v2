@@ -7,29 +7,22 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { FaEdit } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
-import { deleteCategoriaAPI, updateCategoriaAPI } from "../../../../redux/products/productosThunk";
+import { deleteCategoryAPI, updateCategoryAPI } from "../../../../redux/products/productosThunk";
 import { hideNotification, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
 import { BsFillTrashFill } from "react-icons/bs";
+import { Category } from "../../../../interface";
 
-
-interface DataCategoriaInterface {
-  id: string;
-  sucursalId: string;
-  nombre: string;
-  detalle: string;
-  deleted: boolean;
-}
 interface UpdateCategoriaProps {
   closeButton: () => void;
-  dataUpdate: DataCategoriaInterface
+  dataUpdate: Category
 }
 
 export default function UpdateCategory({ dataUpdate, closeButton }: UpdateCategoriaProps) {
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
-  const { idUltimaCategoriaEliminada } = useSelector((s: RootState) => s.Productos);
+  const { idDeletedCategory: idUltimaCategoriaEliminada } = useSelector((s: RootState) => s.Products);
   const { type: typeNotification, showNotification } = useSelector((s: RootState) => s.Notification);
   const dispatch = useDispatch<AppDispatch>()
-  const { data, handleInputChange, resetData } = useForm<DataCategoriaInterface>(dataUpdate);
+  const { data, handleInputChange, resetData } = useForm<Category>(dataUpdate);
   const [editMode, setEditMode] = useState(false);
 
   const cancelUpdate = () => {
@@ -40,18 +33,21 @@ export default function UpdateCategory({ dataUpdate, closeButton }: UpdateCatego
   const submitUpdate = (e: FormEvent) => {
     e.preventDefault();
     const { deleted, ...res } = data;
-    dispatch(updateCategoriaAPI(res, "LOADING-DATA-COMPLETE"));
+    dispatch(updateCategoryAPI(res));
   }
 
-  const deleteCategoria = () => {
+  const deleteCategory = () => {
     if (typeNotification === 'WARNING' && showNotification) {
-      dispatch(deleteCategoriaAPI(dataUpdate.id, "LOADING-DATA-COMPLETE"));
+      dispatch(deleteCategoryAPI(dataUpdate.id));
       dispatch(hideNotification());
     } else {
-      dispatch(showNotificationWarning({ tittle: 'Eliminar categoría', description: 'Si deseas continuar vuelve a presionar el botón de eliminación, caso contrario cierra este mensaje' }))
+      dispatch(showNotificationWarning(
+        { 
+          tittle: 'Eliminar categoría', 
+          description: 'Si deseas continuar vuelve a presionar el botón de eliminación, caso contrario cierra este mensaje' 
+        }))
     }
   }
-
 
   return (
     <Windows tittle='Detalles de categoría' closeButton={closeButton} >
@@ -78,24 +74,24 @@ export default function UpdateCategory({ dataUpdate, closeButton }: UpdateCatego
         <InputText
           handleInputChange={handleInputChange}
           placeholder="*Nombre:"
-          name="nombre"
+          name="name"
           maxLenght={20}
-          value={data.nombre}
+          value={data.name}
           disabled={!editMode || loadingData}
         />
         <InputTextarea
           handleInputChange={handleInputChange}
           placeholder="Detalle:"
-          name="detalle"
-          value={data.detalle}
+          name="details"
+          value={data.details}
           disabled={!editMode || loadingData}
         />
 
         <div className="flex mt-3 justify-center" >
           <ButtonSubmit label="Guardar" color={ButtonColors.success} className="me-3" disabled={!editMode || loadingData} loading={loadingData} spinner />
           <Button label="Cancelar" color={ButtonColors.danger} disabled={!editMode || loadingData} loading={loadingData} onClick={cancelUpdate} />
-          {/* {editMode && <button
-            onClick={deleteCategoria}
+          {editMode && <button
+            onClick={deleteCategory}
             type="button"
             disabled={!editMode || loadingData}
             className="bg-warning bg-opacity-80 flex justify-center items-center text-white rounded-full w-7 h-7 ms-auto hover:bg-opacity-100 disabled:bg-secondary disabled:cursor-not-allowed">
@@ -104,7 +100,7 @@ export default function UpdateCategory({ dataUpdate, closeButton }: UpdateCatego
               :
               <BsFillTrashFill />
             }
-          </button>} */}
+          </button>}
         </div>
       </form>
     </Windows>

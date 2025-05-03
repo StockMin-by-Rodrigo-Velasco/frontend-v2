@@ -363,7 +363,7 @@ export const getAllProductosVentaAPI = (
 ) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id } = getState().Branch;
-        const { listaProductos } = getState().Productos;
+        const { products: listaProductos } = getState().Products;
         if (!id || precioVentaId === '' || almacenId === '') return;
         try {
             if ((loading === 'LOADING-DATA-START') || (loading === 'LOADING-DATA-COMPLETE')) dispatch(startLoadingData());
@@ -384,10 +384,10 @@ export const getAllProductosVentaAPI = (
                 Categoria: p.Categoria,
                 Marca: p.Marca,
                 UnidadMedida: p.UnidadMedida,
-                codigo: p.codigo,
-                imagen: p.imagen,
-                descripcion: p.descripcion,
-                nombre: p.nombre,
+                codigo: p.code,
+                imagen: p.image,
+                descripcion: p.description,
+                nombre: p.name,
                 cantidad: productosAlmacenObj[p.id]?.cantidad || 0,
                 precio: productosVentaObj[p.id]?.precio || '-',
                 createdAt: productosVentaObj[p.id]?.createdAt,

@@ -4,7 +4,7 @@ import api from '../../api/config';
 import { createAlmacen, createManyProductosAlmacen, createProductoAlmacen, createTraspasoProductosAlmacen, getAllAlmacenes, getAllIngresosProductosAlmacen, getAllProductosAlmacen, getAllTraspasosProductosAlmacen, getLogsAlmacenes, updateAlmacen, updateManyProductosAlmacen, updateProductoAlmacen } from './almacenesSlice';
 import { finishLoadingAplication, finishLoadingData, startLoadingAplication, startLoadingData } from '../aplication/aplicationSlice';
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from '../notification/notificationSlice';
-import { CreateIngresoAlmacenDto, CreateManyProductosAlmacenDto, CreateProductoAlmacenDto, IngresoAlmacen, ProductoAlmacenDetallado, ProductoAlmacen, CreateAlmacenDto, Almacen, UpdateAlmacenDto, Producto, ListTransactionProductosAlmacenDto, CreateDocTraspasoAlmacenDto, DocTraspasoProductoAlmacen } from '../../interface';
+import { CreateIngresoAlmacenDto, CreateManyProductosAlmacenDto, CreateProductoAlmacenDto, IngresoAlmacen, ProductoAlmacenDetallado, ProductoAlmacen, CreateAlmacenDto, Almacen, UpdateAlmacenDto, Product, ListTransactionProductosAlmacenDto, CreateDocTraspasoAlmacenDto, DocTraspasoProductoAlmacen } from '../../interface';
 
 
 export const getAllAlmacenesAPI = (
@@ -106,9 +106,9 @@ export const getAllProductosAlmacenAPI = (
 ) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { selectedAlmacen } = getState().Almacenes;
-        const { listaProductos } = getState().Productos;
+        const { products: listaProductos } = getState().Products;
 
-        const listaProductosObj = listaProductos.reduce((acc, p) => { acc[p.id] = p; return acc }, {} as Record<string, Producto>)
+        const listaProductosObj = listaProductos.reduce((acc, p) => { acc[p.id] = p; return acc }, {} as Record<string, Product>)
 
         if (!selectedAlmacen.id) return;
         try {
@@ -123,14 +123,14 @@ export const getAllProductosAlmacenAPI = (
                     id: p.id,
                     productoId: p.productoId,
                     almacenId: p.almacenId,
-                    codigo: listaProductosObj[p.productoId].codigo,
-                    nombre: listaProductosObj[p.productoId].nombre,
-                    descripcion: listaProductosObj[p.productoId].descripcion,
-                    imagen: listaProductosObj[p.productoId].imagen,
-                    categoria: listaProductosObj[p.productoId].Categoria.nombre,
-                    marca: listaProductosObj[p.productoId].Marca.nombre,
-                    unidadMedida: listaProductosObj[p.productoId].UnidadMedida.nombre,
-                    unidadMedidaAbreviada: listaProductosObj[p.productoId].UnidadMedida.abreviatura,
+                    codigo: listaProductosObj[p.productoId].code,
+                    nombre: listaProductosObj[p.productoId].name,
+                    descripcion: listaProductosObj[p.productoId].description,
+                    imagen: listaProductosObj[p.productoId].image,
+                    categoria: listaProductosObj[p.productoId].Categoria.name,
+                    marca: listaProductosObj[p.productoId].Marca.name,
+                    unidadMedida: listaProductosObj[p.productoId].UnidadMedida.name,
+                    unidadMedidaAbreviada: listaProductosObj[p.productoId].UnidadMedida.abbreviation,
                     cantidad: p.cantidad,
                     cantidadMinima: p.cantidadMinima,
                     createdAt: p.createdAt,
@@ -185,9 +185,9 @@ export const createProductoAlmacenAPI = (
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: sucursalId, userData } = getState().Branch;
         const { selectedAlmacen } = getState().Almacenes
-        const { listaProductos } = getState().Productos;
+        const { products: listaProductos } = getState().Products;
 
-        const listaProductosObj = listaProductos.reduce((acc, producto) => { acc[producto.id] = producto; return acc; }, {} as Record<string, Producto>);
+        const listaProductosObj = listaProductos.reduce((acc, producto) => { acc[producto.id] = producto; return acc; }, {} as Record<string, Product>);
 
         if (!userData) return;
         try {
@@ -204,14 +204,14 @@ export const createProductoAlmacenAPI = (
                 id: data.id,
                 productoId: data.productoId,
                 almacenId: data.almacenId,
-                codigo: listaProductosObj[data.productoId].codigo,
-                nombre: listaProductosObj[data.productoId].nombre,
-                descripcion: listaProductosObj[data.productoId].descripcion,
-                imagen: listaProductosObj[data.productoId].imagen,
-                categoria: listaProductosObj[data.productoId].Categoria.nombre,
-                marca: listaProductosObj[data.productoId].Marca.nombre,
-                unidadMedida: listaProductosObj[data.productoId].UnidadMedida.nombre,
-                unidadMedidaAbreviada: listaProductosObj[data.productoId].UnidadMedida.abreviatura,
+                codigo: listaProductosObj[data.productoId].code,
+                nombre: listaProductosObj[data.productoId].name,
+                descripcion: listaProductosObj[data.productoId].description,
+                imagen: listaProductosObj[data.productoId].image,
+                categoria: listaProductosObj[data.productoId].Categoria.name,
+                marca: listaProductosObj[data.productoId].Marca.name,
+                unidadMedida: listaProductosObj[data.productoId].UnidadMedida.name,
+                unidadMedidaAbreviada: listaProductosObj[data.productoId].UnidadMedida.abbreviation,
                 cantidad: data.cantidad,
                 cantidadMinima: data.cantidadMinima,
                 createdAt: data.createdAt,
@@ -282,9 +282,9 @@ export const createManyProductosAlmacenAPI = (
 ) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: sucursalId, userData } = getState().Branch;
-        const { listaProductos } = getState().Productos;
+        const { products: listaProductos } = getState().Products;
 
-        const listaProductosObj = listaProductos.reduce((acc, producto) => { acc[producto.id] = producto; return acc; }, {} as Record<string, Producto>);
+        const listaProductosObj = listaProductos.reduce((acc, producto) => { acc[producto.id] = producto; return acc; }, {} as Record<string, Product>);
 
         if (!userData) return;
         try {
@@ -300,14 +300,14 @@ export const createManyProductosAlmacenAPI = (
                     id: p.id,
                     productoId: p.productoId,
                     almacenId: p.almacenId,
-                    codigo: listaProductosObj[p.productoId].codigo,
-                    nombre: listaProductosObj[p.productoId].nombre,
-                    descripcion: listaProductosObj[p.productoId].descripcion,
-                    imagen: listaProductosObj[p.productoId].imagen,
-                    categoria: listaProductosObj[p.productoId].Categoria.nombre,
-                    marca: listaProductosObj[p.productoId].Marca.nombre,
-                    unidadMedida: listaProductosObj[p.productoId].UnidadMedida.nombre,
-                    unidadMedidaAbreviada: listaProductosObj[p.productoId].UnidadMedida.abreviatura,
+                    codigo: listaProductosObj[p.productoId].code,
+                    nombre: listaProductosObj[p.productoId].name,
+                    descripcion: listaProductosObj[p.productoId].description,
+                    imagen: listaProductosObj[p.productoId].image,
+                    categoria: listaProductosObj[p.productoId].Categoria.name,
+                    marca: listaProductosObj[p.productoId].Marca.name,
+                    unidadMedida: listaProductosObj[p.productoId].UnidadMedida.name,
+                    unidadMedidaAbreviada: listaProductosObj[p.productoId].UnidadMedida.abbreviation,
                     cantidad: p.cantidad,
                     cantidadMinima: p.cantidadMinima,
                     createdAt: p.createdAt,

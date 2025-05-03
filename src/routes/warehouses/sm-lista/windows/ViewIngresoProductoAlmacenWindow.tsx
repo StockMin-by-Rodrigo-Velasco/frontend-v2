@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import Windows from "../../../../components/Windows";
-import { IngresoAlmacen, IngresoProductosAlmacen, Producto, User } from "../../../../interface";
+import { IngresoAlmacen, IngresoProductosAlmacen, Product, User } from "../../../../interface";
 import { RootState } from "../../../../redux/store";
 import { dateLocal } from "../../../../helpers";
 import { useEffect, useState } from "react";
@@ -70,13 +70,13 @@ const initialUser:User = { id:'',sucursalId:'', nombre:'', apellido:'', ci:'', i
 
 export default function ViewIngresoProductoAlmacenWindow({ closeButton, data }: ViewIngresoProductoAlmacenWindowProp) {
   const { logo, listUsers: users } = useSelector((s: RootState) => s.Branch);
-  const { listaProductos } = useSelector((s: RootState) => s.Productos);
+  const { products: listaProductos } = useSelector((s: RootState) => s.Products);
 
   const [ingresoProductos, setIngresoProductos] = useState<ProductoForDataTable[]>([]);
   const [userData, setUserData] = useState<User>(initialUser);
 
   useEffect(() => {
-    const productosSucursal = listaProductos.reduce((acc, producto) => { acc[producto.id] = producto; return acc; }, {} as Record<string, Producto>);
+    const productosSucursal = listaProductos.reduce((acc, producto) => { acc[producto.id] = producto; return acc; }, {} as Record<string, Product>);
 
     const newUserData: User = users.find(u => u.id === data.usuarioId) || initialUser;
 
@@ -91,15 +91,15 @@ export default function ViewIngresoProductoAlmacenWindow({ closeButton, data }: 
         cantidad: p.cantidad,
         cantidadMinima: p.ProductoAlmacen.cantidadMinima,
 
-        codigo: productosSucursal[p.ProductoAlmacen.productoId].codigo,
-        nombre: productosSucursal[p.ProductoAlmacen.productoId].nombre,
-        imagen: productosSucursal[p.ProductoAlmacen.productoId].imagen,
-        categoriaId: productosSucursal[p.ProductoAlmacen.productoId].categoriaId,
-        categoria: productosSucursal[p.ProductoAlmacen.productoId].Categoria.nombre,
-        marcaId: productosSucursal[p.ProductoAlmacen.productoId].marcaId,
-        marca: productosSucursal[p.ProductoAlmacen.productoId].Marca.nombre,
-        unidadMedidaId: productosSucursal[p.ProductoAlmacen.productoId].unidadMedidaId,
-        unidadMedidaAbreviada: productosSucursal[p.ProductoAlmacen.productoId].UnidadMedida.abreviatura,
+        codigo: productosSucursal[p.ProductoAlmacen.productoId].code,
+        nombre: productosSucursal[p.ProductoAlmacen.productoId].name,
+        imagen: productosSucursal[p.ProductoAlmacen.productoId].image,
+        categoriaId: productosSucursal[p.ProductoAlmacen.productoId].categoryId,
+        categoria: productosSucursal[p.ProductoAlmacen.productoId].Categoria.name,
+        marcaId: productosSucursal[p.ProductoAlmacen.productoId].brandId,
+        marca: productosSucursal[p.ProductoAlmacen.productoId].Marca.name,
+        unidadMedidaId: productosSucursal[p.ProductoAlmacen.productoId].unitMeasureId,
+        unidadMedidaAbreviada: productosSucursal[p.ProductoAlmacen.productoId].UnidadMedida.abbreviation,
         show: true
       }));
     setIngresoProductos(newIngresoProductos);

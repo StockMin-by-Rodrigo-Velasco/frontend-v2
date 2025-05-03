@@ -45,6 +45,13 @@ export interface UserPermission {
 
 
 // ------------- DTOs ----------------
+export interface GetLogsDto{
+    branchId: string;
+    module: string;
+    from: string;
+    to: string;
+}
+
 export interface LoginBranchDto {
     code: string;
     password: string;
@@ -60,7 +67,6 @@ export interface LoginUserDto {
     branchId: string;
     password: string;
 }
-
 
 export interface CreateUserDto {
     branchId: string;

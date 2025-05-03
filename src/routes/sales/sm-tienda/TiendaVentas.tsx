@@ -32,7 +32,7 @@ export default function TiendaVentas() {
     const { id: sucursalId } = useSelector((s: RootState) => s.Branch);
     const { opcionesVenta, listaPrecioVenta, listaProductosTienda } = useSelector((s: RootState) => s.Ventas);
     const { listaAlmacenes } = useSelector((s: RootState) => s.Almacenes);
-    const { listaMarcas, listaCategorias } = useSelector((s: RootState) => s.Productos);
+    const { brands: listaMarcas, categories: listaCategorias } = useSelector((s: RootState) => s.Products);
 
     const dispatch = useDispatch<AppDispatch>();
 
@@ -161,7 +161,7 @@ export default function TiendaVentas() {
                     value={filter.categoria}
                     name="categoria"
                     placeholder="Categoría: "
-                    options={listaCategorias.map(m => ({ value: m.nombre, name: m.nombre }))}
+                    options={listaCategorias.map(m => ({ value: m.name, name: m.name }))}
                     optionDefault="Todas..."
                     handleInputChange={filterProductos}
                 />
@@ -170,7 +170,7 @@ export default function TiendaVentas() {
                     className="ms-3"
                     name="marca"
                     placeholder="Marca: "
-                    options={listaMarcas.map(m => ({ value: m.nombre, name: m.nombre }))}
+                    options={listaMarcas.map(m => ({ value: m.name, name: m.name }))}
                     optionDefault="Todas..."
                     handleInputChange={filterProductos}
                 />

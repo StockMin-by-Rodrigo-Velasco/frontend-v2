@@ -3,37 +3,32 @@ import Windows from "../../../../components/Windows";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { useForm } from "../../../../hooks";
 import { FormEvent } from "react";
-import { createMarcaAPI } from "../../../../redux/products/productosThunk";
+import { createBrandAPI } from "../../../../redux/products/productosThunk";
 
 import { InputText, InputTextarea } from "../../../../components/Input";
 import { ButtonColors, ButtonSubmit } from "../../../../components/Buttons";
+import { CreateBrandDto } from "../../../../interface";
 
-interface DataCreateMarcaInterface {
-  nombre: string;
-  origen: string;
-}
+
 interface UpdateMarcaProps {
   closeButton: () => void;
 }
 
-const initialStateMarca: DataCreateMarcaInterface = {
-  nombre: '',
-  origen:''
-}
-
 export default function CreateBrand({ closeButton }: UpdateMarcaProps) {
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
-  const dispatch = useDispatch<AppDispatch>()
-  const { data, handleInputChange } = useForm<DataCreateMarcaInterface>(initialStateMarca);
+  const { id: branchId } = useSelector((s: RootState) => s.Branch);
 
-  const submitCreateMarca = (e: FormEvent) => {
+  const dispatch = useDispatch<AppDispatch>()
+  const { data, handleInputChange } = useForm<CreateBrandDto>({branchId, name:'', origin:''});
+
+  const submitCreateBrand = (e: FormEvent) => {
     e.preventDefault();
-    dispatch(createMarcaAPI(data, "LOADING-DATA-COMPLETE"));
+    dispatch(createBrandAPI(data));
   }
 
   return (
     <Windows tittle='Crear nueva marca' closeButton={closeButton} >
-      <form className="px-5 py-3 relative" onSubmit={submitCreateMarca} >
+      <form className="px-5 py-3 relative" onSubmit={submitCreateBrand} >
 
         <div className="mb-8 flex items-center justify-center border-b-[1px] border-secondary text-secondary">
           <span className="me-3" >INFORMACIÓN</span>
@@ -41,8 +36,8 @@ export default function CreateBrand({ closeButton }: UpdateMarcaProps) {
         <InputText
           handleInputChange={handleInputChange}
           placeholder="*Nombre:"
-          name="nombre"
-          value={data.nombre}
+          name="name"
+          value={data.name}
           maxLenght={20}
           disabled={loadingData}
           required
@@ -50,8 +45,8 @@ export default function CreateBrand({ closeButton }: UpdateMarcaProps) {
         <InputTextarea
           handleInputChange={handleInputChange}
           placeholder="Origen:"
-          name="origen"
-          value={data.origen}
+          name="origin"
+          value={data.origin||''}
           disabled={loadingData}
         />
 

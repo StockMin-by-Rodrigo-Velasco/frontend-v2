@@ -33,31 +33,37 @@ export const loginBranchAPI = (
     }
 }
 
-export const getBranchModuleDataAPI = (
-    navigate: (path: string) => void,
-) => {
-    return async (dispatch: AppDispatch) => {
+export const getBranchModuleDataAPI = (navigate: (path: string) => void) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {id: branchId, userData} = getState().Branch;
+        let bId = branchId;
+        
         try {
+            dispatch(startLoadingAplication());
             //* 1. Verificar token de SUCURSAL
             const token = Cookie.get('token');
             if (token) {
-                dispatch(startLoadingAplication());
-                const res: AxiosResponse = await api.get('branch/verify-branch-token', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                const { data: branchData, token: newToken }: { data: Branch, token: string } = res.data;
-                Cookie.set('token', newToken, { path: '/' });
-                dispatch(loginBranch(branchData));
+                if(branchId === ''){
+                    const res: AxiosResponse = await api.get('branch/verify-branch-token', {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    const { data: branchData, token: newToken }: { data: Branch, token: string } = res.data;
+                    bId = branchData.id;
+                    Cookie.set('token', newToken, { path: '/' });
+                    dispatch(loginBranch(branchData));
+                }
 
                 //* 2. Verificar token de USUARIO
                 const userToken = Cookie.get('userToken');
                 if (userToken) {
-                    const res: AxiosResponse = await api.get('user/verify-user-token', {
-                        headers: { Authorization: `Bearer ${userToken}` }
-                    });
-                    const { data }: { data: {userData:User, token: string} } = res.data;
-                    Cookie.set('userToken', data.token, { path: '/' });
-                    dispatch(loginUser(data.userData));
+                    if(userData.id === ''){
+                        const res: AxiosResponse = await api.get('user/verify-user-token', {
+                            headers: { Authorization: `Bearer ${userToken}` }
+                        });
+                        const { data }: { data: {userData:User, token: string} } = res.data;
+                        Cookie.set('userToken', data.token, { path: '/' });
+                        dispatch(loginUser(data.userData));
+                    }
 
                     //* 3. Traer lista de PERMISOS
                     const resPermisisons: AxiosResponse = await api.get(`permissions/get-permissions`);
@@ -65,7 +71,7 @@ export const getBranchModuleDataAPI = (
                     dispatch(getPermissions(permissions));
 
                     //* 4. Traer lista de USUARIOS
-                    const resUsers: AxiosResponse = await api.get(`user/get-users/${branchData.id}`)
+                    const resUsers: AxiosResponse = await api.get(`user/get-users/${bId}`)
                     const { data:users }: { data: User[] } = resUsers.data;
                     dispatch(getUsers(users));
 

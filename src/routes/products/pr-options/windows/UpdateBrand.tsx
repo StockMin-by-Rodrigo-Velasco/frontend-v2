@@ -3,32 +3,26 @@ import Windows from "../../../../components/Windows";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { useForm } from "../../../../hooks";
 import { FormEvent, useState } from "react";
-import { deleteMarcaAPI, updateMarcaAPI } from "../../../../redux/products/productosThunk";
+import { deleteBrandAPI, updateBrandAPI } from "../../../../redux/products/productosThunk";
 import { FaEdit } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
 import { InputText, InputTextarea } from "../../../../components/Input";
 import { Button, ButtonColors, ButtonSubmit } from "../../../../components/Buttons";
 import { BsFillTrashFill } from "react-icons/bs";
 import { hideNotification, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
+import { Brand } from "../../../../interface";
 
-interface DataMarcaInterface {
-  id: string;
-  sucursalId: string;
-  nombre: string;
-  origen: string;
-  deleted: boolean;
-}
 interface UpdateMarcaProps {
   closeButton: () => void;
-  dataUpdate: DataMarcaInterface
+  dataUpdate: Brand
 }
 
 export default function UpdateBrand({ dataUpdate, closeButton }: UpdateMarcaProps) {
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
-  const { idUltimaMarcaEliminada } = useSelector((s: RootState) => s.Productos);
+  const { idDeletedBrand: idUltimaMarcaEliminada } = useSelector((s: RootState) => s.Products);
   const { type: typeNotification, showNotification } = useSelector((s: RootState) => s.Notification);
   const dispatch = useDispatch<AppDispatch>()
-  const { data, handleInputChange, resetData } = useForm<DataMarcaInterface>(dataUpdate);
+  const { data, handleInputChange, resetData } = useForm<Brand>(dataUpdate);
   const [editMode, setEditMode] = useState(false);
 
   const cancelUpdate = () => {
@@ -38,13 +32,13 @@ export default function UpdateBrand({ dataUpdate, closeButton }: UpdateMarcaProp
 
   const submitUpdate = (e: FormEvent) => {
     e.preventDefault();
-    const { deleted, ...res } = data;
-    dispatch(updateMarcaAPI(res, "LOADING-DATA-COMPLETE"));
+    const {deleted, ...res} = data;
+    dispatch(updateBrandAPI(res));
   }
 
   const deleteMarca = () => {
     if (typeNotification === 'WARNING' && showNotification) {
-      dispatch(deleteMarcaAPI(dataUpdate.id, "LOADING-DATA-COMPLETE"));
+      dispatch(deleteBrandAPI(dataUpdate.id));
       dispatch(hideNotification());
     } else {
       dispatch(showNotificationWarning({ tittle: 'Eliminar marca', description: 'Si deseas continuar vuelve a presionar el botón de eliminación, caso contrario cierra este mensaje' }))
@@ -77,23 +71,23 @@ export default function UpdateBrand({ dataUpdate, closeButton }: UpdateMarcaProp
         <InputText
           handleInputChange={handleInputChange}
           placeholder="*Nombre:"
-          name="nombre"
-          value={data.nombre}
+          name="name"
+          value={data.name}
           maxLenght={20}
           disabled={!editMode || loadingData}
         />
         <InputTextarea
           handleInputChange={handleInputChange}
           placeholder="Origen:"
-          name="origen"
-          value={data.origen}
+          name="origin"
+          value={data.origin}
           disabled={!editMode || loadingData}
         />
 
         <div className="flex mt-3 justify-center" >
           <ButtonSubmit label="Guardar" color={ButtonColors.success} className="me-3" disabled={!editMode} loading={loadingData} spinner />
           <Button label="Cancelar" color={ButtonColors.danger} disabled={!editMode} loading={loadingData} onClick={cancelUpdate} />
-          {/* {editMode && <button
+          {editMode && <button
             onClick={deleteMarca}
             type="button"
             disabled={!editMode || loadingData}
@@ -104,7 +98,7 @@ export default function UpdateBrand({ dataUpdate, closeButton }: UpdateMarcaProp
               :
               <BsFillTrashFill />
             }
-          </button>} */}
+          </button>}
         </div>
       </form>
     </Windows>

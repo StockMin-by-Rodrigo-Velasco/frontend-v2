@@ -47,7 +47,7 @@ const initialStateSelectedProducto: ProductoAlmacenDetallado = {
 export default function SelectedAlmacen() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const { listaMarcas, listaCategorias } = useSelector((s: RootState) => s.Productos);
+  const { brands: listaMarcas, categories: listaCategorias } = useSelector((s: RootState) => s.Products);
   const { selectedAlmacen, listaProductosAlmacen } = useSelector((s: RootState) => s.Almacenes);
   const [filter, setFilter] = useState<FilterInterface>(filterInitialState);
   const [filteredAlmacenProducto, setFilteredProducto] = useState<ProductoAlmacenDetallado[]>([]);
@@ -137,7 +137,7 @@ export default function SelectedAlmacen() {
           className="ms-auto"
           name="categoria"
           placeholder="Categoría: "
-          options={listaCategorias.map(m => ({ value: m.nombre, name: m.nombre }))}
+          options={listaCategorias.map(m => ({ value: m.name, name: m.name }))}
           optionDefault="Todas..."
           handleInputChange={handleChange}
         />
@@ -147,7 +147,7 @@ export default function SelectedAlmacen() {
           className="ms-3"
           name="marca"
           placeholder="Marca: "
-          options={listaMarcas.map(m => ({ value: m.nombre, name: m.nombre }))}
+          options={listaMarcas.map(m => ({ value: m.name, name: m.name }))}
           optionDefault="Todas..."
           handleInputChange={handleChange}
         />

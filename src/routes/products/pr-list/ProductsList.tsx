@@ -6,57 +6,55 @@ import { RootState } from "../../../redux/store";
 import { useEffect, useState } from "react";
 import { InputSearch, InputSelectSearch } from "../../../components/Input";
 import UpdateProduct from "./windows/UpdateProduct";
-import LoadingModule from "../../../components/LoadingModule";
 import { FaPlus } from "react-icons/fa";
 import CreateProduct from "./windows/CreateProduct";
-import { Producto } from "../../../interface";
+import { Product } from "../../../interface";
 
 
-interface ProductoForDataTable extends Producto {
-  unidadMedida: string;
-  marca: string;
-  categoria: string;
+interface ProductoForDataTable extends Product {
+  unitMeasure: string;
+  brand: string;
+  category: string;
 }
 
 const dataInitialState: ProductoForDataTable = {
   id: '',
-  sucursalId: '',
-  codigo: '',
-  nombre: '',
-  descripcion: '',
-  imagen: '',
+  branchId: '',
+  code: '',
+  name: '',
+  description: '',
+  image: '',
   deleted: false,
   createdAt: '',
   updatedAt: '',
-  categoriaId: '',
-  marcaId: '',
-  unidadMedidaId: '',
+  categoryId: '',
+  brandId: '',
+  unitMeasureId: '',
 
-  Marca: {id:'', sucursalId:'', nombre:'', origen:'', deleted:false},
-  Categoria: {id:'', sucursalId:'', nombre:'', detalle:'', deleted:false},
-  UnidadMedida: {id:'', nombre:'', abreviatura:'', detalle:''},  
+  Brand: {id:'', branchId:'', name:'', origin:'', deleted:false},
+  Category: {id:'', branchId:'', name:'', details:'', deleted:false},
+  UnitMeasure: {id:'', name:'', abbreviation:'', details:''},  
 
-  unidadMedida: '',
-  marca:'',
-  categoria: '',
+  unitMeasure: '',
+  brand:'',
+  category: '',
 }
 
 
 interface FilterInterface{
-  buscar: string;
-  categoria: string;
-  marca: string;
+  search: string;
+  category: string;
+  brand: string;
 }
 
 const filterInitialState:FilterInterface = {
-  buscar: '',
-  categoria: '',
-  marca: '',
+  search: '',
+  category: '',
+  brand: '',
 }
 
 export default function ProductsList() {
-  const { listaProductos, listaMarcas, listaCategorias } = useSelector((s: RootState) => s.Productos);
-  const { loadingApplication } = useSelector((s: RootState) => s.Aplication);
+  const { products, brands, categories } = useSelector((s: RootState) => s.Products);
   
   const [filter, setFilter] = useState<FilterInterface>(filterInitialState);
   const [filteredProducto, setFilteredProducto] = useState<ProductoForDataTable[]>([]);
@@ -65,16 +63,14 @@ export default function ProductsList() {
   const [productoSelected, setProductoSelected] = useState<ProductoForDataTable>(dataInitialState);
 
   const columns: DataTableColumnInterface<ProductoForDataTable>[] = [
-    { name: 'IMAGEN', type: DataTableColumnTypes.IMG, key: "imagen"},
-    { name: 'CODIGO', type: DataTableColumnTypes.P , key: "codigo"},
-    { name: 'U/M', type: DataTableColumnTypes.P , key: "unidadMedida"},
-    { name: 'NOMBRE', type: DataTableColumnTypes.P, key: "nombre" },
-    { name: 'MARCA', type: DataTableColumnTypes.P, key: "marca" },
-    { name: 'CATEGORIA', type: DataTableColumnTypes.P, key: "categoria" },
+    { name: 'IMAGEN', type: DataTableColumnTypes.IMG, key: "image"},
+    { name: 'CODIGO', type: DataTableColumnTypes.P , key: "code"},
+    { name: 'U/M', type: DataTableColumnTypes.P , key: "unitMeasure"},
+    { name: 'NOMBRE', type: DataTableColumnTypes.P, key: "name" },
+    { name: 'MARCA', type: DataTableColumnTypes.P, key: "brand" },
+    { name: 'CATEGORIA', type: DataTableColumnTypes.P, key: "category" },
   ];
 
-
-  //* ---------------- METODOS ----------------
   const getProducto = (d:ProductoForDataTable) => {
     setProductoSelected(d);
     setOpenDataDetails(true);
@@ -83,65 +79,62 @@ export default function ProductsList() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { value, name } = e.target;
     const newFilter = {...filter, [name]: value};
-    const newData = listaProductos.filter(i => 
-      i.Categoria.nombre?.includes(newFilter.categoria) && 
-      i.Marca.nombre?.includes(newFilter.marca) &&
-      (i.nombre.includes(newFilter.buscar) || i.codigo.includes(newFilter.buscar))
+    const newData = products.filter(i => 
+      i.Category.name?.toLowerCase().includes(newFilter.category.toLowerCase()) && 
+      i.Brand.name?.toLowerCase().includes(newFilter.brand.toLowerCase()) &&
+      (i.name.toLowerCase().includes(newFilter.search.toLowerCase()) || i.code.toLowerCase().includes(newFilter.search.toLowerCase()))
     );
 
-    const newListaProductos:ProductoForDataTable[] = newData.map(p => ({
+    const newListProducts:ProductoForDataTable[] = newData.map(p => ({
       ...p, 
-      unidadMedida: p.UnidadMedida.nombre,
-      marca: p.Marca.nombre,
-      categoria: p.Categoria.nombre
+      unitMeasure: p.UnitMeasure.name,
+      brand: p.Brand.name,
+      category: p.Category.name
     }))
-    setFilteredProducto([...newListaProductos]);
+    setFilteredProducto([...newListProducts]);
     setFilter(newFilter);
   }
 
-  //* ---------------- METODOS ----------------
-
   useEffect(() => {
-    const newListaProductos:ProductoForDataTable[] = listaProductos.map(p => ({
+    const newListaProductos:ProductoForDataTable[] = products.map(p => ({
       ...p, 
-      unidadMedida: p.UnidadMedida.nombre,
-      marca: p.Marca.nombre,
-      categoria: p.Categoria.nombre
+      unitMeasure: p.UnitMeasure.name,
+      brand: p.Brand.name,
+      category: p.Category.name
     }))
     setFilteredProducto([...newListaProductos]);
-  }, [listaProductos]);
+  }, [products]);
   return (
     <>
       {openDataDetails&&
-        <UpdateProduct producto={productoSelected} closeButton={() => {setOpenDataDetails(s => !s)}} />
+        <UpdateProduct product={productoSelected} closeButton={() => {setOpenDataDetails(s => !s)}} />
       }
       {openCreateProducto&&
         <CreateProduct closeButton={() => {setOpenCreateProducto(s => !s)}} />
       }
-      {loadingApplication&& <LoadingModule title="Cargando lista de productos"/>}
 
       <HeaderSection>
         <InputSearch
           handleInputChange={handleChange}
-          name='buscar'
+          name='search'
           placeholder="Buscar"
-          value={filter.buscar}
+          value={filter.search}
         />
         <InputSelectSearch
-          value={filter.categoria}
+          value={filter.category}
           className="ms-auto"
-          name="categoria"
+          name="category"
           placeholder="Categoría: "
-          options={listaCategorias.map(m => ({value: m.nombre, name:m.nombre}))}
+          options={categories.map(m => ({value: m.name, name:m.name}))}
           optionDefault="Todas..."
           handleInputChange={handleChange} 
         />
         <InputSelectSearch
-          value={filter.marca}
+          value={filter.brand}
           className="ms-3"
-          name="marca"
+          name="brand"
           placeholder="Marca: "
-          options={listaMarcas.map(m => ({value: m.nombre, name:m.nombre}))}
+          options={brands.map(m => ({value: m.name, name:m.name}))}
           optionDefault="Todas..."
           handleInputChange={handleChange} 
         />

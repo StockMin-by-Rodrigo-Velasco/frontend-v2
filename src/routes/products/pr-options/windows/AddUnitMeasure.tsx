@@ -1,37 +1,38 @@
 import { useDispatch, useSelector } from "react-redux";
 import Windows from "../../../../components/Windows"
 import { AppDispatch, RootState } from "../../../../redux/store";
-import { UnidadMedida } from "../../../../interface";
+import { UnitMeasure } from "../../../../interface";
 import { AiOutlineLoading } from "react-icons/ai";
-import { handleUnidadMedidaAPI } from "../../../../redux/products/productosThunk";
+import { toggleUnitMeasureAPI } from "../../../../redux/products/productosThunk";
 import { useEffect, useState } from "react";
 
-interface CreateUnidadMedidaProp {
+interface AddUnitMeasureProp {
     closeButton: () => void;
 }
 
-interface DataUnidadMedida extends UnidadMedida {
+interface DataUnidadMedida extends UnitMeasure {
     inSucursal: boolean;
 }
 
-export default function AddUnitMeasure({closeButton}: CreateUnidadMedidaProp) {
+export default function AddUnitMeasure({closeButton}: AddUnitMeasureProp) {
     const dispatch = useDispatch<AppDispatch>();
     
-    const { listaUnidadesMedida:listaUM, listaUnidadesMedidaSucursal } = useSelector((s:RootState) => s.Productos);
     const { loadingData } = useSelector((s:RootState) => s.Aplication);
+    const { id: branchId } = useSelector((s:RootState) => s.Branch);
+    const { unitMeasures, unitMeasuresBranch } = useSelector((s:RootState) => s.Products);
 
     const [listaUnidadesMedida, setListaUnidadMedida] = useState<DataUnidadMedida[]>([])
 
-    const handleUnidadMedida = ( um: UnidadMedida ) => {
-        dispatch(handleUnidadMedidaAPI(um.id, "LOADING-DATA-COMPLETE"));
+    const toggleUnitMeasure = ( unitMeasureId: string ) => {
+        dispatch(toggleUnitMeasureAPI({branchId, unitMeasureId}));
     }
 
     useEffect(() => {
-        const unidadesMedidaSucursalIds = new Set(listaUnidadesMedidaSucursal.map(um => um.unidadMedidaId));
+        const unitMeasuresBranchIds = new Set(unitMeasuresBranch.map(um => um.unitMeasureId));
         
-        const newListaUnidadesMedida: DataUnidadMedida[] = listaUM.map(um => ({...um, inSucursal: unidadesMedidaSucursalIds.has(um.id)}));
+        const newListaUnidadesMedida: DataUnidadMedida[] = unitMeasures.map(um => ({...um, inSucursal: unitMeasuresBranchIds.has(um.id)}));
         setListaUnidadMedida(newListaUnidadesMedida);
-    }, [listaUnidadesMedidaSucursal])
+    }, [unitMeasuresBranch])
     
   return (
 
@@ -55,9 +56,9 @@ export default function AddUnitMeasure({closeButton}: CreateUnidadMedidaProp) {
                     <tbody>
                         {listaUnidadesMedida.map(um => (
                             <tr key={um.id} className="hover:bg-secondary-1 border border-b-secondary" >
-                                <td className="uppercase px-1">{um.nombre}</td>
-                                <td className="px-1 uppercase text-center">{um.abreviatura}</td>
-                                <td>{um.detalle}</td>
+                                <td className="uppercase px-1">{um.name}</td>
+                                <td className="px-1 uppercase text-center">{um.abbreviation}</td>
+                                <td>{um.details}</td>
                                 <td>
                                     <div className="flex justify-center">
                                         {loadingData?
@@ -67,7 +68,7 @@ export default function AddUnitMeasure({closeButton}: CreateUnidadMedidaProp) {
                                             type="button" 
                                             className={`${um.inSucursal? 'border-danger text-danger hover:bg-danger':'border-success text-success hover:bg-success'} uppercase border rounded-full text-[12px] 
                                             px-2 hover:text-white` }
-                                            onClick={() => {handleUnidadMedida(um)}}>
+                                            onClick={() => {toggleUnitMeasure(um.id)}}>
                                                 {um.inSucursal? 'quitar':'agregar'}
                                             </button>
                                         }

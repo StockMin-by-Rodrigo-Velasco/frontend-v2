@@ -1,50 +1,110 @@
-export interface Producto {
+export interface Product {
     id: string;
-    sucursalId: string;
-    codigo: string;
-    nombre: string;
-    descripcion: string;
-    imagen: string;
+    branchId: string;
+    code: string;
+    name: string;
+    description: string;
+    image: string;
     deleted: boolean;
     createdAt: string;
     updatedAt: string;
-    categoriaId: string;
-    marcaId: string;
-    unidadMedidaId: string;
+    categoryId: string;
+    brandId: string;
+    unitMeasureId: string;
 
-    Marca: Marca;
-    Categoria: Categoria;
-    UnidadMedida: UnidadMedida;
+    Brand: Brand;
+    Category: Category;
+    UnitMeasure: UnitMeasure;
 }
 
-export interface Marca {
+export interface Brand {
     id: string;
-    sucursalId: string;
-    nombre: string;
-    origen: string;
+    branchId: string;
+    name: string;
+    origin: string;
     deleted: boolean;
 }
 
-export interface Categoria {
+export interface Category {
     id: string;
-    sucursalId: string;
-    nombre: string;
-    detalle: string;
+    branchId: string;
+    name: string;
+    details: string;
     deleted: boolean;
 }
 
-export interface UnidadMedida {
+export interface UnitMeasure {
     id: string;
-    nombre: string;
-    abreviatura: string;
-    detalle: string;
+    name: string;
+    abbreviation: string;
+    details: string;
 }
 
-
-export interface UnidadMedidaSucursal {
+export interface UnitMeasureBranch {
     id: string;
-    sucursalId: string;
-    unidadMedidaId: string;
+    branchId: string;
+    unitMeasureId: string;
     deleted: boolean;
-    UnidadMedida: UnidadMedida;
+    UnitMeasure: UnitMeasure;
+}
+
+//* ----------------------------- DTOs -------------------------------------
+
+export interface CreateBrandDto {
+    branchId: string;
+    name: string;
+    origin?: string;
+}
+export interface DeleteBrandDto {
+    id: string;
+    branchId: string;
+}
+export interface UpdateBrandDto {
+    id: string;
+    branchId: string;
+    name?: string;
+    origin?: string;
+}
+export interface CreateCategoryDto {
+    branchId: string;
+    name: string;
+    details?: string;
+}
+export interface DeleteCategoryDto {
+    id: string;
+    branchId: string;
+}
+export interface UpdateCategoryDto {
+    id: string;
+    branchId: string;
+    name?: string;
+    details?: string;
+}
+export interface CreateProductDto {
+    branchId: string;
+    code: string;
+    name: string;
+    description?: string;
+    categoryId: string;
+    brandId: string;
+    unitMeasureId: string;
+}
+export interface UpdateProductDto {
+    id: string;
+    branchId: string;
+    code?: string;
+    name?: string;
+    description?: string;
+    categoryId?: string;
+    brandId?: string;
+    unitMeasureId?: string;
+}
+export interface CreateUnitMeasureDto {
+    name: string;
+    abbreviation: string;
+    details?: string;
+}
+export interface ToggleUnitMeasureDto {
+    branchId: string;
+    unitMeasureId: string;
 }
