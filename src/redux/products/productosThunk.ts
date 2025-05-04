@@ -14,15 +14,14 @@ import {
     CreateBrandDto,
     CreateCategoryDto,
     CreateProductDto,
-    GetLogsDto,
-    Log,
     Product,
     ToggleUnitMeasureDto,
     UnitMeasure,
     UnitMeasureBranch,
     UpdateBrandDto,
     UpdateCategoryDto,
-    UpdateProductDto
+    UpdateProductDto,
+    UpdateProductImageDto
 } from "../../interface";
 import {
     createCategories,
@@ -46,6 +45,7 @@ import {
 export const getProductModuleDataAPI = () => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: branchId } = getState().Branch;
+        if(branchId === '')return
         try {
             dispatch(startLoadingModule());
 
@@ -98,9 +98,9 @@ export const createProductAPI = (createProductDto: CreateProductDto, image: File
         newProducto.append('name', createProductDto.name);
         newProducto.append('description', createProductDto.description || '');
         newProducto.append('categoryId', createProductDto.categoryId);
-        newProducto.append('brandId', createProductDto.branchId);
+        newProducto.append('brandId', createProductDto.brandId);
         newProducto.append('unitMeasureId', createProductDto.unitMeasureId);
-        if (image) newProducto.append('imagen', image);
+        if (image) newProducto.append('image', image);
 
         try {
             dispatch(startLoadingData());
@@ -174,15 +174,18 @@ export const updateProductAPI = (updateProductDto: UpdateProductDto) => {
         }
     }
 }
-export const updateProductImageAPI = (productId: string, image: File | undefined) => {
+export const updateProductImageAPI = (updateProductImageDto: UpdateProductImageDto, image: File | undefined) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         if (image) {
             const { userData } = getState().Branch;
             const updateProductImage = new FormData();
             updateProductImage.append('image', image);
+            updateProductImage.append('productId', updateProductImageDto.productId);
+            updateProductImage.append('imagenUrl', updateProductImageDto.imagenUrl);
+
             try {
                 dispatch(startLoadingData());
-                const response: AxiosResponse = await api.patch(`product/update-product-image/${productId}`,
+                const response: AxiosResponse = await api.patch(`product/update-product-image`,
                     updateProductImage,
                     {
                         headers: {
@@ -399,33 +402,26 @@ export const getUnitMeasuresBranchAPI = () => {
 }
 
 export const toggleUnitMeasureAPI = (toggleUnitMeasureDto: ToggleUnitMeasureDto) => {
-    return async (dispatch: AppDispatch) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {userData} = getState().Branch;
         try {
-            const response: AxiosResponse = await api.post(`unit-measure/toggle-unit-measure`, toggleUnitMeasureDto);
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.post(`unit-measure/toggle-unit-measure`, toggleUnitMeasureDto,
+                { headers: { "X-User-Id": userData.id } }
+            );
             const { data, message }: { data: UnitMeasureBranch, message: string } = response.data;
             dispatch(toggleUnitMeasure(data));
 
             dispatch(showNotificationSuccess({ tittle: 'ACTUALIZACIÓN DE UNIDADES DE MEDIDA', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
+            dispatch(finishLoadingData());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'ACTUALIZACIÓN DE UNIDADES DE MEDIDA', description: data.message }));
                 setTimeout(() => dispatch(hideNotification()), 5000);
             } else console.log(error);
-        }
-    }
-}
-
-export const getLogsProductosAPI = (getLogsDto: GetLogsDto) => {
-    return async (dispatch: AppDispatch) => {
-        dispatch(startLoadingData());
-        try {
-            const response: AxiosResponse = await api.post(`log/get-logs`, getLogsDto);
-            const {data}:{data:Log[]} = response.data;
-            dispatch(getProductLogs(data));
-        } catch (error) {
-            console.log(error);
+            dispatch(finishLoadingData());
         }
     }
 }

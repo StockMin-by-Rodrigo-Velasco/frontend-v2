@@ -47,7 +47,7 @@ export interface UserPermission {
 // ------------- DTOs ----------------
 export interface GetLogsDto{
     branchId: string;
-    module: string;
+    module: 'products'|'warehouses'|'sales';
     from: string;
     to: string;
 }

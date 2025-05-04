@@ -1,12 +1,13 @@
 import axios, { AxiosResponse } from "axios";
 import { AppDispatch, RootState } from '../store';
 import api from "../../api/config";
-import { CreateUserDto, ToggleUserPermissionDto, LoginBranchDto, LoginUserDto, Permission, Branch, UpdateUserDto, User, LoginSuperUserDto } from "../../interface";
+import { CreateUserDto, ToggleUserPermissionDto, LoginBranchDto, LoginUserDto, Permission, Branch, UpdateUserDto, User, LoginSuperUserDto, GetLogsDto, Log } from "../../interface";
 import { hideNotification, showNotificationError, showNotificationSuccess } from "../notification/notificationSlice";
 import { createUser, getPermissions, getUsers, loginBranch, loginUser, logoutBranch, logoutUser, updateUser } from "./branchSlice";
 import { finishLoadingAplication, finishLoadingData, finishLoadingModule, startLoadingAplication, startLoadingData, startLoadingModule } from "../aplication/aplicationSlice";
 import Cookie from 'js-cookie';
 import { NavigateFunction } from "react-router";
+import { getProductLogs } from "../products/productosSlice";
 
 export const loginBranchAPI = (
     loginBranchDto: LoginBranchDto,
@@ -299,6 +300,21 @@ export const getPermissionsAPI = () => {
         } catch (error) {
             console.log(error);
             dispatch(finishLoadingModule());
+        }
+    }
+}
+
+export const getLogsAPI = (getLogsDto: GetLogsDto) => {
+    return async (dispatch: AppDispatch) => {
+        try {
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.post(`log/get-logs`, getLogsDto);
+            const {data}:{data:Log[]} = response.data;
+            if(getLogsDto.module === 'products') dispatch(getProductLogs(data));
+            dispatch(finishLoadingData());
+        } catch (error) {
+            console.log(error);
+            dispatch(finishLoadingData());
         }
     }
 }

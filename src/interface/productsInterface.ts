@@ -99,6 +99,10 @@ export interface UpdateProductDto {
     brandId?: string;
     unitMeasureId?: string;
 }
+export interface UpdateProductImageDto {
+    productId: string;
+    imagenUrl: string;
+  }
 export interface CreateUnitMeasureDto {
     name: string;
     abbreviation: string;

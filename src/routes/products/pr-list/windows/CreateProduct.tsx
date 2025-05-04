@@ -7,33 +7,34 @@ import { FormEvent, useState } from "react";
 import { createProductAPI } from "../../../../redux/products/productosThunk";
 import { Button, ButtonColors, ButtonSubmit } from "../../../../components/Buttons";
 import logos from "../../../../assets/logos";
+import { CreateProductDto } from "../../../../interface";
 
 interface ProductoSelectedWindowsPropInterface {
     closeButton: () => void
 }
-interface FormProducto {
-    codigo: string;
-    nombre: string;
-    descripcion: string;
-    categoriaId: string;
-    marcaId: string;
-    unidadMedidaId: string;
-}
-
 
 export default function CreateProduct({ closeButton }: ProductoSelectedWindowsPropInterface) {
 
+    const { id: branchId } = useSelector((s: RootState) => s.Branch);
     const { loadingData } = useSelector((s: RootState) => s.Aplication);
     const { categories: listaCategorias, brands: listaMarcas, unitMeasuresBranch: listaUnidadesMedidaSucursal } = useSelector((s: RootState) => s.Products);
     const dispatch = useDispatch<AppDispatch>();
-    const { data, handleInputChange, resetData } = useForm<FormProducto>({ codigo:'', nombre:'', descripcion:'', categoriaId:'', marcaId:'', unidadMedidaId:''});
-    const [imagen, setImagen] = useState<File|undefined>(undefined);
+    const { data, handleInputChange, resetData } = useForm<CreateProductDto>({ 
+        branchId,
+        code:'', 
+        name:'', 
+        description:'',
+        brandId:'', 
+        categoryId:'', 
+        unitMeasureId:''
+    });
+    const [image, setImage] = useState<File|undefined>(undefined);
 
-    const createProducto = (e: FormEvent) => {
-        e.preventDefault();    
-        dispatch( createProductAPI(data, imagen, "LOADING-DATA-COMPLETE") );
+    const createProduct = (e: FormEvent) => {
+        e.preventDefault();
+        dispatch( createProductAPI(data, image) );
     }
-    const cancelUpdateProducto = () => {
+    const cancelUpdateProduct = () => {
         resetData();
     }
 
@@ -41,11 +42,11 @@ export default function CreateProduct({ closeButton }: ProductoSelectedWindowsPr
         <Windows tittle='nuevo producto' closeButton={closeButton} >
             <div className="p-4 flex relative">
                 <div>
-                    <InputFileImage name="file" imageDefault={logos.logoNoImage} placeholder="Subir imagen..." setFileValue={setImagen} />
+                    <InputFileImage name="file" imageDefault={logos.logoNoImage} placeholder="Subir imagen..." setFileValue={setImage} />
                 </div>
 
                 <div className="ms-3" >
-                    <form className="flex flex-col" onSubmit={createProducto} >
+                    <form className="flex flex-col" onSubmit={createProduct} >
                         <div className="flex items-center text-center border-b-[1px] border-secondary mb-2 text-secondary">
                             <span className="me-3" >INFORMACIÓN</span>
                         </div>
@@ -53,31 +54,30 @@ export default function CreateProduct({ closeButton }: ProductoSelectedWindowsPr
                             <div>
                                 <InputText
                                     handleInputChange={handleInputChange}
-                                    value={data.codigo}
-                                    name="codigo"
+                                    value={data.code}
+                                    name="code"
                                     placeholder="*Código:"
-                                    maxLenght={8}
                                     required
                                 />
                                 <InputText
                                     handleInputChange={handleInputChange}
-                                    value={data.nombre}
-                                    name="nombre"
+                                    value={data.name}
+                                    name="name"
                                     placeholder="*Nombre:"
                                     required
                                 />
                                 <InputTextarea
                                     handleInputChange={handleInputChange}
-                                    value={data.descripcion}
-                                    name="descripcion"
+                                    value={data.description||""}
+                                    name="description"
                                     placeholder="Descripción" 
                                 />
                             </div>
                             <div className="flex flex-col ms-3" >
                                 <InputSelect
                                     handleInputChange={handleInputChange}
-                                    value={data.categoriaId}
-                                    name='categoriaId'
+                                    value={data.categoryId}
+                                    name='categoryId'
                                     placeholder="*Categoría:"
                                     options={listaCategorias.map(c => ({name: c.name, value: c.id}))}
                                     optionDefault="Sin categoría"
@@ -85,8 +85,8 @@ export default function CreateProduct({ closeButton }: ProductoSelectedWindowsPr
                                 />
                                 <InputSelect
                                     handleInputChange={handleInputChange}
-                                    value={data.marcaId}
-                                    name='marcaId'
+                                    value={data.brandId}
+                                    name='brandId'
                                     placeholder="*Marca:"
                                     options={listaMarcas.map(m => ({ name: m.name, value: m.id }))}
                                     optionDefault="Sin Marca"
@@ -94,10 +94,10 @@ export default function CreateProduct({ closeButton }: ProductoSelectedWindowsPr
                                 />
                                 <InputSelect
                                     handleInputChange={handleInputChange}
-                                    value={data.unidadMedidaId}
-                                    name='unidadMedidaId'
+                                    value={data.unitMeasureId}
+                                    name='unitMeasureId'
                                     placeholder="*U. Medida:"
-                                    options={listaUnidadesMedidaSucursal.map(um => ({ name: um.UnidadMedida.nombre, value: um.unitMeasureId }))}
+                                    options={listaUnidadesMedidaSucursal.map(um => ({ name: um.UnitMeasure.name, value: um.unitMeasureId }))}
                                     optionDefault="Sin U/M"
                                     required
                                 />
@@ -106,7 +106,7 @@ export default function CreateProduct({ closeButton }: ProductoSelectedWindowsPr
 
                         <div className="border-t-[1px] border-secondary mt-2 pt-2 flex" >
                             <ButtonSubmit label="Guardar" color={ButtonColors.success} className="me-3" loading={loadingData} spinner/>
-                            <Button label="Cancelar" color={ButtonColors.danger} loading={loadingData} onClick={cancelUpdateProducto}/>
+                            <Button label="Cancelar" color={ButtonColors.danger} loading={loadingData} onClick={cancelUpdateProduct}/>
                         </div>
                     </form>
                 </div>

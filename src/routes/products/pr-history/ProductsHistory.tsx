@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import HeaderSection from "../../../components/HeaderSection";
 import BodySection from "../../../components/BodySection";
 import DataTable, { DataTableColumnInterface, DataTableColumnTypes } from "../../../components/DataTable";
-import { getLogsProductosAPI } from "../../../redux/products/productosThunk";
+import { getLogsAPI } from "../../../redux/branch/branchThunk";
 import { InputDateSearch } from "../../../components/Input";
 import { useForm } from "../../../hooks";
 import { IoSearch } from "react-icons/io5";
@@ -51,7 +51,7 @@ export default function ProductsHistory() {
     toStr.setHours(toStr.getHours() + 28); // Ajustamos a la hora de Bolivia
     const to = toStr.getTime().toString();
     
-    dispatch(getLogsProductosAPI({from, to, branchId, module:'product'}));
+    dispatch(getLogsAPI({from, to, branchId, module:"products"}));
   }
 
   useEffect(() => {

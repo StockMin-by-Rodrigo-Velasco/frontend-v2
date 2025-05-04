@@ -34,7 +34,16 @@ export default function UpdateProduct({ product, closeButton }: UpdateProductPro
     const { idDeletedProduct, categories, brands, unitMeasures } = useSelector((s: RootState) => s.Products);
     const dispatch = useDispatch<AppDispatch>();
     // const { code, name, description, categoryId, brandId, unitMeasureId } = producto;
-    const { data: dataUpdate, handleInputChange, resetData } = useForm<UpdateProductDto>(product);
+    const { data: dataUpdate, handleInputChange, resetData } = useForm<UpdateProductDto>({
+        branchId: product.branchId,
+        id: product.id,
+        name: product.name,
+        code: product.code,
+        brandId: product.brandId,
+        categoryId: product.categoryId,
+        description: product.description,
+        unitMeasureId: product.unitMeasureId
+    });
     const [editMode, setEditMode] = useState(false);
     const [editModeImagen, setEditModeImagen] = useState(false);
     const [image, setImage] = useState<File | undefined>(undefined);
@@ -44,7 +53,7 @@ export default function UpdateProduct({ product, closeButton }: UpdateProductPro
         dispatch(updateProductAPI(dataUpdate));
     }
     const updateProductImage = () => {
-        dispatch(updateProductImageAPI(product.id, image));
+        dispatch(updateProductImageAPI({productId: product.id, imagenUrl: product.image}, image));
     }
     const cancelUpdateProduct = () => {
         resetData();
@@ -149,14 +158,16 @@ export default function UpdateProduct({ product, closeButton }: UpdateProductPro
                                     name='categoryId'
                                     placeholder="*Categoría:"
                                     options={categories.map(c => ({ name: c.name, value: c.id }))}
+                                    optionDefault="Sin categoría"
                                     disabled={!editMode}
                                 />
                                 <InputSelect
                                     handleInputChange={handleInputChange}
-                                    value={dataUpdate.branchId || ''}
-                                    name='branchId'
+                                    value={dataUpdate.brandId || ''}
+                                    name='brandId'
                                     placeholder="*Marca:"
                                     options={brands.map(m => ({ name: m.name, value: m.id }))}
+                                    optionDefault="Sin marca"
                                     disabled={!editMode}
                                 />
                                 <InputSelect
@@ -165,6 +176,7 @@ export default function UpdateProduct({ product, closeButton }: UpdateProductPro
                                     name='unitMeasureId'
                                     placeholder="*U. Medida:"
                                     options={unitMeasures.map(m => ({ name: m.name, value: m.id }))}
+                                    optionDefault="Sin U/M"
                                     disabled={!editMode}
                                 />
                             </div>
