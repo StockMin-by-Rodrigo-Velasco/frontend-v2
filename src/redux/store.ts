@@ -3,8 +3,8 @@ import NotificationSlice from './notification/notificationSlice';
 import BranchSlice from './branch/branchSlice';
 import AplicationSlice from './aplication/aplicationSlice';
 import ProductsSlice from './products/productosSlice';
-import AlmacenesSlice from './warehouses/almacenesSlice';
-import VentasSlice from './sales/ventasSlice';
+// import AlmacenesSlice from './warehouses/almacenesSlice';
+// import VentasSlice from './sales/ventasSlice';
 
 
 export const store = configureStore({
@@ -13,8 +13,8 @@ export const store = configureStore({
         Notification: NotificationSlice,
         Branch: BranchSlice,
         Products: ProductsSlice,
-        Almacenes: AlmacenesSlice,
-        Ventas: VentasSlice,
+        // Almacenes: AlmacenesSlice,
+        // Ventas: VentasSlice,
     }
 })
 

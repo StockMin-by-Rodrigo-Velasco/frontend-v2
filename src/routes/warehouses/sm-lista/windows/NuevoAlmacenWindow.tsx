@@ -1,11 +1,11 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { ButtonColors, ButtonSubmit } from "../../../../components/Buttons";
 import { InputText, InputTextarea } from "../../../../components/Input";
 import Windows from "../../../../components/Windows";
 import { useForm } from "../../../../hooks";
-import { AppDispatch, RootState } from "../../../../redux/store";
+import { RootState } from "../../../../redux/store";
 import { FormEvent } from "react";
-import { createAlmacenAPI } from "../../../../redux/warehouses/almacenThunks";
+// import { createAlmacenAPI } from "../../../../redux/warehouses/almacenThunks";
 
 interface CreateAlmacenWindowProp{
     closeButton: () => void; 
@@ -18,15 +18,15 @@ interface createForm{
 
 
 export default function NuevoAlmacenWindow({closeButton}: CreateAlmacenWindowProp) {
-    const dispatch = useDispatch<AppDispatch>();
+    // const dispatch = useDispatch<AppDispatch>();
     const {loadingData} = useSelector((s:RootState) => s.Aplication);
-    const {id:sucursalId} = useSelector((s:RootState) => s.Branch);
+    // const {id:sucursalId} = useSelector((s:RootState) => s.Branch);
     const { data, handleInputChange } = useForm<createForm>({nombre:'', descripcion:''});
 
 
     const formSubmit = (e:FormEvent) => {
         e.preventDefault();
-        dispatch(createAlmacenAPI({ sucursalId,...data}, "LOADING-DATA-COMPLETE"));
+        // dispatch(createAlmacenAPI({ sucursalId,...data}, "LOADING-DATA-COMPLETE"));
     }
 
   return (

@@ -22,6 +22,7 @@ export const loginBranchAPI = (
 
             Cookie.set('token', token, { path: '/' });
             dispatch(loginBranch(data));
+            dispatch(finishLoadingData());
             navigate('/list-users');
         } catch (error) {
             console.log(error);
@@ -30,6 +31,7 @@ export const loginBranchAPI = (
                 dispatch(showNotificationError({ tittle: 'INICIO DE SESION', description: data.message }));
                 setTimeout(() => dispatch(hideNotification()), 5000);
             } else console.log(error);
+            dispatch(finishLoadingData());
         }
     }
 }
@@ -56,7 +58,7 @@ export const getBranchModuleDataAPI = (navigate: (path: string) => void) => {
 
                 //* 2. Verificar token de USUARIO
                 const userToken = Cookie.get('userToken');
-                if (userToken) {
+                if (userToken || userData.id === branchId) {
                     if(userData.id === ''){
                         const res: AxiosResponse = await api.get('user/verify-user-token', {
                             headers: { Authorization: `Bearer ${userToken}` }
@@ -79,6 +81,7 @@ export const getBranchModuleDataAPI = (navigate: (path: string) => void) => {
                     dispatch(finishLoadingAplication());
                     navigate('/main');
                 } else {
+
                     dispatch(finishLoadingAplication());
                     navigate('/list-users');
                 }
@@ -156,6 +159,7 @@ export const loginSuperUserAPI = (
             const res: AxiosResponse = await api.post('branch/login-super-user', loginSuperUserDto)
             const { data }: { data: User } = res.data;
             dispatch(loginUser(data));
+            console.log()
             dispatch(finishLoadingData());
             navigate('/main');
         } catch (error) {

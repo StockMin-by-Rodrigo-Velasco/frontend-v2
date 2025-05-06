@@ -83,21 +83,21 @@ export default function Navbar() {
                     title: 'Lista de almacenes', 
                     path: '/main/warehouses/list', 
                     icon: <CiBoxes size='14px'/>,
-                    access: userPermissionsSet.has(warehousesPermissionsModule['wh-01'])
+                    access: false//userPermissionsSet.has(warehousesPermissionsModule['wh-01'])
 
                 },
                 { 
                     title: 'Traspasos', 
                     path: '/main/warehouses/transfers', 
                     icon: <GrTransaction size='14px'/>,
-                    access: userPermissionsSet.has(warehousesPermissionsModule['wh-02'])
+                    access: false//userPermissionsSet.has(warehousesPermissionsModule['wh-02'])
 
                 },
                 { 
                     title: 'Historial', 
                     path: '/main/warehouses/history', 
                     icon: <TbHistory size='14px'/>,
-                    access: userPermissionsSet.has(warehousesPermissionsModule['wh-03'])
+                    access: false//userPermissionsSet.has(warehousesPermissionsModule['wh-03'])
                 },
             ]
         },
@@ -108,28 +108,28 @@ export default function Navbar() {
                     title: 'Tienda', 
                     path: '/main/sales/store', 
                     icon: <AiOutlineShop size='14px'/>,
-                    access: userPermissionsSet.has(salesModulePermissions['sa-01'])
+                    access: false//userPermissionsSet.has(salesModulePermissions['sa-01'])
 
                 },
                 { 
                     title: 'Clientes', 
                     path: '/main/sales/customers', 
                     icon: <FaRegUser size='14px'/>,
-                    access: userPermissionsSet.has(salesModulePermissions['sa-02'])
+                    access: false//userPermissionsSet.has(salesModulePermissions['sa-02'])
 
                 },
                 { 
                     title: 'Opciones', 
                     path: '/main/sales/options', 
                     icon: <LuSettings size='14px'/>,
-                    access: userPermissionsSet.has(salesModulePermissions['sa-03'])
+                    access: false//userPermissionsSet.has(salesModulePermissions['sa-03'])
 
                 },
                 { 
                     title: 'Historial', 
                     path: '/main/sales/history', 
                     icon: <TbHistory size='14px'/>,
-                    access: userPermissionsSet.has(salesModulePermissions['sa-04'])
+                    access: false//userPermissionsSet.has(salesModulePermissions['sa-04'])
 
                 },
             ]

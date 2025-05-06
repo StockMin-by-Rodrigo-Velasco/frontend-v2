@@ -80,8 +80,8 @@ export default function ProductsList() {
     const { value, name } = e.target;
     const newFilter = {...filter, [name]: value};
     const newData = products.filter(i => 
-      // i.Category.name.includes(newFilter.category) && 
-      // i.Brand.name.includes(newFilter.brand) &&
+      i.Category.name.includes(newFilter.category) && 
+      i.Brand.name.includes(newFilter.brand) &&
       (i.name.includes(newFilter.search) || i.code.includes(newFilter.search))
     );
 

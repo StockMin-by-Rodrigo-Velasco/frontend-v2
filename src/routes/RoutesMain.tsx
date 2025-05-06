@@ -1,9 +1,10 @@
-import { Navigate, Route, Routes } from "react-router";
+import { Route, Routes } from "react-router";
+// import { useSelector } from "react-redux";
+// import { RootState } from "../redux/store";
 
 import LoginBranch from "./branch/LoginBranch";
 import ListUsers from "./branch/ListUsers";
 import MainAplication from "./main/MainAplication";
-import Ventas from "./sales/Ventas";
 import ListaUsuarios from "./users/lista-sm/ListaUsuarios";
 
 import Products from "./products/Products";
@@ -12,21 +13,21 @@ import ProductsOptions from "./products/pr-options/ProductsOptions";
 import ProductsHistory from "./products/pr-history/ProductsHistory";
 
 import Warehouses from "./warehouses/Warehouses";
-import ListaAlmacenes from "./warehouses/sm-lista/ListaAlmacenes";
-import HistorialAlmacenes from "./warehouses/sm-historial/HistorialAlmacenes";
+// import SelectedAlmacen from "./warehouses/sm-lista/SelectedAlmacen";
+// import TraspasosAlmacenes from "./warehouses/sm-traspasos/TraspasosAlmacenes";
+// import ListaAlmacenes from "./warehouses/sm-lista/ListaAlmacenes";
+// import HistorialAlmacenes from "./warehouses/sm-historial/HistorialAlmacenes";
 
-import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import SelectedAlmacen from "./warehouses/sm-lista/SelectedAlmacen";
-import ClientesVentas from "./sales/sm-clientes/ClientesVentas";
-import HistorialVentas from "./sales/sm-historial/HistorialVentas";
-import OpcionesVentas from "./sales/sm-opciones/OpcionesVentas";
-import TiendaVentas from "./sales/sm-tienda/TiendaVentas";
+import Sales from "./sales/Sales";
+// import ClientesVentas from "./sales/sm-clientes/ClientesVentas";
+// import HistorialVentas from "./sales/sm-historial/HistorialVentas";
+// import OpcionesVentas from "./sales/sm-opciones/OpcionesVentas";
+// import TiendaVentas from "./sales/sm-tienda/TiendaVentas";
+
 import Usuarios from "./users/Usuarios";
-import TraspasosAlmacenes from "./warehouses/sm-traspasos/TraspasosAlmacenes";
 
 export default function RoutesMain() {
-  const { selectedAlmacen } = useSelector((s:RootState) => s.Almacenes);
+  // const { selectedAlmacen } = useSelector((s:RootState) => s.Almacenes);
   
   return (
       <Routes>
@@ -41,19 +42,21 @@ export default function RoutesMain() {
           </Route>
 
           <Route path="warehouses" element={<Warehouses/>}>
-            <Route path="list" element={<ListaAlmacenes/>}>
+            {/* <Route path="list" element={<ListaAlmacenes/>}>
               {selectedAlmacen.id&& <Route index element={<Navigate to={selectedAlmacen.id}/>} /> }
               <Route path=":name" element={<SelectedAlmacen/>} />
             </Route>
             <Route path="transfers" element={<TraspasosAlmacenes/>} />
-            <Route path="history" element={<HistorialAlmacenes/>} />
+            <Route path="history" element={<HistorialAlmacenes/>} /> */}
           </Route>
-          <Route path="sales" element={<Ventas/>}>
-            <Route path="store" element={<TiendaVentas/>}/>
+
+          <Route path="sales" element={<Sales/>}>
+            {/* <Route path="store" element={<TiendaVentas/>}/>
             <Route path="customers" element={<ClientesVentas/>}/>
             <Route path="options" element={<OpcionesVentas/>}/>
-            <Route path="history" element={<HistorialVentas/>} />
+            <Route path="history" element={<HistorialVentas/>} /> */}
           </Route>
+
           <Route path="users" element={<Usuarios/>}>
             <Route path="list" element={<ListaUsuarios/>}/>
           </Route>
