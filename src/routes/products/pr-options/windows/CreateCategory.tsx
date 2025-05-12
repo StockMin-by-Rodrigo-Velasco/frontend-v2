@@ -7,7 +7,7 @@ import { createCategoryAPI } from "../../../../redux/products/productsThunk";
 
 import { InputText, InputTextarea } from "../../../../components/Input";
 import { ButtonSubmit } from "../../../../components/Buttons";
-import { CreateCategoryDto } from "../../../../interface";
+import { CreateCategoryDto } from "../../../../interfaces";
 
 interface UpdateCategoryProps {
   closeButton: () => void;

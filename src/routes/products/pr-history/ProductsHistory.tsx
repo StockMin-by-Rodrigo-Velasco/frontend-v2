@@ -10,7 +10,7 @@ import { InputDateSearch } from "../../../components/Input";
 import { useForm } from "../../../hooks";
 import { IoSearch } from "react-icons/io5";
 import LogDetails from "../../../components/LogDetails";
-import { Log } from "../../../interface";
+import { Log } from "../../../interfaces";
 
 const columns: DataTableColumnInterface<Log>[] = [
   { name: 'ACCIÓN', type: DataTableColumnTypes.P, key: "title" },

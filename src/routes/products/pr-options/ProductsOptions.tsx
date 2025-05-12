@@ -10,7 +10,7 @@ import { FaPlus } from 'react-icons/fa';
 import CreateBrand from './windows/CreateBrand';
 import CreateCategory from './windows/CreateCategory';
 import AddUnitMeasure from './windows/AddUnitMeasure';
-import { Category, Brand } from '../../../interface';
+import { Category, Brand } from '../../../interfaces';
 import { toggleUnitMeasureAPI } from '../../../redux/products/productsThunk';
 
 

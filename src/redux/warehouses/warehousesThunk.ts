@@ -1,11 +1,11 @@
 import axios, { AxiosResponse } from "axios";
 import { AppDispatch, RootState } from "../store";
 import api from "../../api/config";
-import { Brand, Category, Product } from "../../interface";
+import { Brand, Category, Product } from "../../interfaces";
 import { finishLoadingData, finishLoadingModule, startLoadingData, startLoadingModule } from "../aplication/aplicationSlice";
 import { getBrands, getCategories, getProducts } from "../products/productSlice";
-import { ProductWarehouse, Warehouse, CreateWarehouseDto, UpdateWarehouseDto, CreateManyProductsWarehouseDto, CreateProductWarehouseDto, UpdateProductWarehouseDto, ListProductTransferDto } from '../../interface/warehousesInterfaces';
-import { createManyProductsWarehouse, createProductWarehouse, createWarehouse, deleteWarehouse, getProductsWarehouse, getWarehauses, updateProductWarehouse, updateWarehouse } from "./warehousesSlice";
+import { ProductWarehouse, Warehouse, CreateWarehouseDto, UpdateWarehouseDto, CreateManyProductsWarehouseDto, CreateProductWarehouseDto, UpdateProductWarehouseDto, ListProductTransferDto, GetDocEntryDto, DocEntry, CreateDocEntryDto } from '../../interfaces/warehousesInterfaces';
+import { createManyProductsWarehouse, createProductWarehouse, createWarehouse, deleteWarehouse, getDocEntries, getProductsWarehouse, getWarehauses, updateProductWarehouse, updateWarehouse } from "./warehousesSlice";
 import { hideNotification, showNotificationError, showNotificationSuccess } from "../notification/notificationSlice";
 
 
@@ -207,24 +207,60 @@ export const getProductsWarehouseAPI = () => {
     }
 }
 
-export const decrementProdutsWarehouseAPI = (listProductTransferDto: ListProductTransferDto) => {
-    return async () => {
+//* ------------------------------- DOC ENTRIES ----------------------------------
+
+export const getDocEntriesAPI = (getDocEntryDto: GetDocEntryDto) => {
+    return async (dispatch: AppDispatch) => {
+
         try {
-            await api.post(`product-warehouse/decrement-products-warehouse`, listProductTransferDto);
+            dispatch(startLoadingData());
+            const resProduct: AxiosResponse = await api.post(`product-entry/get-doc-entries`, getDocEntryDto);
+            const { data: docEntries }: { data: DocEntry[] } = resProduct.data;
+            dispatch(getDocEntries(docEntries));
+            dispatch(finishLoadingData());
         } catch (error) {
             console.log(error);
+            dispatch(finishLoadingData());
         }
     }
 }
 
-export const incrementProdutsWarehouseAPI = (listProductTransferDto: ListProductTransferDto) => {
-    return async () => {
+export const createDocEntryAPI = (createDocEntryDto: CreateDocEntryDto) => {
+    return async (dispatch: AppDispatch) => {
+
         try {
-            await api.post(`product-warehouse/increment-products-warehouse`, listProductTransferDto);
+            dispatch(startLoadingData());
+            const resProduct: AxiosResponse = await api.post(`product-entry/create-doc-entry`, createDocEntryDto);
+            const { data: docEntry, message }: { data: DocEntry, message: string } = resProduct.data;
+            // console.log(docEntry)
+            dispatch(showNotificationSuccess({ tittle: 'INGRESO DE PRODUCTOS', description: message }));
+            setTimeout(() => dispatch(hideNotification()), 5000);
+            dispatch(finishLoadingData());
         } catch (error) {
             console.log(error);
+            dispatch(finishLoadingData());
         }
     }
 }
+
+// export const decrementProdutsWarehouseAPI = (listProductTransferDto: ListProductTransferDto) => {
+//     return async () => {
+//         try {
+//             await api.post(`product-warehouse/decrement-products-warehouse`, listProductTransferDto);
+//         } catch (error) {
+//             console.log(error);
+//         }
+//     }
+// }
+
+// export const incrementProdutsWarehouseAPI = (listProductTransferDto: ListProductTransferDto) => {
+//     return async () => {
+//         try {
+//             await api.post(`product-warehouse/increment-products-warehouse`, listProductTransferDto);
+//         } catch (error) {
+//             console.log(error);
+//         }
+//     }
+// }
 
 

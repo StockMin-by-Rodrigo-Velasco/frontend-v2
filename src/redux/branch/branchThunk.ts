@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { AppDispatch, RootState } from '../store';
 import api from "../../api/config";
-import { CreateUserDto, ToggleUserPermissionDto, LoginBranchDto, LoginUserDto, Permission, Branch, UpdateUserDto, User, LoginSuperUserDto, GetLogsDto, Log } from "../../interface";
+import { CreateUserDto, ToggleUserPermissionDto, LoginBranchDto, LoginUserDto, Permission, Branch, UpdateUserDto, User, LoginSuperUserDto, GetLogsDto, Log } from "../../interfaces";
 import { hideNotification, showNotificationError, showNotificationSuccess } from "../notification/notificationSlice";
 import { createUser, getPermissions, getUsers, loginBranch, loginUser, logoutBranch, logoutUser, updateUser } from "./branchSlice";
 import { finishLoadingAplication, finishLoadingData, finishLoadingModule, startLoadingAplication, startLoadingData, startLoadingModule } from "../aplication/aplicationSlice";

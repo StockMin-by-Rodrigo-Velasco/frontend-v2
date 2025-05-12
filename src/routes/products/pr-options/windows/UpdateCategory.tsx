@@ -10,7 +10,7 @@ import { AiOutlineLoading } from "react-icons/ai";
 import { deleteCategoryAPI, updateCategoryAPI } from "../../../../redux/products/productsThunk";
 import { hideNotification, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
 import { BsFillTrashFill } from "react-icons/bs";
-import { Category } from "../../../../interface";
+import { Category } from "../../../../interfaces";
 
 interface UpdateCategoriaProps {
   closeButton: () => void;

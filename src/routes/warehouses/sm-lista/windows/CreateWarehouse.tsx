@@ -4,7 +4,7 @@ import { InputText, InputTextarea } from "../../../../components/Input";
 import { useForm } from "../../../../hooks";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { FormEvent } from "react";
-import { CreateWarehouseDto } from "../../../../interface";
+import { CreateWarehouseDto } from "../../../../interfaces";
 import Windows from "../../../../components/Windows";
 import { createWarehouseAPI } from "../../../../redux/warehouses/warehousesThunk";
 

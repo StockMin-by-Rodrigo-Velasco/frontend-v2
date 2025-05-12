@@ -10,7 +10,7 @@ import { AiOutlineLoading } from "react-icons/ai";
 import { InputPassword, InputText } from "../../../components/Input";
 import { useForm } from "../../../hooks";
 import { FormEvent } from 'react';
-import { UpdateUserDto } from "../../../interface";
+import { UpdateUserDto } from "../../../interfaces";
 
 interface UserProfileProp {
   closeButton: () => void

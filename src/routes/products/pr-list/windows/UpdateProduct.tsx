@@ -11,7 +11,7 @@ import { Button, ButtonSubmit } from "../../../../components/Buttons";
 import { BsFillTrashFill } from "react-icons/bs";
 import { hideNotification, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
 import { IoCheckmark, IoClose } from "react-icons/io5";
-import { Product, UpdateProductDto } from "../../../../interface";
+import { Product, UpdateProductDto } from "../../../../interfaces";
 import logos from "../../../../assets/logos";
 import { dateLocalWhitTime } from "../../../../helpers";
 

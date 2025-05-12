@@ -4,7 +4,7 @@ import { InputLoginPassword, InputLoginText } from '../../components/Input';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { Notification } from '../../components/Notification';
-import { LoginBranchDto } from '../../interface';
+import { LoginBranchDto } from '../../interfaces';
 import { loginBranchAPI, getBranchModuleDataAPI } from '../../redux/branch/branchThunk';
 import { useNavigate } from 'react-router';
 import logos from '../../assets/logos';

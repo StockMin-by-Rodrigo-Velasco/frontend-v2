@@ -8,12 +8,13 @@ import { TbLogout2, TbReportAnalytics } from "react-icons/tb";
 import BodySection from "../../../components/BodySection";
 import { FaPlus } from "react-icons/fa";
 import { logoutWarehouse } from "../../../redux/warehouses/warehousesSlice";
-import { initialProductWarehouse, ProductWarehouse } from "../../../interface";
+import { initialProductWarehouse, ProductWarehouse } from "../../../interfaces";
 import logos from "../../../assets/logos";
 import { BsBoxArrowInUpRight } from "react-icons/bs";
-import { AiOutlineLoading } from "react-icons/ai";
 import CreateManyProductsWarehouse from "./windows/CreateManyProductsWarehouse";
 import ProductWarehouseSelected from "./windows/ProductWarehouseSelected";
+import CreateDocEntry from "./windows/CreateDocEntry";
+import DocEntries from "./windows/DocEntries";
 
 interface FilterInterface {
   search: string;
@@ -43,8 +44,8 @@ export default function WarehouseSelected() {
   const [openProductWarehouseSelected, setOpenProductWarehouseSelected] = useState(false);
 
 
-  const [openIngresarProductosAlmacen, setOpenIngresarProductosAlmacen] = useState(false);
-  const [openHistorialIngresosAlmacen, setOpenHistorialIngresosAlmacen] = useState(false);
+  const [openCreateDocEntry, setOpenCreateDocEntry] = useState(false);
+  const [openDocEntries, setOpenDocEntries] = useState(false);
 
   const [productWarehouseSelected, setProductWarehouseSelected] = useState<ProductWarehouse>(initialProductWarehouse)
 
@@ -53,7 +54,7 @@ export default function WarehouseSelected() {
     navigate('/main/almacenes/lista');
   }
 
-  const getProducto = (productoData: ProductWarehouse) => {
+  const getProduct = (productoData: ProductWarehouse) => {
     setProductWarehouseSelected(productoData);
     setOpenProductWarehouseSelected(true)
   }
@@ -70,13 +71,13 @@ export default function WarehouseSelected() {
     setFilter(newFilter);
   }
 
-  const goToRegistrarProductos = () => {
+  const goToCreateManyProductsWarehouse = () => {
     setOpenCreateManyProductsWarehouse(true);
     setCreateOptions(s => !s)
   }
 
-  const goToIngresarProductos = () => {
-    setOpenIngresarProductosAlmacen(true);
+  const goToCreateDocEntry = () => {
+    setOpenCreateDocEntry(true);
     setCreateOptions(s => !s)
   }
 
@@ -87,8 +88,8 @@ export default function WarehouseSelected() {
     <>
       {openCreateManyProductsWarehouse && <CreateManyProductsWarehouse closeButton={() => { setOpenCreateManyProductsWarehouse(false)}} />}
       {openProductWarehouseSelected && <ProductWarehouseSelected product={productWarehouseSelected} closeButton={() => {setOpenProductWarehouseSelected(false)}} />}
-      {/* {openIngresarProductosAlmacen && <IngresarProductosAlmacenWindow closeButton={() => setOpenIngresarProductosAlmacen(false)}/>} */}
-      {/* {openHistorialIngresosAlmacen && <HistorialIngresosAlmacenWindow closeButton={() => setOpenHistorialIngresosAlmacen(false)}/> } */}
+      {openCreateDocEntry && <CreateDocEntry closeButton={() => setOpenCreateDocEntry(false)}/>}
+      {openDocEntries && <DocEntries closeButton={() => setOpenDocEntries(false)}/> }
 
 
       <HeaderSection>
@@ -101,7 +102,7 @@ export default function WarehouseSelected() {
 
         <div
           className="w-[200px] flex justify-center items-center border relative overflow-hidden border-primary text-primary rounded-lg ms-auto me-auto transition-all duration-300 cursor-pointer"
-          onClick={() => { setOpenHistorialIngresosAlmacen(true) }}
+          onClick={() => { setOpenDocEntries(true) }}
         >
           <span className="uppercase flex" >{warehouseSelected.name} <span className="ms-2 text-[20px]" ><TbReportAnalytics /></span> </span>
 
@@ -182,7 +183,7 @@ export default function WarehouseSelected() {
                   }
                 </td>
                 <td className="text-center text-secondary" >
-                  <button type="button" onClick={() => { getProducto(p) }} ><BsBoxArrowInUpRight /></button>
+                  <button type="button" onClick={() => { getProduct(p) }} ><BsBoxArrowInUpRight /></button>
                 </td>
               </tr>
             ))}
@@ -191,8 +192,8 @@ export default function WarehouseSelected() {
       </BodySection>
       <div className='absolute bottom-2 right-2 flex flex-col items-end ' >
         {createOptions && <div className='flex flex-col bg-primary mb-3 rounded text-white' >
-          <span className='px-3 py-1 cursor-pointer hover:bg-white/10' onClick={goToRegistrarProductos} >REGISTRAR PRODUCTOS</span>
-          <span className='px-3 py-1 cursor-pointer hover:bg-white/10' onClick={goToIngresarProductos} >INGRESAR PRODUCTOS</span>
+          <span className='px-3 py-1 cursor-pointer hover:bg-white/10' onClick={goToCreateManyProductsWarehouse} >REGISTRAR PRODUCTOS</span>
+          <span className='px-3 py-1 cursor-pointer hover:bg-white/10' onClick={goToCreateDocEntry} >INGRESAR PRODUCTOS</span>
         </div>}
         <button
           onClick={() => { setCreateOptions(s => !s) }}

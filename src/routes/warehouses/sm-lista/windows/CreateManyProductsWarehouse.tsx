@@ -4,37 +4,15 @@ import { AppDispatch, RootState } from "../../../../redux/store";
 import { useEffect, useState } from 'react';
 import ListProductsOutWarehouse from "./ListProductsOutWarehouse";
 import { FaPlus } from "react-icons/fa";
-import { CreateProductWarehouseDto } from "../../../../interface";
+import { CreateProductWarehouseDto } from "../../../../interfaces";
 import { AiOutlineLoading } from "react-icons/ai";
 import { createManyProductsWarehouseAPI } from "../../../../redux/warehouses/warehousesThunk";
 import { BsFillTrashFill } from "react-icons/bs";
+import { ProductWarehouseForm } from "../../../../interfaces/formInterface";
 
 interface CreateManyProductsWarehouseProp {
   closeButton: () => void;
 }
-
-interface ProductForm {
-  productId: string;
-  code: string;
-  name: string;
-  image?: string;
-  quantity: string;
-  minQuantity: string;
-
-  categoryId: string;
-  categoryName?: string;
-
-  brandId: string;
-  brandName?: string;
-
-  unitMeasureId: string;
-  unitMeasureAbbreviation?: string;
-
-  registered: boolean;
-  selected: boolean;
-  show: boolean;
-}
-
 
 export default function CreateManyProductsWarehouse({ closeButton }: CreateManyProductsWarehouseProp) {
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
@@ -43,7 +21,7 @@ export default function CreateManyProductsWarehouse({ closeButton }: CreateManyP
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const [productsForm, setProductsForm] = useState<ProductForm[]>([]);
+  const [productsForm, setProductsForm] = useState<ProductWarehouseForm[]>([]);
 
   const [openListaProductosRegistrarAlmacenWindow, setOpenListaProductosRegistrarAlmacenWindow] = useState(false);
 
@@ -80,8 +58,9 @@ export default function CreateManyProductsWarehouse({ closeButton }: CreateManyP
   useEffect(() => {
     const idsRegistered = new Set(productsWarehouse.map(p => p.productId));
 
-    const newProductsOutWarehouse: ProductForm[] = products
+    const newProductsOutWarehouse: ProductWarehouseForm[] = products
       .map(p => ({
+        id: '', //No se usa
         productId: p.id,
         code: p.code,
         name: p.name,

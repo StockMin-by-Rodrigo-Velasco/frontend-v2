@@ -9,7 +9,7 @@ import { FaEdit } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../redux/store";
-import { ProductWarehouse } from "../../../../interface";
+import { ProductWarehouse } from "../../../../interfaces";
 import { updateProductWarehouseAPI } from "../../../../redux/warehouses/warehousesThunk";
 // import { updateProductoAlmacenAPI } from "../../../../redux/warehouses/almacenThunks";
 

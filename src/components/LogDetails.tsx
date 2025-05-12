@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { perfilColor, perfilImg } from "../assets/profile";
 import { dateLocalWhitTime } from "../helpers";
-import { Log } from "../interface";
+import { Log } from "../interfaces";
 import logos from "../assets/logos";
 
 interface LogDetailWindowsPropInterface {

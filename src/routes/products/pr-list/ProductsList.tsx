@@ -8,7 +8,7 @@ import { InputSearch, InputSelectSearch } from "../../../components/Input";
 import UpdateProduct from "./windows/UpdateProduct";
 import { FaPlus } from "react-icons/fa";
 import CreateProduct from "./windows/CreateProduct";
-import { Product } from "../../../interface";
+import { Product } from "../../../interfaces";
 
 
 interface ProductoForDataTable extends Product {

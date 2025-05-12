@@ -10,7 +10,7 @@ import { InputText, InputTextarea } from "../../../../components/Input";
 import { Button, ButtonSubmit } from "../../../../components/Buttons";
 import { BsFillTrashFill } from "react-icons/bs";
 import { hideNotification, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
-import { Brand } from "../../../../interface";
+import { Brand } from "../../../../interfaces";
 
 interface UpdateMarcaProps {
   closeButton: () => void;

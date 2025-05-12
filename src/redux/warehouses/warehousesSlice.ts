@@ -1,5 +1,5 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
-import { DocEntry, DocTransfer, Log, ProductWarehouse, Warehouse } from "../../interface";
+import { DocEntry, DocTransfer, Log, ProductWarehouse, Warehouse } from "../../interfaces";
 
 
 export interface ProductoAlmacenWithOutIdInterface {
@@ -82,7 +82,7 @@ const WarehousesSlice = createSlice({
         getDocEntries: (state, action: PayloadAction<DocEntry[]>) => {
             state.docEntries = action.payload;
         },
-        clearIngresosProductosAlmacen: (state) => {
+        clearDocEntries: (state) => {
             state.docEntries = [];
         },
         getLogsWarehouse: (state, action: PayloadAction<Log[]>) => {
@@ -111,7 +111,7 @@ export const {
     createDocTransfer,
 
     getDocEntries,
-    clearIngresosProductosAlmacen,
+    clearDocEntries,
 
     getLogsWarehouse
 

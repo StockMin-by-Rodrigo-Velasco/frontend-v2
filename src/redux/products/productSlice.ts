@@ -1,5 +1,5 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
-import { Log, Category, Brand, Product, UnitMeasure, UnitMeasureBranch } from "../../interface";
+import { Log, Category, Brand, Product, UnitMeasure, UnitMeasureBranch } from "../../interfaces";
 
 interface InitialState {
     idDeletedProduct: string;

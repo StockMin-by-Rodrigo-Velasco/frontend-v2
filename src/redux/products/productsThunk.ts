@@ -22,7 +22,7 @@ import {
     UpdateCategoryDto,
     UpdateProductDto,
     UpdateProductImageDto
-} from "../../interface";
+} from "../../interfaces";
 import {
     createCategories,
     createBrand,

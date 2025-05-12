@@ -6,7 +6,7 @@ import { useForm } from "../../../../hooks";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { FormEvent } from "react";
 import { updateWarehouseAPI } from "../../../../redux/warehouses/warehousesThunk";
-import { UpdateWarehouseDto, Warehouse } from "../../../../interface";
+import { UpdateWarehouseDto, Warehouse } from "../../../../interfaces";
 
 interface UpdateAlmacenWindowInterface{
     closeButton: () => void; 

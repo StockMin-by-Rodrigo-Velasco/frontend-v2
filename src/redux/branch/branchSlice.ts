@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, current } from '@reduxjs/toolkit';
 import Cookie from 'js-cookie';
-import { Permission, Branch, User } from '../../interface';
+import { Permission, Branch, User } from '../../interfaces';
 
 interface BranchState{
     id: string;

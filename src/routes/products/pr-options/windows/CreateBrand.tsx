@@ -7,7 +7,7 @@ import { createBrandAPI } from "../../../../redux/products/productsThunk";
 
 import { InputText, InputTextarea } from "../../../../components/Input";
 import { ButtonSubmit } from "../../../../components/Buttons";
-import { CreateBrandDto } from "../../../../interface";
+import { CreateBrandDto } from "../../../../interfaces";
 
 
 interface UpdateMarcaProps {

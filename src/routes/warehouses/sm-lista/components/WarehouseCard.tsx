@@ -5,7 +5,7 @@ import { AppDispatch } from "../../../../redux/store";
 import { FaEdit } from "react-icons/fa";
 import { useState } from "react";
 import UpdateWarehouse from "../windows/UpdateWarehouse";
-import { Warehouse } from "../../../../interface";
+import { Warehouse } from "../../../../interfaces";
 import { loginWarehouse } from "../../../../redux/warehouses/warehousesSlice";
 
 interface WarehouseCardProp {

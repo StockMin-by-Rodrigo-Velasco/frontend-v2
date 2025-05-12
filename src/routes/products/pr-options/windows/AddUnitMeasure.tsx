@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import Windows from "../../../../components/Windows"
 import { AppDispatch, RootState } from "../../../../redux/store";
-import { UnitMeasure } from "../../../../interface";
+import { UnitMeasure } from "../../../../interfaces";
 import { AiOutlineLoading } from "react-icons/ai";
 import { toggleUnitMeasureAPI } from "../../../../redux/products/productsThunk";
 import { useEffect, useState } from "react";

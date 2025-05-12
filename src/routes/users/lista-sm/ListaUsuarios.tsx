@@ -5,7 +5,7 @@ import { InputSearch } from "../../../components/Input";
 import BodySection from "../../../components/BodySection";
 import DataTable, { DataTableColumnInterface, DataTableColumnTypes } from "../../../components/DataTable";
 import { FaPlus } from "react-icons/fa";
-import { User } from "../../../interface";
+import { User } from "../../../interfaces";
 import { useEffect, useState } from "react";
 import UpdateUsuario from "./windows/UpdateUsuario";
 import CreateUsuario from "./windows/CreateUsuario";

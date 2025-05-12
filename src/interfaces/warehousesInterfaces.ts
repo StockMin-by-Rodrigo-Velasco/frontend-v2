@@ -1,3 +1,4 @@
+import { initialUser, User } from "./branchInterfaces";
 import { Product } from "./productsInterface";
 
 export interface Warehouse {
@@ -36,6 +37,8 @@ export interface ProductEntry {
     quantity: number;
     docEntryId?: string;
     productWarehouseId?: string;
+
+    ProductWarehouse:ProductWarehouse;
 }
 
 export interface ProductTransfer {
@@ -61,6 +64,16 @@ export interface DocEntry {
     createdAt?: string;
     userId: string;
     warehouseId: string;
+
+    User: User;
+
+    ProductEntry: ProductEntry[];
+}
+
+export const initialDocEntry:DocEntry = {
+    id:'', details:'',createdAt:'', userId:'', warehouseId:'',
+    User: initialUser,
+    ProductEntry: []
 }
 
 //* ------------------- DTOs -------------------------------

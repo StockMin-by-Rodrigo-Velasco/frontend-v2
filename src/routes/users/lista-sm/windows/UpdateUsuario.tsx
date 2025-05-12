@@ -7,7 +7,7 @@ import { AiOutlineLoading } from "react-icons/ai";
 import { InputText, InputTextBlock } from "../../../../components/Input";
 import { useForm } from "../../../../hooks";
 import { FormEvent } from 'react';
-import { ToggleUserPermissionDto, UpdateUserDto, User } from "../../../../interface";
+import { ToggleUserPermissionDto, UpdateUserDto, User } from "../../../../interfaces";
 import { FaEdit } from "react-icons/fa";
 import { handlePermisoToUserAPI, updateUserAPI } from "../../../../redux/branch/branchThunk";
 

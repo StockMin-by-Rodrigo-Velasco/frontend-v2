@@ -7,7 +7,7 @@ import { FormEvent, useState } from "react";
 import { createProductAPI } from "../../../../redux/products/productsThunk";
 import { Button, ButtonSubmit } from "../../../../components/Buttons";
 import logos from "../../../../assets/logos";
-import { CreateProductDto } from "../../../../interface";
+import { CreateProductDto } from "../../../../interfaces";
 
 interface ProductoSelectedWindowsPropInterface {
     closeButton: () => void

@@ -7,7 +7,7 @@ import { AiOutlineLoading } from "react-icons/ai";
 import { InputText } from "../../../../components/Input";
 import { useForm } from "../../../../hooks";
 import { FormEvent } from 'react';
-import { CreateUserDto, User } from "../../../../interface";
+import { CreateUserDto, User } from "../../../../interfaces";
 import { createUserAPI } from "../../../../redux/branch/branchThunk";
 
 interface CreateUsuarioProp {

@@ -29,6 +29,9 @@ export interface User {
 
     UserPermission: UserPermission[];
 }
+export const initialUser: User = {
+    id: '', branchId: '', name: '', lastName: '', ci: '', profile: '', contact: '', address: '', password: '', deleted: true, UserPermission: []
+}
 
 export interface Permission {
     id: string;
