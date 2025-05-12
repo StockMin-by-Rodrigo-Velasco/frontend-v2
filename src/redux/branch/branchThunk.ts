@@ -7,7 +7,7 @@ import { createUser, getPermissions, getUsers, loginBranch, loginUser, logoutBra
 import { finishLoadingAplication, finishLoadingData, finishLoadingModule, startLoadingAplication, startLoadingData, startLoadingModule } from "../aplication/aplicationSlice";
 import Cookie from 'js-cookie';
 import { NavigateFunction } from "react-router";
-import { getProductLogs } from "../products/productosSlice";
+import { getProductLogs } from "../products/productSlice";
 
 export const loginBranchAPI = (
     loginBranchDto: LoginBranchDto,

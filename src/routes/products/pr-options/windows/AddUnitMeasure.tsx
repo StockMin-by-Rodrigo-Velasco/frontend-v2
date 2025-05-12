@@ -3,7 +3,7 @@ import Windows from "../../../../components/Windows"
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { UnitMeasure } from "../../../../interface";
 import { AiOutlineLoading } from "react-icons/ai";
-import { toggleUnitMeasureAPI } from "../../../../redux/products/productosThunk";
+import { toggleUnitMeasureAPI } from "../../../../redux/products/productsThunk";
 import { useEffect, useState } from "react";
 
 interface AddUnitMeasureProp {

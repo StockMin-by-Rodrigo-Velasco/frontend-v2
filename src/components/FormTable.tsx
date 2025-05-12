@@ -1,19 +1,19 @@
 import { BsFillTrashFill } from "react-icons/bs";
 import logos from "../assets/logos";
 
-export enum FormTableColumnTypes {
-    IMG,
-    INPUT,
-    CHECK,
-    P,
-    INPUTNUM,
-    SELECT,
-}
+// export enum FormTableColumnTypes {
+//     IMG,
+//     INPUT,
+//     CHECK,
+//     P,
+//     INPUTNUM,
+//     SELECT,
+// }
 
 export interface FormTableColumn<T> {
     width?: string;
     name: string,
-    type: FormTableColumnTypes;
+    type: 'img'|'text'|'number'|'check'|'p-block';
     key: keyof T;
 }
 
@@ -45,8 +45,8 @@ export default function FormTable<T>({ arrayData, columns, handleInputChange, re
                     <tr key={indexFil} className="border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase">
                         {columns.map((c, i) => (
                             <td key={i} className="p-1 text-center" >
-                                {c.type === FormTableColumnTypes.IMG && <div className="flex justify-center" ><img src={(f[c.key] as string) || logos.logoNoImage} className="w-14" /></div>}
-                                {c.type === FormTableColumnTypes.INPUT &&
+                                {c.type === 'img' && <div className="flex justify-center" ><img src={(f[c.key] as string) || logos.logoNoImage} className="w-14" /></div>}
+                                {c.type === 'text' &&
                                     <input
                                         onChange={handleInputChange}
                                         className="border-secondary border-[1px] rounded w-full p-1 focus:outline-none"
@@ -55,7 +55,7 @@ export default function FormTable<T>({ arrayData, columns, handleInputChange, re
                                         id={`${c.key as string}:${indexFil}`}
                                         value={f[c.key] as string} />
                                 }
-                                {c.type === FormTableColumnTypes.INPUTNUM &&
+                                {c.type === 'number' &&
                                     <input
                                         onChange={handleInputChange}
                                         className="border-secondary border-[1px] rounded max-w-[100px] p-1 focus:outline-none"
@@ -64,7 +64,7 @@ export default function FormTable<T>({ arrayData, columns, handleInputChange, re
                                         id={`${c.key as string}:${indexFil}`}
                                         value={f[c.key] as string} />
                                 }
-                                {c.type === FormTableColumnTypes.P &&
+                                {c.type === 'p-block' &&
                                     <p className="bg-secondary-1/50 border-secondary text-secondary border-[1px] py-1 px-2 rounded">{f[c.key] as string}</p>
                                 }
                             </td>

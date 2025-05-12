@@ -13,9 +13,9 @@ import ProductsOptions from "./products/pr-options/ProductsOptions";
 import ProductsHistory from "./products/pr-history/ProductsHistory";
 
 import Warehouses from "./warehouses/Warehouses";
-// import SelectedAlmacen from "./warehouses/sm-lista/SelectedAlmacen";
+import WarehouseList from "./warehouses/sm-lista/WarehouseList";
+import WarehouseSelected from "./warehouses/sm-lista/WarehouseSelected";
 // import TraspasosAlmacenes from "./warehouses/sm-traspasos/TraspasosAlmacenes";
-// import ListaAlmacenes from "./warehouses/sm-lista/ListaAlmacenes";
 // import HistorialAlmacenes from "./warehouses/sm-historial/HistorialAlmacenes";
 
 import Sales from "./sales/Sales";
@@ -27,7 +27,7 @@ import Sales from "./sales/Sales";
 import Usuarios from "./users/Usuarios";
 
 export default function RoutesMain() {
-  // const { selectedAlmacen } = useSelector((s:RootState) => s.Almacenes);
+
   
   return (
       <Routes>
@@ -42,11 +42,10 @@ export default function RoutesMain() {
           </Route>
 
           <Route path="warehouses" element={<Warehouses/>}>
-            {/* <Route path="list" element={<ListaAlmacenes/>}>
-              {selectedAlmacen.id&& <Route index element={<Navigate to={selectedAlmacen.id}/>} /> }
-              <Route path=":name" element={<SelectedAlmacen/>} />
+            <Route path="list" element={<WarehouseList/>}>
+              <Route path=":name" element={<WarehouseSelected/>} />
             </Route>
-            <Route path="transfers" element={<TraspasosAlmacenes/>} />
+            {/* <Route path="transfers" element={<TraspasosAlmacenes/>} />
             <Route path="history" element={<HistorialAlmacenes/>} /> */}
           </Route>
 

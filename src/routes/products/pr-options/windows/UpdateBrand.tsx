@@ -3,11 +3,11 @@ import Windows from "../../../../components/Windows";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { useForm } from "../../../../hooks";
 import { FormEvent, useState } from "react";
-import { deleteBrandAPI, updateBrandAPI } from "../../../../redux/products/productosThunk";
+import { deleteBrandAPI, updateBrandAPI } from "../../../../redux/products/productsThunk";
 import { FaEdit } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
 import { InputText, InputTextarea } from "../../../../components/Input";
-import { Button, ButtonColors, ButtonSubmit } from "../../../../components/Buttons";
+import { Button, ButtonSubmit } from "../../../../components/Buttons";
 import { BsFillTrashFill } from "react-icons/bs";
 import { hideNotification, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
 import { Brand } from "../../../../interface";
@@ -85,8 +85,8 @@ export default function UpdateBrand({ dataUpdate, closeButton }: UpdateMarcaProp
         />
 
         <div className="flex mt-3 justify-center" >
-          <ButtonSubmit label="Guardar" color={ButtonColors.success} className="me-3" disabled={!editMode} loading={loadingData} spinner />
-          <Button label="Cancelar" color={ButtonColors.danger} disabled={!editMode} loading={loadingData} onClick={cancelUpdate} />
+          <ButtonSubmit label="Guardar" color='success' className="me-3" disabled={!editMode} loading={loadingData} spinner />
+          <Button label="Cancelar" color='danger' disabled={!editMode} loading={loadingData} onClick={cancelUpdate} />
           {editMode && <button
             onClick={deleteMarca}
             type="button"

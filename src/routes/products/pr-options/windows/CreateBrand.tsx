@@ -3,10 +3,10 @@ import Windows from "../../../../components/Windows";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { useForm } from "../../../../hooks";
 import { FormEvent } from "react";
-import { createBrandAPI } from "../../../../redux/products/productosThunk";
+import { createBrandAPI } from "../../../../redux/products/productsThunk";
 
 import { InputText, InputTextarea } from "../../../../components/Input";
-import { ButtonColors, ButtonSubmit } from "../../../../components/Buttons";
+import { ButtonSubmit } from "../../../../components/Buttons";
 import { CreateBrandDto } from "../../../../interface";
 
 
@@ -51,7 +51,7 @@ export default function CreateBrand({ closeButton }: UpdateMarcaProps) {
         />
 
         <div className="flex mt-3 justify-center" >
-          <ButtonSubmit label="Guardar" color={ButtonColors.success} className="me-3" disabled={loadingData} loading={loadingData} spinner />
+          <ButtonSubmit label="Guardar" color='success' className="me-3" disabled={loadingData} loading={loadingData} spinner />
         </div>
       </form>
     </Windows>

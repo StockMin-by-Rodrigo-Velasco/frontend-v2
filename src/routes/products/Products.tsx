@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet } from "react-router";
 import { AppDispatch, RootState } from "../../redux/store";
-import { getProductModuleDataAPI } from "../../redux/products/productosThunk";
+import { getProductModuleDataAPI } from "../../redux/products/productsThunk";
 import LoadingModule from "../../components/LoadingModule";
 
 export default function Products() {

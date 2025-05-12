@@ -1,144 +1,147 @@
-export interface Almacen {
+import { Product } from "./productsInterface";
+
+export interface Warehouse {
     id: string;
-    sucursalId: string;
-    nombre: string;
-    descripcion?: string,
+    name: string;
+    description?: string;
     deleted: boolean;
-    createdAt: string;
+    createdAt?: string;
+    updatedAt?: string;
+    branchId: string;
+}
+
+export interface ProductWarehouse {
+    id: string;
+    quantity: number;
+    minQuantity: number;
+    productId: string;
+    warehouseId: string;
+    createdAt: String;
     updatedAt: string;
+    Product: Product;
 }
 
-export interface ProductoAlmacen {
+export const initialProductWarehouse: ProductWarehouse = {
+    id:'', productId:'', warehouseId:'', minQuantity:0, quantity:0, createdAt:'', updatedAt:'',
+    Product:{
+      branchId:'', brandId:'', categoryId:'',code:'', createdAt:'', deleted: false, id:'', description:'', image:'', name:'', unitMeasureId:'', updatedAt:'',
+      Brand:{id:'', branchId:'', deleted:false, name:'', origin:''},
+      Category:{id:'',branchId:'', deleted:false, details:'', name:''},
+      UnitMeasure:{id:'', abbreviation:'', details:'', name:''}
+    }
+  }
+
+export interface ProductEntry {
     id: string;
-    productoId: string;
-    almacenId: string;
-    cantidad: number;
-    cantidadMinima: number;
-    createdAt: string;
-    updatedAt: string;
+    quantity: number;
+    docEntryId?: string;
+    productWarehouseId?: string;
 }
 
-export interface ProductoAlmacenDetallado extends ProductoAlmacen {
-    codigo: string;
-    nombre: string;
-    descripcion: string;
-    imagen: string;
-    categoria?: string;
-    marca?: string;
-    unidadMedida?: string;
-    unidadMedidaAbreviada?: string;
-}
-
-export interface IngresoProductosAlmacen {
+export interface ProductTransfer {
     id: string;
-    cantidad: number;
-    ingresoAlmacenId: string;
-    productoAlmacenId: string;
-
-    ProductoAlmacen: ProductoAlmacen;
+    quantity: number;
+    productId: string;
+    docTransferId: string;
 }
-export interface IngresoAlmacen {
+
+export interface DocTransfer {
     id: string;
-    usuarioId: string;
-    almacenId: string;
-    detalle: string;
-    createdAt: string;
-    IngresoProductosAlmacen: IngresoProductosAlmacen[];
+    originWarehouseId: string;
+    destinationWarehouseId: string;
+    details?: string;
+    createdAt?: string;
+    branchId: string;
+    userId: string;
 }
 
-export interface TraspasoProductoAlmacen {
+export interface DocEntry {
     id: string;
-    productoId: string;
-    cantidad: string;
-
-    docTraspasoProductoAlmacenId: string;
-    DocTraspasoProductoAlmacen: DocTraspasoProductoAlmacen;
+    details?: string;
+    createdAt?: string;
+    userId: string;
+    warehouseId: string;
 }
 
-export interface DocTraspasoProductoAlmacen {
+//* ------------------- DTOs -------------------------------
+
+export interface CreateWarehouseDto {
+    branchId: string;
+    name: string;
+    description?: string;
+}
+
+export interface UpdateWarehouseDto {
     id: string;
-    sucursalId: string;
-    usuarioId: string;
-    almacenOrigenId: string;
-    almacenDestinoId: string;
-    detalle?: string;
-    createdAt: string;
+    branchId: string;
+    name?: string;
+    description?: string;
+  }
 
-    TraspasoProductoAlmacen: TraspasoProductoAlmacen[];
+  export interface CreateProductEntryDto {
+    productWarehouseId: string;
+    docEntryId?: string;
+    quantity: number;
 }
 
-// --------------------- DTOs ------------------------
-
-export interface CreateAlmacenDto {
-    sucursalId: string;
-    nombre: string;
-    descripcion?: string;
+export interface CreateDocEntryDto {
+    userId: string;
+    warehouseId: string;
+    details?: string;
+    productsEntry: CreateProductEntryDto[]
 }
 
-export interface DeleteAlmacenDto {
-    almacenId: string;
-    sucursalId: string;
+export interface GetDocEntryDto{
+    warehouseId: string;
+    from: string;
+    to: string;
 }
 
-export interface UpdateAlmacenDto {
-    almacenId: string;
-    sucursalId: string;
-    nombre?: string;
-    descripcion?: string;
+export interface CreateProductTransferDto {
+    productId: string;
+    quantity: number;
+    docTransferId?: string;
 }
 
-export interface CreateProductoAlmacenDto {
-    productoId: string;
-    almacenId: string;
-    cantidad?: number;
-    cantidadMinima?: number;
+export interface CreateDocTrasferDto {
+    branchId: string;
+    userId: string;
+    originWarehouseId: string;
+    destinationWarehouseId: string;
+    details?: string;
+    productsTransfer: CreateProductTransferDto[]
 }
 
-export interface CreateManyProductosAlmacenDto {
-    almacenId: string;
-    productosAlmacen: CreateProductoAlmacenDto[];
-    // ----- DATOS PARA LOG -----
-    almacenNombre: string;
+export interface GetDocTransfersDto{
+    branchId: string;
+    from: string;
+    to: string;
 }
 
-export interface CreateIngresoProductoAlmacenDto {
-    productoAlmacenId: string;
-    cantidad: number;
+export interface CreateProductWarehouseDto{
+    productId: string;
+    warehouseId: string;
+    quantity?: number;
+    minQuantity?: number;
 }
 
-export interface CreateIngresoAlmacenDto {
-    usuarioId: string;
-    almacenId: string;
-    detalle?: string;
-    ingresoProductosAlmacen: CreateIngresoProductoAlmacenDto[]
+export interface CreateManyProductsWarehouseDto{
+    warehouseId: string;
+    productsWarehouse: CreateProductWarehouseDto[];
 }
 
-export interface TransactionProductoAlmacenDto {
-    productoAlmacenId: string;
-    cantidad: number;
+export interface ProductTransferDto {
+    productWarehouseId: string;
+    quantity: number;
 }
 
-export interface ListTransactionProductosAlmacenDto {
-    productos: TransactionProductoAlmacenDto[]
+export interface ListProductTransferDto {
+    products: ProductTransferDto[]
 }
 
-export interface GetTraspasosAlmacenDto {
-    sucursalId: string;
-    desde: string;
-    hasta: string;
+export interface UpdateProductWarehouseDto{
+    productWarehouseId: string;
+    minQuantity?: number ;
 }
 
-export interface CreateTraspasoProductoAlmacenDto {
-    productoId: string;
-    cantidad: number;
-}
-
-export interface CreateDocTraspasoAlmacenDto {
-    sucursalId: string;
-    usuarioId: string;
-    almacenOrigenId: string;
-    almacenDestinoId: string;
-    detalle?: string;
-
-    traspasoProductosAlmacen: CreateTraspasoProductoAlmacenDto[]
-}
+  

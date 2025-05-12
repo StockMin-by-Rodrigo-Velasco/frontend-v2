@@ -1,7 +1,7 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
 import { Log, Category, Brand, Product, UnitMeasure, UnitMeasureBranch } from "../../interface";
 
-interface InitialStateInterface {
+interface InitialState {
     idDeletedProduct: string;
     idDeletedBrand: string;
     idDeletedCategory: string;
@@ -13,7 +13,7 @@ interface InitialStateInterface {
     logs: Log[],
 }
 
-const initialState: InitialStateInterface = {
+const initialState: InitialState = {
     idDeletedProduct: '',
     idDeletedBrand: '',
     idDeletedCategory: '',

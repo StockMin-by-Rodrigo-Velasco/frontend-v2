@@ -1,30 +1,23 @@
 import { Outlet } from "react-router";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
-// import { useEffect } from "react";
-
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../redux/store";
 import LoadingModule from "../../components/LoadingModule";
-
-// import { getCategoriesAPI, getBrandsAPI, getProductsAPI } from "../../redux/products/productosThunk";
-
-// import { getAllAlmacenesAPI } from "../../redux/warehouses/almacenThunks";
+import { useEffect } from "react";
+import { getWarehouseModuleDataAPI } from "../../redux/warehouses/warehousesThunk";
 
 export default function Warehouses() {
-  const { loadingApplication } = useSelector((s: RootState) => s.Aplication);
-  // const { id } = useSelector((s: RootState) => s.Branch);
+  const { loadingModule } = useSelector((s: RootState) => s.Aplication);
+  const { id } = useSelector((s: RootState) => s.Branch);
 
-  // const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>();
 
-//   useEffect(() => {
-//     dispatch(getAllAlmacenesAPI("LOADING-APP-START"));
-//     dispatch(getBrandsAPI());
-//     dispatch(getCategoriesAPI());
-//     dispatch(getProductsAPI("LOADING-APP-FINISH"));
-//   }, [id])
+  useEffect(() => {
+    dispatch(getWarehouseModuleDataAPI());
+  }, [id])
 
   return (
     <>
-      {loadingApplication && <LoadingModule title="Cargando la lista de almacenes…" />}
+      {loadingModule && <LoadingModule title="Cargando la lista de almacenes…" />}
       <Outlet />
     </>
   );

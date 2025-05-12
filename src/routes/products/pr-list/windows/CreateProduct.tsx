@@ -4,8 +4,8 @@ import Windows from "../../../../components/Windows";
 import { useForm } from "../../../../hooks";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { FormEvent, useState } from "react";
-import { createProductAPI } from "../../../../redux/products/productosThunk";
-import { Button, ButtonColors, ButtonSubmit } from "../../../../components/Buttons";
+import { createProductAPI } from "../../../../redux/products/productsThunk";
+import { Button, ButtonSubmit } from "../../../../components/Buttons";
 import logos from "../../../../assets/logos";
 import { CreateProductDto } from "../../../../interface";
 
@@ -105,8 +105,8 @@ export default function CreateProduct({ closeButton }: ProductoSelectedWindowsPr
                         </div>
 
                         <div className="border-t-[1px] border-secondary mt-2 pt-2 flex" >
-                            <ButtonSubmit label="Guardar" color={ButtonColors.success} className="me-3" loading={loadingData} spinner/>
-                            <Button label="Cancelar" color={ButtonColors.danger} loading={loadingData} onClick={cancelUpdateProduct}/>
+                            <ButtonSubmit label="Guardar" color='success' className="me-3" loading={loadingData} spinner/>
+                            <Button label="Cancelar" color='danger' loading={loadingData} onClick={cancelUpdateProduct}/>
                         </div>
                     </form>
                 </div>

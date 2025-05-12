@@ -2,12 +2,12 @@ import { FormEvent, useState } from "react";
 import { InputText, InputTextarea } from "../../../../components/Input";
 import Windows from "../../../../components/Windows";
 import { useForm } from '../../../../hooks/useForm';
-import { Button, ButtonColors, ButtonSubmit } from "../../../../components/Buttons";
+import { Button, ButtonSubmit } from "../../../../components/Buttons";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { FaEdit } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
-import { deleteCategoryAPI, updateCategoryAPI } from "../../../../redux/products/productosThunk";
+import { deleteCategoryAPI, updateCategoryAPI } from "../../../../redux/products/productsThunk";
 import { hideNotification, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
 import { BsFillTrashFill } from "react-icons/bs";
 import { Category } from "../../../../interface";
@@ -88,8 +88,8 @@ export default function UpdateCategory({ dataUpdate, closeButton }: UpdateCatego
         />
 
         <div className="flex mt-3 justify-center" >
-          <ButtonSubmit label="Guardar" color={ButtonColors.success} className="me-3" disabled={!editMode || loadingData} loading={loadingData} spinner />
-          <Button label="Cancelar" color={ButtonColors.danger} disabled={!editMode || loadingData} loading={loadingData} onClick={cancelUpdate} />
+          <ButtonSubmit label="Guardar" color='success' className="me-3" disabled={!editMode || loadingData} loading={loadingData} spinner />
+          <Button label="Cancelar" color='danger' disabled={!editMode || loadingData} loading={loadingData} onClick={cancelUpdate} />
           {editMode && <button
             onClick={deleteCategory}
             type="button"

@@ -40,12 +40,12 @@ import {
     updateProduct,
     toggleUnitMeasure,
     getUnitMeasuresBranch
-} from "./productosSlice";
+} from "./productSlice";
 
 export const getProductModuleDataAPI = () => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: branchId } = getState().Branch;
-        if(branchId === '')return
+        if(branchId === '') return;
         try {
             dispatch(startLoadingModule());
 

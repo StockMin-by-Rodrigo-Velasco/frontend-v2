@@ -6,8 +6,8 @@ import { AppDispatch, RootState } from "../../../../redux/store";
 import { FaEdit } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
 import { FormEvent, useState } from "react";
-import { deleteProductAPI, updateProductAPI, updateProductImageAPI } from "../../../../redux/products/productosThunk";
-import { Button, ButtonColors, ButtonSubmit } from "../../../../components/Buttons";
+import { deleteProductAPI, updateProductAPI, updateProductImageAPI } from "../../../../redux/products/productsThunk";
+import { Button, ButtonSubmit } from "../../../../components/Buttons";
 import { BsFillTrashFill } from "react-icons/bs";
 import { hideNotification, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
 import { IoCheckmark, IoClose } from "react-icons/io5";
@@ -183,8 +183,8 @@ export default function UpdateProduct({ product, closeButton }: UpdateProductPro
                         </div>
 
                         <div className="border-t-[1px] border-secondary mt-2 pt-2 flex" >
-                            <ButtonSubmit label="Guardar" color={ButtonColors.success} className="me-3" disabled={!editMode} loading={loadingData} spinner />
-                            <Button label="Cancelar" color={ButtonColors.danger} disabled={!editMode} loading={loadingData} onClick={cancelUpdateProduct} />
+                            <ButtonSubmit label="Guardar" color='success' className="me-3" disabled={!editMode} loading={loadingData} spinner />
+                            <Button label="Cancelar" color='danger' disabled={!editMode} loading={loadingData} onClick={cancelUpdateProduct} />
                             {editMode &&
                                 <button
                                     onClick={deleteProduct}

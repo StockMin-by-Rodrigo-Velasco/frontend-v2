@@ -1,3 +1,3 @@
-export * from './ReduxHook';
+export * from './reduxHook';
 
 export * from './useForm'

@@ -2,8 +2,8 @@ import { configureStore } from '@reduxjs/toolkit';
 import NotificationSlice from './notification/notificationSlice';
 import BranchSlice from './branch/branchSlice';
 import AplicationSlice from './aplication/aplicationSlice';
-import ProductsSlice from './products/productosSlice';
-// import AlmacenesSlice from './warehouses/almacenesSlice';
+import ProductsSlice from './products/productSlice';
+import WarehousesSlice from './warehouses/warehousesSlice';
 // import VentasSlice from './sales/ventasSlice';
 
 
@@ -13,7 +13,7 @@ export const store = configureStore({
         Notification: NotificationSlice,
         Branch: BranchSlice,
         Products: ProductsSlice,
-        // Almacenes: AlmacenesSlice,
+        Warehouses: WarehousesSlice,
         // Ventas: VentasSlice,
     }
 })

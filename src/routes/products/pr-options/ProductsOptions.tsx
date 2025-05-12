@@ -11,7 +11,7 @@ import CreateBrand from './windows/CreateBrand';
 import CreateCategory from './windows/CreateCategory';
 import AddUnitMeasure from './windows/AddUnitMeasure';
 import { Category, Brand } from '../../../interface';
-import { toggleUnitMeasureAPI } from '../../../redux/products/productosThunk';
+import { toggleUnitMeasureAPI } from '../../../redux/products/productsThunk';
 
 
 const marcaColumns: DataTableColumnInterface<Brand>[] = [

@@ -83,21 +83,21 @@ export default function Navbar() {
                     title: 'Lista de almacenes', 
                     path: '/main/warehouses/list', 
                     icon: <CiBoxes size='14px'/>,
-                    access: false//userPermissionsSet.has(warehousesPermissionsModule['wh-01'])
+                    access: userPermissionsSet.has(warehousesPermissionsModule['wh-01'])
 
                 },
                 { 
                     title: 'Traspasos', 
                     path: '/main/warehouses/transfers', 
                     icon: <GrTransaction size='14px'/>,
-                    access: false//userPermissionsSet.has(warehousesPermissionsModule['wh-02'])
+                    access: userPermissionsSet.has(warehousesPermissionsModule['wh-02'])
 
                 },
                 { 
                     title: 'Historial', 
                     path: '/main/warehouses/history', 
                     icon: <TbHistory size='14px'/>,
-                    access: false//userPermissionsSet.has(warehousesPermissionsModule['wh-03'])
+                    access: userPermissionsSet.has(warehousesPermissionsModule['wh-03'])
                 },
             ]
         },
