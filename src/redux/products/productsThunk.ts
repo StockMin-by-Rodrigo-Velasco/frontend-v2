@@ -41,8 +41,9 @@ import {
     toggleUnitMeasure,
     getUnitMeasuresBranch
 } from "./productSlice";
+import { NavigateFunction } from "react-router";
 
-export const getProductModuleDataAPI = () => {
+export const getProductModuleDataAPI = (navigate?: NavigateFunction) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
         const { id: branchId } = getState().Branch;
         if(branchId === '') return;
@@ -68,6 +69,8 @@ export const getProductModuleDataAPI = () => {
             const resUnitMeasureBranch: AxiosResponse = await api.get(`unit-measure/get-unit-measures-branch/${branchId}`);
             const { data:unitMeasuresBranch }: { data: UnitMeasureBranch[] } = resUnitMeasureBranch.data;
             dispatch(getUnitMeasuresBranch(unitMeasuresBranch));
+
+            if(navigate) navigate('/main/products/list');
 
             dispatch(finishLoadingModule());
         } catch (error) {

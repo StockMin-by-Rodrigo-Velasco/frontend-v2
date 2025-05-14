@@ -8,7 +8,8 @@ import { finishLoadingAplication, finishLoadingData, finishLoadingModule, startL
 import Cookie from 'js-cookie';
 import { NavigateFunction } from "react-router";
 import { getProductLogs } from "../products/productSlice";
-import { getLogsWarehouse } from "../warehouses/warehousesSlice";
+import { getWarehouseLogs } from "../warehouses/warehousesSlice";
+import { getSalesLogs } from "../sales/salesSlice";
 
 export const loginBranchAPI = (
     loginBranchDto: LoginBranchDto,
@@ -96,10 +97,9 @@ export const getBranchModuleDataAPI = (navigate: (path: string) => void) => {
     }
 }
 
-export const getUsersModuleDataAPI = (
-    branchId: string
-) => {
-    return async (dispatch: AppDispatch) => {
+export const getUsersModuleDataAPI = (navigate?: NavigateFunction) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {id: branchId} = getState().Branch;
         try {
             dispatch(startLoadingModule());
             //* 1. Traer lista de PERMISOS
@@ -111,6 +111,9 @@ export const getUsersModuleDataAPI = (
             const resUsers: AxiosResponse = await api.get(`user/get-users/${branchId}`)
             const { data }: { data: User[] } = resUsers.data;
             dispatch(getUsers(data));
+
+            if(navigate) navigate('/main/users/list');
+
             dispatch(finishLoadingModule());
         } catch (error) {
             console.log(error)
@@ -317,7 +320,8 @@ export const getLogsAPI = (getLogsDto: GetLogsDto) => {
             const response: AxiosResponse = await api.post(`log/get-logs`, getLogsDto);
             const {data}:{data:Log[]} = response.data;
             if(getLogsDto.module === 'products') dispatch(getProductLogs(data));
-            if(getLogsDto.module === 'warehouses') dispatch(getLogsWarehouse(data));
+            if(getLogsDto.module === 'warehouses') dispatch(getWarehouseLogs(data));
+            if(getLogsDto.module === 'sales') dispatch(getSalesLogs(data));
 
             dispatch(finishLoadingData());
         } catch (error) {

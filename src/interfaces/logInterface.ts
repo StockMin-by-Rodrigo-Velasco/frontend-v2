@@ -7,3 +7,4 @@ export interface Log {
     description: string;
     createdAt: string;
 }
+export const initialLog:Log= {id: '', branchId: '', userId: '', module: '', title: '', description: '', createdAt: ''}

@@ -7,9 +7,10 @@ import { getBrands, getCategories, getProducts } from "../products/productSlice"
 import { ProductWarehouse, Warehouse, CreateWarehouseDto, UpdateWarehouseDto, CreateManyProductsWarehouseDto, CreateProductWarehouseDto, UpdateProductWarehouseDto, GetDocEntryDto, DocEntry, CreateDocEntryDto, ProductEntry, CreateDocTrasferDto, DocTransfer, GetDocTransfersDto, ProductTransfer } from '../../interfaces/warehousesInterfaces';
 import { createDocTransfer, createManyProductsWarehouse, createProductWarehouse, createWarehouse, deleteWarehouse, getDocEntries, getDocTransfers, getProductsWarehouse, getWarehauses, updateManyProductsWarehouse, updateProductWarehouse, updateWarehouse } from "./warehousesSlice";
 import { hideNotification, showNotificationError, showNotificationSuccess } from "../notification/notificationSlice";
+import { NavigateFunction } from "react-router";
 
 
-export const getWarehouseModuleDataAPI = () => {
+export const getWarehouseModuleDataAPI = (navigate?: NavigateFunction) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
 
         const { id: branchId } = getState().Branch;
@@ -33,6 +34,8 @@ export const getWarehouseModuleDataAPI = () => {
             const resProduct: AxiosResponse = await api.get(`product/get-products/${branchId}`);
             const {data:products}:{data:Product[]} = resProduct.data;
             dispatch(getProducts(products));
+
+            if(navigate) navigate('/main/warehouses/list');
 
             dispatch(finishLoadingModule());
         } catch (error) {

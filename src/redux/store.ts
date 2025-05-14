@@ -5,6 +5,7 @@ import AplicationSlice from './aplication/aplicationSlice';
 import ProductsSlice from './products/productSlice';
 import WarehousesSlice from './warehouses/warehousesSlice';
 // import VentasSlice from './sales/ventasSlice';
+import SalesSlice from './sales/salesSlice';
 
 
 export const store = configureStore({
@@ -14,7 +15,7 @@ export const store = configureStore({
         Branch: BranchSlice,
         Products: ProductsSlice,
         Warehouses: WarehousesSlice,
-        // Ventas: VentasSlice,
+        Sales: SalesSlice
     }
 })
 

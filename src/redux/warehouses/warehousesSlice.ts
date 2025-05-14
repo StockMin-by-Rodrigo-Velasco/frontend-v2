@@ -86,7 +86,7 @@ const WarehousesSlice = createSlice({
         clearDocEntries: (state) => {
             state.docEntries = [];
         },
-        getLogsWarehouse: (state, action: PayloadAction<Log[]>) => {
+        getWarehouseLogs: (state, action: PayloadAction<Log[]>) => {
             state.logs = [...action.payload];
         },
 
@@ -114,7 +114,7 @@ export const {
     getDocEntries,
     clearDocEntries,
 
-    getLogsWarehouse
+    getWarehouseLogs
 
 } = WarehousesSlice.actions;
 export default WarehousesSlice.reducer;

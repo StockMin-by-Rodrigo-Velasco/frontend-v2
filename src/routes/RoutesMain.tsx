@@ -27,6 +27,7 @@ import Sales from "./sales/Sales";
 import Usuarios from "./users/Usuarios";
 import WarehousesHistory from "./warehouses/sm-historial/WarehousesHistory";
 import Transfers from "./warehouses/sm-traspasos/Transfers";
+import Customers from "./sales/sm-customers/Customers";
 
 export default function RoutesMain() {
 
@@ -52,10 +53,10 @@ export default function RoutesMain() {
           </Route>
 
           <Route path="sales" element={<Sales/>}>
-            {/* <Route path="store" element={<TiendaVentas/>}/>
-            <Route path="customers" element={<ClientesVentas/>}/>
-            <Route path="options" element={<OpcionesVentas/>}/>
-            <Route path="history" element={<HistorialVentas/>} /> */}
+            {/* <Route path="store" element={<TiendaVentas/>}/> */}
+            <Route path="customers" element={<Customers/>}/>
+            {/* <Route path="options" element={<OpcionesVentas/>}/> */}
+            {/* <Route path="history" element={<HistorialVentas/>} /> */}
           </Route>
 
           <Route path="users" element={<Usuarios/>}>

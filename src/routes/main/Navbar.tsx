@@ -115,7 +115,7 @@ export default function Navbar() {
                     title: 'Clientes', 
                     path: '/main/sales/customers', 
                     icon: <FaRegUser size='14px'/>,
-                    access: false//userPermissionsSet.has(salesModulePermissions['sa-02'])
+                    access: userPermissionsSet.has(salesModulePermissions['sa-02'])
 
                 },
                 { 
