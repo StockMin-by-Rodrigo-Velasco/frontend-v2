@@ -16,7 +16,7 @@ interface CreateUsuarioProp {
 }
 
 export default function CreateUsuario({ closeButton, getUsuario }: CreateUsuarioProp) {
-  const { id: branchId, listPermissions: listaPermisos } = useSelector((s: RootState) => s.Branch);
+  const { id: branchId, permissions: listaPermisos } = useSelector((s: RootState) => s.Branch);
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
 
   const dispatch = useDispatch<AppDispatch>();

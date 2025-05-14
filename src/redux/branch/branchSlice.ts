@@ -6,10 +6,10 @@ interface BranchState{
     id: string;
     data: Branch;
     userData: User,
-    listUsers: User[];
-    listUsersObj: Record<string, User>;
-    listPermissions: Permission[];
-    listPermissionsObj: Record<string, Permission> ;
+    users: User[];
+    // usersObj: Record<string, User>;
+    permissions: Permission[];
+    // listPermissionsObj: Record<string, Permission>;
     logo: string;
 }
 
@@ -17,10 +17,10 @@ const initialState: BranchState = {
     id: '',
     data: {id:'', nit:'', code: '', name:'', owner:'', address:'', contact: '', adminPassword:'',logo:'',password:'',deleted:false, createdAt:'', updatedAt:''},
     userData: { id:'', branchId:'', name:'', lastName:'', ci:'', profile:'', contact:'', address:'', password:'', UserPermission:[], deleted:false },
-    listUsers:[],
-    listUsersObj:{},
-    listPermissions:[],
-    listPermissionsObj:{},
+    users:[],
+    // usersObj:{},
+    permissions:[],
+    // listPermissionsObj:{},
     logo: '',
 }
 
@@ -36,14 +36,14 @@ const BranchSlice = createSlice({
     logoutBranch: (state) => {
         state.id = '';
         state.data = initialState.data;
-        state.listUsers =[];
+        state.users =[];
         state.logo = '';
 
         Cookie.remove('token');
     },
     getUsers: (state, action: PayloadAction<User[]>) => {
-        state.listUsers = [...action.payload]
-        state.listUsersObj = action.payload.reduce((acc, a) => {acc[a.id] = a; return acc}, {} as Record<string, User>);
+        state.users = [...action.payload]
+        // state.usersObj = action.payload.reduce((acc, a) => {acc[a.id] = a; return acc}, {} as Record<string, User>);
     },
     loginUser: (state, action: PayloadAction<User>) => {
         state.userData = {...action.payload};
@@ -52,18 +52,18 @@ const BranchSlice = createSlice({
         state.userData = initialState.userData;
     },
     createUser: (state, action: PayloadAction<User>) => {
-        state.listUsers = [action.payload, ...state.listUsers];
-        state.listUsersObj[action.payload.id] = action.payload;
+        state.users = [action.payload, ...state.users];
+        // state.usersObj[action.payload.id] = action.payload;
     },
     updateUser: (state, action: PayloadAction<User>) => {
         if( action.payload.id === state.userData.id ) state.userData = {...state.userData,...action.payload};
-        const newListUsers = current(state.listUsers).map(u => (u.id !== action.payload.id)? u:action.payload);
-        state.listUsers = newListUsers;
-        state.listUsersObj[action.payload.id] = action.payload;
+        const newListUsers = current(state.users).map(u => (u.id !== action.payload.id)? u:action.payload);
+        state.users = newListUsers;
+        // state.usersObj[action.payload.id] = action.payload;
     },
     getPermissions: (state, action: PayloadAction<Permission[]>) => {
-        state.listPermissions = action.payload;
-        state.listPermissionsObj = action.payload.reduce((acc, a) => {acc[a.id] = a; return acc}, {} as Record<string, Permission>);
+        state.permissions = action.payload;
+        // state.listPermissionsObj = action.payload.reduce((acc, a) => {acc[a.id] = a; return acc}, {} as Record<string, Permission>);
     },
   }
 });

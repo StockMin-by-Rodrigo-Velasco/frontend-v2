@@ -51,7 +51,7 @@ export default function WarehouseSelected() {
 
   const logoutAlmacen = () => {
     dispatch(logoutWarehouse())
-    navigate('/main/almacenes/lista');
+    navigate('/main/warehouses/list');
   }
 
   const getProduct = (productoData: ProductWarehouse) => {
@@ -172,9 +172,9 @@ export default function WarehouseSelected() {
                 <td>
                   {(p.minQuantity > 0) && (p.minQuantity > 0) ?
                     <div className="w-full h-full flex justify-center items-center">
-                      {(p.quantity > (p.quantity * 2)) && <div className="bg-success rounded h-5 w-2"></div>}
-                      {((p.quantity <= (p.quantity * 2)) && (p.quantity > p.quantity)) && <div className="bg-warning rounded h-5 w-2"></div>}
-                      {(p.quantity<= p.quantity) && <div className="bg-danger rounded h-5 w-2"></div>}
+                      {(p.quantity > (p.minQuantity * 2)) && <div className="bg-success rounded h-5 w-2"></div>}
+                      {((p.quantity <= (p.minQuantity * 2)) && (p.quantity > p.minQuantity)) && <div className="bg-warning rounded h-5 w-2"></div>}
+                      {(p.quantity<= p.minQuantity) && <div className="bg-danger rounded h-5 w-2"></div>}
                     </div>
                     :
                     <div className="w-full h-full flex justify-center items-center">

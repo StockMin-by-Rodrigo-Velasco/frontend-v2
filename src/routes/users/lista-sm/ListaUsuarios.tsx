@@ -26,7 +26,7 @@ const columns: DataTableColumnInterface<User>[] = [
 
 export default function ListaUsuarios() {
 
-  const { listUsers: users } = useSelector((s:RootState) => s.Branch);
+  const { users: users } = useSelector((s:RootState) => s.Branch);
 
   const [filter, setFilter] = useState<FilterInterface>(filterInitialState);
     const [openCreateUsuario, setOpenCreateUsuario] = useState(false);

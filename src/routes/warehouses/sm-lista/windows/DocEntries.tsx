@@ -25,17 +25,16 @@ export default function DocEntries({ closeButton }: DocEntriesProp) {
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
   const { warehouseSelected, docEntries } = useSelector((s: RootState) => s.Warehouses);
 
-  const [openViewIngresoProductoAlmacenWindow, setOpenViewIngresoProductoAlmacenWindow] = useState(false);
-  const [ingresosData, setIngresosData] = useState<DocEntry>(initialDocEntry)
+  const [openViewDocEntry, setOpenViewDocEntry] = useState(false);
+  const [docEntry, setDocEntry] = useState<DocEntry>(initialDocEntry);
 
   const dispatch = useDispatch<AppDispatch>();
 
   const { data: dateRange, handleInputChange } = useForm<DateRange>(initDateRange);
 
-  const getIngreso = (data: DocEntry) => {
-    // console.log(data);
-    setIngresosData(data);
-    setOpenViewIngresoProductoAlmacenWindow(true);
+  const getDocEntry = (data: DocEntry) => {
+    setDocEntry(data);
+    setOpenViewDocEntry(true);
   }
 
   const filterIngresos = () => {
@@ -60,10 +59,10 @@ export default function DocEntries({ closeButton }: DocEntriesProp) {
   return (
     <Windows tittle="HISTORIAL DE INGRESOS" closeButton={closeButton} >
 
-      {openViewIngresoProductoAlmacenWindow&& 
+      {openViewDocEntry&& 
       <ViewDocEntry 
-        closeButton={() => { setOpenViewIngresoProductoAlmacenWindow(false) }} 
-        data={ingresosData}
+        closeButton={() => { setOpenViewDocEntry(false) }} 
+        data={docEntry}
       /> }
 
 
@@ -108,7 +107,7 @@ export default function DocEntries({ closeButton }: DocEntriesProp) {
                 <td>{dateLocalWhitTime(i.createdAt || '')}</td>
                 <td>{i.details}</td>
                 <td className="text-center text-secondary">
-                  <button type="button" onClick={() => { getIngreso(i) }} ><BsBoxArrowInUpRight /></button>
+                  <button type="button" onClick={() => { getDocEntry(i) }} ><BsBoxArrowInUpRight /></button>
                 </td>
               </tr>
             ))}

@@ -12,7 +12,7 @@ interface LogDetailWindowsPropInterface {
 }
 
 export default function LogDetailsWindows({ log, closeButton }: LogDetailWindowsPropInterface) {
-    const { listUsersObj } = useSelector((s: RootState) => s.Branch);
+    const { usersObj: listUsersObj } = useSelector((s: RootState) => s.Branch);
 
     return (
         <Windows tittle='DETALLES DE LA ACCION' closeButton={closeButton}>

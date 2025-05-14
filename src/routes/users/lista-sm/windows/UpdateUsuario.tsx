@@ -17,7 +17,7 @@ interface UpdateUsuarioProp {
 }
 
 export default function UpdateUsuario({ closeButton, user }: UpdateUsuarioProp) {
-  const { id: branchId, listPermissions: listaPermisos } = useSelector((s: RootState) => s.Branch);
+  const { id: branchId, permissions: listaPermisos } = useSelector((s: RootState) => s.Branch);
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
 
   const userPermissionsSet = new Set(user.UserPermission.map(p => p.permissionId));

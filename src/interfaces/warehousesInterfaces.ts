@@ -23,14 +23,14 @@ export interface ProductWarehouse {
 }
 
 export const initialProductWarehouse: ProductWarehouse = {
-    id:'', productId:'', warehouseId:'', minQuantity:0, quantity:0, createdAt:'', updatedAt:'',
-    Product:{
-      branchId:'', brandId:'', categoryId:'',code:'', createdAt:'', deleted: false, id:'', description:'', image:'', name:'', unitMeasureId:'', updatedAt:'',
-      Brand:{id:'', branchId:'', deleted:false, name:'', origin:''},
-      Category:{id:'',branchId:'', deleted:false, details:'', name:''},
-      UnitMeasure:{id:'', abbreviation:'', details:'', name:''}
+    id: '', productId: '', warehouseId: '', minQuantity: 0, quantity: 0, createdAt: '', updatedAt: '',
+    Product: {
+        branchId: '', brandId: '', categoryId: '', code: '', createdAt: '', deleted: false, id: '', description: '', image: '', name: '', unitMeasureId: '', updatedAt: '',
+        Brand: { id: '', branchId: '', deleted: false, name: '', origin: '' },
+        Category: { id: '', branchId: '', deleted: false, details: '', name: '' },
+        UnitMeasure: { id: '', abbreviation: '', details: '', name: '' }
     }
-  }
+}
 
 export interface ProductEntry {
     id: string;
@@ -38,14 +38,17 @@ export interface ProductEntry {
     docEntryId?: string;
     productWarehouseId?: string;
 
-    ProductWarehouse:ProductWarehouse;
+    ProductWarehouse: ProductWarehouse;
 }
 
 export interface ProductTransfer {
     id: string;
     quantity: number;
+    productOriginWarehouseId: string;
+    productDestinationWarehouseId: string;
     productId: string;
-    docTransferId: string;
+
+    Product: Product;
 }
 
 export interface DocTransfer {
@@ -56,6 +59,20 @@ export interface DocTransfer {
     createdAt?: string;
     branchId: string;
     userId: string;
+
+    User: User;
+
+    ProductTransfer?: ProductTransfer[]
+}
+export const initialDocTransfer: DocTransfer = {
+    id: '',
+    originWarehouseId: '',
+    destinationWarehouseId: '',
+    details: '',
+    createdAt: '',
+    branchId: '',
+    userId: '',
+    User: initialUser
 }
 
 export interface DocEntry {
@@ -67,13 +84,12 @@ export interface DocEntry {
 
     User: User;
 
-    ProductEntry: ProductEntry[];
+    ProductEntry?: ProductEntry[]
 }
 
-export const initialDocEntry:DocEntry = {
-    id:'', details:'',createdAt:'', userId:'', warehouseId:'',
+export const initialDocEntry: DocEntry = {
+    id: '', details: '', createdAt: '', userId: '', warehouseId: '',
     User: initialUser,
-    ProductEntry: []
 }
 
 //* ------------------- DTOs -------------------------------
@@ -89,9 +105,9 @@ export interface UpdateWarehouseDto {
     branchId: string;
     name?: string;
     description?: string;
-  }
+}
 
-  export interface CreateProductEntryDto {
+export interface CreateProductEntryDto {
     productWarehouseId: string;
     docEntryId?: string;
     quantity: number;
@@ -104,14 +120,22 @@ export interface CreateDocEntryDto {
     productsEntry: CreateProductEntryDto[]
 }
 
-export interface GetDocEntryDto{
+export interface GetDocEntryDto {
     warehouseId: string;
     from: string;
     to: string;
 }
 
+// export interface CreateProductTransferDto {
+//     productWarehouseId: string;
+//     quantity: number;
+//     docTransferId?: string;
+// }
+
 export interface CreateProductTransferDto {
     productId: string;
+    productWarehouseOriginId: string;
+    productWarehouseDestinationId: string;
     quantity: number;
     docTransferId?: string;
 }
@@ -125,20 +149,20 @@ export interface CreateDocTrasferDto {
     productsTransfer: CreateProductTransferDto[]
 }
 
-export interface GetDocTransfersDto{
+export interface GetDocTransfersDto {
     branchId: string;
     from: string;
     to: string;
 }
 
-export interface CreateProductWarehouseDto{
+export interface CreateProductWarehouseDto {
     productId: string;
     warehouseId: string;
     quantity?: number;
     minQuantity?: number;
 }
 
-export interface CreateManyProductsWarehouseDto{
+export interface CreateManyProductsWarehouseDto {
     warehouseId: string;
     productsWarehouse: CreateProductWarehouseDto[];
 }
@@ -152,9 +176,9 @@ export interface ListProductTransferDto {
     products: ProductTransferDto[]
 }
 
-export interface UpdateProductWarehouseDto{
+export interface UpdateProductWarehouseDto {
     productWarehouseId: string;
-    minQuantity?: number ;
+    minQuantity?: number;
 }
 
-  
+

@@ -12,7 +12,8 @@ import { ProductWarehouseForm } from "../../../../interfaces/formInterface";
 import { BsFillTrashFill } from "react-icons/bs";
 import ListProductsForEntries from './ListProductsForEntries';
 import { createDocEntryAPI } from "../../../../redux/warehouses/warehousesThunk";
-import { CreateProductEntryDto } from "../../../../interfaces";
+import { CreateProductEntryDto, DocEntry, initialDocEntry } from "../../../../interfaces";
+import ViewDocEntry from "./ViewDocEntry";
 
 interface CreateDocEntryProp {
   closeButton: () => void;
@@ -30,7 +31,10 @@ export default function CreateDocEntry({ closeButton }: CreateDocEntryProp) {
   const { products } = useSelector((s: RootState) => s.Products);
   const { warehouseSelected, productsWarehouse } = useSelector((s: RootState) => s.Warehouses);
 
-  const [openListaProductosIngresarAlmacenWindow, setOpenListaProductosIngresarAlmacenWindow] = useState(false);
+  const [docEntry, setDocEntry] = useState<DocEntry>(initialDocEntry);
+  
+  const [openListProductsForEntries, setOpenListProductsForEntries] = useState(false);
+  const [openViewDocEntry, setOpenViewDocEntry] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -40,7 +44,6 @@ export default function CreateDocEntry({ closeButton }: CreateDocEntryProp) {
     details: ''
   });
   const { arrayData: productsForm, handleInputChange, replaceData: setProductsForm } = useFormArray<ProductWarehouseForm>([]);
-  // const [productsForm, setProductsForm] = useState<ProductWarehouseForm[]>([]);
 
   const checkProduct = (productId: string, e?: React.ChangeEvent<HTMLInputElement>,) => {
     if (e?.target.checked) {
@@ -53,19 +56,7 @@ export default function CreateDocEntry({ closeButton }: CreateDocEntryProp) {
     }
   }
 
-  // const changeQuantity = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const { value, name, type } = e.target;
-  //   const prop = name.split(':')[0]; // Nombre de la propiedad del objeto
-  //   const index = parseInt(name.split(':')[1]); // Lugar del objeto en el array
-
-  //   let newProductsForm = productsForm;
-  //   newProductsForm[index] = { ...newProductsForm[index], [prop]: (value === '' && type === 'number') ? '0' : value };
-  //   setProductsForm([...newProductsForm]);
-  // }
-
-
   const createDoc = () => {
-    // console.log('Creando Doc')
     const productsEntry:CreateProductEntryDto[] = productsForm.filter(p => p.selected).map(p => {
         const quantityInt = typeof p.quantity !== 'number'? parseInt(p.quantity): p.quantity;
         return {
@@ -74,12 +65,17 @@ export default function CreateDocEntry({ closeButton }: CreateDocEntryProp) {
       }}
     );
 
-    dispatch (createDocEntryAPI({...formEntry, productsEntry }));
+    dispatch (createDocEntryAPI({...formEntry, productsEntry}, getDocEntry));
   }
+
+  const getDocEntry = (data: DocEntry) => {
+      setDocEntry(data);
+      setOpenViewDocEntry(true);
+    }
 
   useEffect(() => {
     const productsWarehouseIds = productsWarehouse.reduce((acc, p) => { acc[p.productId] = p.id; return acc; }, {} as Record<string, string>);
-    const productsFormIds = productsForm.filter(p=>p.registered).reduce((acc, p) => { acc[p.productId] = p.quantity; return acc; }, {} as Record<string, string>);
+    const productsFormIds = productsForm.filter(p=>p.selected).reduce((acc, p) => { acc[p.productId] = p.quantity; return acc; }, {} as Record<string, string>);
     const idsRegistered = new Set(productsWarehouse.map(p => p.productId)); 
 
     const newProductWarehouseForm: ProductWarehouseForm[] = products
@@ -106,13 +102,14 @@ export default function CreateDocEntry({ closeButton }: CreateDocEntryProp) {
 
   return (
     <Windows tittle="REGISTRAR INGRESO DE PRODUCTOS EN EL ALMACÉN" closeButton={closeButton}>
-      {openListaProductosIngresarAlmacenWindow &&
+      {openListProductsForEntries &&
         <ListProductsForEntries
           products={productsForm}
           setProductsForm={setProductsForm}
           checkProduct={checkProduct}
-          closeButton={() => { setOpenListaProductosIngresarAlmacenWindow(false) }}
+          closeButton={() => { setOpenListProductsForEntries(false) }}
         />}
+      {openViewDocEntry&& <ViewDocEntry closeButton={() => setOpenViewDocEntry(false)} data={docEntry} />}
 
       <div className="relative  flex flex-col h-[80vh] overflow-y-scroll scroll-custom ms-2 my-2 ">
         {loadingData && <div className="bg-black/30 backdrop-blur-[2px] rounded absolute top-0 left-0 right-0 bottom-0 text-white z-10 flex flex-col justify-center items-center">
@@ -176,13 +173,11 @@ export default function CreateDocEntry({ closeButton }: CreateDocEntryProp) {
             ))}
           </tbody>
         </table>
-
-        {/* <FormTable<FormTable> arrayData={productsForm} handleInputChange={handleInputChange} columns={columns} removeData={{ name: 'BORRAR', action: removeData, width: 'w-[85px]' }} tableFixed /> */}
         <div>
           <button
             type="button"
             className="flex items-center border border-secondary rounded-full text-[14px] px-3 mt-2 text-secondary transition-all duration-200 hover:bg-secondary hover:text-white"
-            onClick={() => { setOpenListaProductosIngresarAlmacenWindow(true) }}
+            onClick={() => { setOpenListProductsForEntries(true) }}
           > <FaPlus /> <span className="ms-2">AGREGAR PRODUCTOS A LA LISTA</span></button>
         </div>
       </div>

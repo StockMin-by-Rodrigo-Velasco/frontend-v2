@@ -34,7 +34,7 @@ interface Module{
 
 export default function Navbar() {
     const { pathname } = useLocation();
-    const { userData, listPermissions: listaPermisos } = useSelector((s: RootState) => s.Branch);
+    const { userData, permissions: listaPermisos } = useSelector((s: RootState) => s.Branch);
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const [viewPerfil, setViewPerfil] = useState(false);

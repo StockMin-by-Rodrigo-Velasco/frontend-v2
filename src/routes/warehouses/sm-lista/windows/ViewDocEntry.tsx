@@ -1,59 +1,33 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Windows from "../../../../components/Windows";
-import { initialUser, Product, ProductEntry, User } from "../../../../interfaces";
-import { RootState } from "../../../../redux/store";
+import { ProductEntry } from "../../../../interfaces";
+import { AppDispatch, RootState } from "../../../../redux/store";
 import { dateLocal } from "../../../../helpers";
 import { useEffect, useState } from "react";
-import DataTable, { DataTableColumnInterface, DataTableColumnTypes } from "../../../../components/DataTable";
 import { DocEntry } from "../../../../interfaces";
-import { ProductWarehouseForm } from "../../../../interfaces/formInterface";
-
-
+import { getProductsEntryAPI } from "../../../../redux/warehouses/warehousesThunk";
+import { AiOutlineLoading } from "react-icons/ai";
 
 interface ViewIngresoProductoAlmacenWindowProp {
   closeButton: () => void;
   data: DocEntry
 }
 
-// const initialUser:User = { id:'',sucursalId:'', nombre:'', apellido:'', ci:'', imagen:'', contacto:'', deleted:false, direccion:'', password:'', UsuarioPermiso:[] };
-
 export default function ViewDocEntry({ closeButton, data }: ViewIngresoProductoAlmacenWindowProp) {
   const { logo } = useSelector((s: RootState) => s.Branch);
-  // const { products: listaProductos } = useSelector((s: RootState) => s.Products);
+  
+  const [productsEntry, setProductsEntry] = useState<ProductEntry[]>([])
 
-  // const [ingresoProductos, setIngresoProductos] = useState<ProductoForDataTable[]>([]);
-  // const [userData, setUserData] = useState<User>(initialUser);
-
-  // useEffect(() => {
-  //   const productosSucursal = listaProductos.reduce((acc, producto) => { acc[producto.id] = producto; return acc; }, {} as Record<string, Product>);
-
-  //   const newUserData: User = users.find(u => u.id === data.usuarioId) || initialUser;
-
-  //   const newIngresoProductos: ProductoForDataTable[] = data.IngresoProductosAlmacen
-  //     .map(p =>
-  //     ({
-  //       id: p.id,
-  //       ingresoAlmacenId: p.ingresoAlmacenId,
-  //       ProductoAlmacen: p.ProductoAlmacen,
-  //       productoId: p.ProductoAlmacen.productoId,
-  //       productoAlmacenId: p.productoAlmacenId,
-  //       cantidad: p.cantidad,
-  //       cantidadMinima: p.ProductoAlmacen.cantidadMinima,
-
-  //       codigo: productosSucursal[p.ProductoAlmacen.productoId].code,
-  //       nombre: productosSucursal[p.ProductoAlmacen.productoId].name,
-  //       imagen: productosSucursal[p.ProductoAlmacen.productoId].image,
-  //       categoriaId: productosSucursal[p.ProductoAlmacen.productoId].categoryId,
-  //       categoria: productosSucursal[p.ProductoAlmacen.productoId].Categoria.name,
-  //       marcaId: productosSucursal[p.ProductoAlmacen.productoId].brandId,
-  //       marca: productosSucursal[p.ProductoAlmacen.productoId].Marca.name,
-  //       unidadMedidaId: productosSucursal[p.ProductoAlmacen.productoId].unitMeasureId,
-  //       unidadMedidaAbreviada: productosSucursal[p.ProductoAlmacen.productoId].UnidadMedida.abbreviation,
-  //       show: true
-  //     }));
-  //   setIngresoProductos(newIngresoProductos);
-  //   setUserData(newUserData);
-  // }, [])
+  const dispatch = useDispatch<AppDispatch>();
+  
+  const getProductsEntry = (pe:ProductEntry[]) => {
+    setProductsEntry([...pe]);
+  }
+  
+  useEffect(() => {
+    if(!data.ProductEntry) dispatch(getProductsEntryAPI(data.id, getProductsEntry));
+    else getProductsEntry(data.ProductEntry);
+  }, [])
   return (
 
 
@@ -70,34 +44,23 @@ export default function ViewDocEntry({ closeButton, data }: ViewIngresoProductoA
             <p><span className="font-bold">Detalle: </span> <span >{`${data.details}`}</span> </p>
           </div>
         </div>
-
-        {/* const columns: DataTableColumnInterface<ProductEntry>[] = [
-  { name: 'CODIGO', type: DataTableColumnTypes.P, key: "code" },
-  { name: 'NOMBRE', type: DataTableColumnTypes.P, key: "name" },
-  { name: 'MEDIDA', type: DataTableColumnTypes.P, key: "unitMeasureAbbreviation" },
-  { name: 'CANTIDAD', type: DataTableColumnTypes.P, key: "quantity" },
-]; */}
-
         <table className="table-auto w-full text-left" >
           <thead className="bg-primary text-white sticky top-0">
             <tr>
               <th className="text-center">CODIGO</th>
               <th className="text-center">NOMBRE</th>
+              <th className="text-center">MARCA</th>
               <th className="text-center">U/M</th>
               <th className="text-center">CANTIDAD</th>
-              {/* {columns.map(c => (
-                        <th key={c.name} className="uppercase text-center">{c.name}</th>
-                    ))}
-                    {details?.name &&
-                        <th className="uppercase text-center">{details.name}</th>
-                    } */}
             </tr>
           </thead>
           <tbody>
-            {data.ProductEntry.map(p => (
-              <tr className="border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase">
+            {productsEntry.length === 0 &&<tr><td colSpan={5} ><div className="flex justify-center py-2" ><AiOutlineLoading className="ms-2 animate-spin"/></div></td></tr>}
+            {productsEntry.map(p => (
+              <tr key={p.id} className="border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase">
                 <td className="py-2 text-center"><p>{p.ProductWarehouse.Product.code}</p></td>
                 <td className="py-2 text-center"><p>{p.ProductWarehouse.Product.name}</p></td>
+                <td className="py-2 text-center"><p>{p.ProductWarehouse.Product.Brand.name}</p></td>
                 <td className="py-2 text-center"><p>{p.ProductWarehouse.Product.UnitMeasure.abbreviation}</p></td>
                 <td className="py-2 text-center"><p>{p.quantity}</p></td>
               </tr>
@@ -105,9 +68,6 @@ export default function ViewDocEntry({ closeButton, data }: ViewIngresoProductoA
             ))}
           </tbody>
         </table>
-
-
-        {/* <DataTable<ProductEntry> columns={columns} data={ingresoProductos} /> */}
       </div>
 
     </Windows>

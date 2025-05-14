@@ -14,7 +14,7 @@ import LoginUser from "./windows/LoginUser";
 
 export default function ListUsers() {
 
-  const { id: branchId, logo, listUsers } = useSelector((s: RootState) => s.Branch);
+  const { id: branchId, logo, users: listUsers } = useSelector((s: RootState) => s.Branch);
   const { loadingApplication } = useSelector((s: RootState) => s.Aplication);
 
   const navigate = useNavigate();

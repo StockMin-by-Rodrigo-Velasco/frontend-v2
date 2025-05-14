@@ -26,7 +26,7 @@ export function Button({ label, color, className='', spinner=false, disabled=fal
 export function ButtonSubmit({ label, color, className='', spinner=false, disabled=false, loading=false }: ButtonProps) {
     return (
         <button
-            className={`${color} ${className} bg-opacity-80 flex items-center rounded-full px-2 py-1 text-white text-[14px] hover:bg-opacity-100 disabled:bg-secondary disabled:cursor-not-allowed`}
+            className={`bg-${color} ${className} bg-opacity-80 flex items-center rounded-full px-2 py-1 text-white text-[14px] hover:bg-opacity-100 disabled:bg-secondary disabled:cursor-not-allowed`}
             type="submit"
             disabled={disabled || loading}
         >{label} {(loading&&spinner)&& <AiOutlineLoading className="ms-2 animate-spin"/>}

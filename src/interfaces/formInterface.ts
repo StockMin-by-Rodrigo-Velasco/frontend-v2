@@ -6,6 +6,7 @@ export interface ProductWarehouseForm {
     image?: string;
     quantity: string;
     minQuantity: string;
+    transferQuantity?: string; // Solo para crear transpasos
 
     categoryId: string;
     categoryName?: string;

@@ -8,6 +8,7 @@ import { finishLoadingAplication, finishLoadingData, finishLoadingModule, startL
 import Cookie from 'js-cookie';
 import { NavigateFunction } from "react-router";
 import { getProductLogs } from "../products/productSlice";
+import { getLogsWarehouse } from "../warehouses/warehousesSlice";
 
 export const loginBranchAPI = (
     loginBranchDto: LoginBranchDto,
@@ -312,9 +313,12 @@ export const getLogsAPI = (getLogsDto: GetLogsDto) => {
     return async (dispatch: AppDispatch) => {
         try {
             dispatch(startLoadingData());
+
             const response: AxiosResponse = await api.post(`log/get-logs`, getLogsDto);
             const {data}:{data:Log[]} = response.data;
             if(getLogsDto.module === 'products') dispatch(getProductLogs(data));
+            if(getLogsDto.module === 'warehouses') dispatch(getLogsWarehouse(data));
+
             dispatch(finishLoadingData());
         } catch (error) {
             console.log(error);

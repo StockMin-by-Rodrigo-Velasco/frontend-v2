@@ -25,6 +25,8 @@ import Sales from "./sales/Sales";
 // import TiendaVentas from "./sales/sm-tienda/TiendaVentas";
 
 import Usuarios from "./users/Usuarios";
+import WarehousesHistory from "./warehouses/sm-historial/WarehousesHistory";
+import Transfers from "./warehouses/sm-traspasos/Transfers";
 
 export default function RoutesMain() {
 
@@ -45,8 +47,8 @@ export default function RoutesMain() {
             <Route path="list" element={<WarehouseList/>}>
               <Route path=":name" element={<WarehouseSelected/>} />
             </Route>
-            {/* <Route path="transfers" element={<TraspasosAlmacenes/>} />
-            <Route path="history" element={<HistorialAlmacenes/>} /> */}
+            <Route path="transfers" element={<Transfers/>} />
+            <Route path="history" element={<WarehousesHistory/>} />
           </Route>
 
           <Route path="sales" element={<Sales/>}>
