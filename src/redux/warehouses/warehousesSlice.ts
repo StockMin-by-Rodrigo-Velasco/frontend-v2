@@ -41,6 +41,7 @@ const WarehousesSlice = createSlice({
         },
         logoutWarehouse: (state) => {
             state.warehouseSelected = initialState.warehouseSelected;
+            state.productsWarehouse = initialState.productsWarehouse;
         },
         createWarehouse: (state, action: PayloadAction<Warehouse>) => {
             state.warehouses = [action.payload, ...state.warehouses];
