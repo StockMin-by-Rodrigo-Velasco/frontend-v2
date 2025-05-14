@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { perfilColor, perfilImg } from "../assets/profile";
 import { dateLocalWhitTime } from "../helpers";
-import { Log } from "../interfaces";
+import { Log, User } from "../interfaces";
 import logos from "../assets/logos";
 
 interface LogDetailWindowsPropInterface {
@@ -12,7 +12,8 @@ interface LogDetailWindowsPropInterface {
 }
 
 export default function LogDetailsWindows({ log, closeButton }: LogDetailWindowsPropInterface) {
-    const { usersObj: listUsersObj } = useSelector((s: RootState) => s.Branch);
+    const {users} = useSelector((s: RootState) => s.Branch);
+    const usersObj = users.reduce((acc, a) => { acc[a.id] = a; return acc; }, {} as Record<string, User>);
 
     return (
         <Windows tittle='DETALLES DE LA ACCION' closeButton={closeButton}>
@@ -22,10 +23,10 @@ export default function LogDetailsWindows({ log, closeButton }: LogDetailWindows
                     <h1 className="text-center border-b-[1px] border-secondary mb-3 text-secondary" >Datos del usuario</h1>
                     <div className="w-full flex items-center justify-center">
                         <div className="flex justify-center items-center w-32 h-32 rounded mb-3"
-                            style={{ backgroundColor: listUsersObj[log.userId]? perfilColor(listUsersObj[log.userId].profile.split(' ')[1]):'white' }}
+                            style={{ backgroundColor: usersObj[log.userId]? perfilColor(usersObj[log.userId].profile.split(' ')[1]):'white' }}
                         >
-                            <img src={ listUsersObj[log.userId]?
-                                perfilImg(listUsersObj[log.userId].profile.split(' ')[0])
+                            <img src={ usersObj[log.userId]?
+                                perfilImg(usersObj[log.userId].profile.split(' ')[0])
                                 :
                                 logos.logoNoImage
                             } width='120px' />
@@ -33,15 +34,15 @@ export default function LogDetailsWindows({ log, closeButton }: LogDetailWindows
                     </div>
                     <p className="bg-secondary-1 rounded overflow-hidden mb-2" > 
                         <span className="bg-secondary px-2 text-white" >Nombre:</span> 
-                        <span className="uppercase px-2" >{ listUsersObj[log.userId]? listUsersObj[log.userId].name:'desconocido'}</span>
+                        <span className="uppercase px-2" >{ usersObj[log.userId]? usersObj[log.userId].name:'desconocido'}</span>
                     </p>
                     <p className="bg-secondary-1 rounded overflow-hidden mb-2" > 
                         <span className="bg-secondary px-2 text-white" >Apellido:</span> 
-                        <span className="uppercase px-2" >{ listUsersObj[log.userId]? listUsersObj[log.userId].lastName:'desconocido'}</span>
+                        <span className="uppercase px-2" >{ usersObj[log.userId]? usersObj[log.userId].lastName:'desconocido'}</span>
                     </p>
                     <p className="bg-secondary-1 rounded overflow-hidden mb-2" > 
                         <span className="bg-secondary px-2 text-white" >CI:</span> 
-                        <span className="uppercase px-2" >{ listUsersObj[log.userId]? listUsersObj[log.userId].ci:'desconocido'}</span>
+                        <span className="uppercase px-2" >{ usersObj[log.userId]? usersObj[log.userId].ci:'desconocido'}</span>
                     </p>
                 </div>
 
