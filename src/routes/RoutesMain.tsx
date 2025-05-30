@@ -15,19 +15,14 @@ import ProductsHistory from "./products/pr-history/ProductsHistory";
 import Warehouses from "./warehouses/Warehouses";
 import WarehouseList from "./warehouses/sm-lista/WarehouseList";
 import WarehouseSelected from "./warehouses/sm-lista/WarehouseSelected";
-// import TraspasosAlmacenes from "./warehouses/sm-traspasos/TraspasosAlmacenes";
-// import HistorialAlmacenes from "./warehouses/sm-historial/HistorialAlmacenes";
 
 import Sales from "./sales/Sales";
-// import ClientesVentas from "./sales/sm-clientes/ClientesVentas";
-// import HistorialVentas from "./sales/sm-historial/HistorialVentas";
-// import OpcionesVentas from "./sales/sm-opciones/OpcionesVentas";
-// import TiendaVentas from "./sales/sm-tienda/TiendaVentas";
-
 import Usuarios from "./users/Usuarios";
 import WarehousesHistory from "./warehouses/sm-historial/WarehousesHistory";
 import Transfers from "./warehouses/sm-traspasos/Transfers";
 import Customers from "./sales/sm-customers/Customers";
+import SalesHistory from "./sales/sm-history/SalesHistory";
+import SalesOptions from "./sales/sm-options/SalesOptions";
 
 export default function RoutesMain() {
 
@@ -55,8 +50,8 @@ export default function RoutesMain() {
           <Route path="sales" element={<Sales/>}>
             {/* <Route path="store" element={<TiendaVentas/>}/> */}
             <Route path="customers" element={<Customers/>}/>
-            {/* <Route path="options" element={<OpcionesVentas/>}/> */}
-            {/* <Route path="history" element={<HistorialVentas/>} /> */}
+            <Route path="options" element={<SalesOptions/>}/>
+            <Route path="history" element={<SalesHistory/>} />
           </Route>
 
           <Route path="users" element={<Usuarios/>}>

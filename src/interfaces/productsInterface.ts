@@ -1,3 +1,37 @@
+export interface Brand {
+    id: string;
+    branchId: string;
+    name: string;
+    origin: string;
+    deleted: boolean;
+}
+export const initialBrand:Brand = {id:'', branchId:'', name:'', origin:'', deleted:false}
+
+export interface Category {
+    id: string;
+    branchId: string;
+    name: string;
+    details: string;
+    deleted: boolean;
+}
+export const initialCategory:Category = {id:'', branchId:'', name:'', details:'', deleted:false}
+
+export interface UnitMeasure {
+    id: string;
+    name: string;
+    abbreviation: string;
+    details: string;
+}
+export const initialUnitMeasure:UnitMeasure = {id:'', name:'', abbreviation:'', details:''}
+
+export interface UnitMeasureBranch {
+    id: string;
+    branchId: string;
+    unitMeasureId: string;
+    deleted: boolean;
+    UnitMeasure: UnitMeasure;
+}
+
 export interface Product {
     id: string;
     branchId: string;
@@ -16,37 +50,7 @@ export interface Product {
     Category: Category;
     UnitMeasure: UnitMeasure;
 }
-
-export interface Brand {
-    id: string;
-    branchId: string;
-    name: string;
-    origin: string;
-    deleted: boolean;
-}
-
-export interface Category {
-    id: string;
-    branchId: string;
-    name: string;
-    details: string;
-    deleted: boolean;
-}
-
-export interface UnitMeasure {
-    id: string;
-    name: string;
-    abbreviation: string;
-    details: string;
-}
-
-export interface UnitMeasureBranch {
-    id: string;
-    branchId: string;
-    unitMeasureId: string;
-    deleted: boolean;
-    UnitMeasure: UnitMeasure;
-}
+export const initialProduct:Product = {id:'', branchId:'', code:'', name:'', description:'', image:'', deleted:false, createdAt:'', updatedAt:'', brandId:'', categoryId:'',unitMeasureId:'', Brand:initialBrand, Category:initialCategory, UnitMeasure:initialUnitMeasure}
 
 //* ----------------------------- DTOs -------------------------------------
 

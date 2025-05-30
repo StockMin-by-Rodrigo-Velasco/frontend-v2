@@ -1,5 +1,5 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
-import { Customer, Log } from "../../interfaces";
+import { Currency, Customer, Log } from "../../interfaces";
 
 interface SalesInitialState {
     // idUltimoTipoMonedaVentaEliminado: string,
@@ -7,7 +7,7 @@ interface SalesInitialState {
     // opcionesVenta: OpcionesVenta,
     // listaProductosTienda: ProductoTienda[],
     customers: Customer[];
-    // listaTipoMonedaVenta: TipoMonedaVenta[];
+    currencies: Currency[];
     // listaPrecioVenta: PrecioVenta[];
     // listaPrecioVentaObj: Record<string, PrecioVenta>;
     logs: Log[];
@@ -19,7 +19,7 @@ const initialState: SalesInitialState = {
     // opcionesVenta: initialOpciones,
     // listaProductosTienda: [],
     customers: [],
-    // listaTipoMonedaVenta: [],
+    currencies: [],
     // listaPrecioVenta: [],
     // listaPrecioVentaObj:{},
     logs:[]
@@ -53,9 +53,9 @@ const SalesSlice = createSlice({
             state.customers = [...updateListaClientes];
         },
 
-        // getAllTipoMonedaVenta: (state, action: PayloadAction<TipoMonedaVenta[]>) => {
-        //     state.listaTipoMonedaVenta = action.payload;
-        // },
+        getCurrencies: (state, action: PayloadAction<Currency[]>) => {
+            state.currencies = action.payload;
+        },
 
 
         // getAllPrecioVenta: (state, action: PayloadAction<PrecioVenta[]>) => {
@@ -87,26 +87,11 @@ const SalesSlice = createSlice({
 });
 
 export const {
-    // getAllProductosVenta,
-    // decrementProductos,
-
     getCustomers,
     createCustomer,
     updateCustomer,
 
-    // getAllTipoMonedaVenta,
-    // createTipoMonedaVenta,
-    // updateTipoMonedaVenta,
-    // deleteTipoMonedaVenta,
-    // resetIdUltimoTipoMonedaVentaEliminado,
-
-    // getAllPrecioVenta,
-    // createPrecioVenta,
-    // updatePrecioVenta,
-    // deletePrecioVenta,
-    // resetIdUltimoPrecioVentaEliminado,
-
-    // getOpcionesVenta,
+    getCurrencies,
     
     getSalesLogs,
 

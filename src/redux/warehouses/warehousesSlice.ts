@@ -1,5 +1,5 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
-import { DocEntry, DocTransfer, Log, ProductWarehouse, Warehouse } from "../../interfaces";
+import { DocEntry, DocTransfer, initialWarehouse, Log, ProductWarehouse, User, Warehouse } from "../../interfaces";
 
 
 export interface ProductoAlmacenWithOutIdInterface {
@@ -21,7 +21,7 @@ interface InitialState {
 }
 
 const initialState: InitialState = {
-    warehouseSelected: {id: '', branchId: '', name: '', description: '', deleted: false, createdAt: '', updatedAt: ''},
+    warehouseSelected: initialWarehouse,
     warehouses: [],
     docEntries: [],
     docTransfers:[],
@@ -48,6 +48,19 @@ const WarehousesSlice = createSlice({
         },
         updateWarehouse: (state, action: PayloadAction<Warehouse>) => {
             state.warehouses = current(state.warehouses).map(a => (a.id === action.payload.id) ? action.payload : a);
+        },
+        createUserWarehouseSale:(state, action: PayloadAction<User>) => {
+            const newUserWarehouse = action.payload;
+            state.warehouses = current(state.warehouses).map(w => (w.id === newUserWarehouse.warehouseId)?{...w, User:[...w.User, newUserWarehouse]}:w);
+        },
+        deleteUserWarehouseSale:(state, action: PayloadAction<{userId: string, warehouseId: string}>) => {
+            const {userId, warehouseId} = action.payload;
+            state.warehouses = current(state.warehouses).map(w => {
+                if(w.id === warehouseId){
+                    const newUsers = w.User.filter(u => u.id !== userId);
+                    return {...w, User: newUsers}
+                } else return w
+            })
         },
         deleteWarehouse: (state, action: PayloadAction<string>) => {
             state.warehouses = state.warehouses.filter(a => a.id !== action.payload);
@@ -100,6 +113,8 @@ export const {
     logoutWarehouse,
     createWarehouse,
     updateWarehouse,
+    createUserWarehouseSale,
+    deleteUserWarehouseSale,
     deleteWarehouse,
 
     getProductsWarehouse,

@@ -1,15 +1,18 @@
 import { initialUser, User } from "./branchInterfaces";
-import { Product } from "./productsInterface";
+import { initialProduct, Product } from "./productsInterface";
 
 export interface Warehouse {
     id: string;
     name: string;
     description?: string;
     deleted: boolean;
+    warehouseSale?: boolean;
+    branchId: string;
     createdAt?: string;
     updatedAt?: string;
-    branchId: string;
+    User: User[];
 }
+export const initialWarehouse:Warehouse = {id: '',name: '',description: '',deleted: false,warehouseSale: false,branchId: '',createdAt: '',updatedAt: '',User: []}
 
 export interface ProductWarehouse {
     id: string;
@@ -21,15 +24,9 @@ export interface ProductWarehouse {
     updatedAt: string;
     Product: Product;
 }
-
 export const initialProductWarehouse: ProductWarehouse = {
     id: '', productId: '', warehouseId: '', minQuantity: 0, quantity: 0, createdAt: '', updatedAt: '',
-    Product: {
-        branchId: '', brandId: '', categoryId: '', code: '', createdAt: '', deleted: false, id: '', description: '', image: '', name: '', unitMeasureId: '', updatedAt: '',
-        Brand: { id: '', branchId: '', deleted: false, name: '', origin: '' },
-        Category: { id: '', branchId: '', deleted: false, details: '', name: '' },
-        UnitMeasure: { id: '', abbreviation: '', details: '', name: '' }
-    }
+    Product: initialProduct
 }
 
 export interface ProductEntry {

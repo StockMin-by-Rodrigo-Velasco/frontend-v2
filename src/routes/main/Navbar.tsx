@@ -122,14 +122,14 @@ export default function Navbar() {
                     title: 'Opciones', 
                     path: '/main/sales/options', 
                     icon: <LuSettings size='14px'/>,
-                    access: false//userPermissionsSet.has(salesModulePermissions['sa-03'])
+                    access: userPermissionsSet.has(salesModulePermissions['sa-03'])
 
                 },
                 { 
                     title: 'Historial', 
                     path: '/main/sales/history', 
                     icon: <TbHistory size='14px'/>,
-                    access: false//userPermissionsSet.has(salesModulePermissions['sa-04'])
+                    access: userPermissionsSet.has(salesModulePermissions['sa-04'])
 
                 },
             ]

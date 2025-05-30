@@ -20,7 +20,7 @@ interface UpdateMarcaProps {
 export default function UpdateBrand({ dataUpdate, closeButton }: UpdateMarcaProps) {
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
   const { idDeletedBrand: idUltimaMarcaEliminada } = useSelector((s: RootState) => s.Products);
-  const { type: typeNotification, showNotification } = useSelector((s: RootState) => s.Notification);
+  // const { type: typeNotification, showNotification } = useSelector((s: RootState) => s.Notification);
   const dispatch = useDispatch<AppDispatch>()
   const { data, handleInputChange, resetData } = useForm<Brand>(dataUpdate);
   const [editMode, setEditMode] = useState(false);
@@ -36,14 +36,14 @@ export default function UpdateBrand({ dataUpdate, closeButton }: UpdateMarcaProp
     dispatch(updateBrandAPI(res));
   }
 
-  const deleteMarca = () => {
-    if (typeNotification === 'WARNING' && showNotification) {
-      dispatch(deleteBrandAPI(dataUpdate.id));
-      dispatch(hideNotification());
-    } else {
-      dispatch(showNotificationWarning({ tittle: 'Eliminar marca', description: 'Si deseas continuar vuelve a presionar el botón de eliminación, caso contrario cierra este mensaje' }))
-    }
-  }
+  // const deleteMarca = () => {
+  //   if (typeNotification === 'WARNING' && showNotification) {
+  //     dispatch(deleteBrandAPI(dataUpdate.id));
+  //     dispatch(hideNotification());
+  //   } else {
+  //     dispatch(showNotificationWarning({ tittle: 'Eliminar marca', description: 'Si deseas continuar vuelve a presionar el botón de eliminación, caso contrario cierra este mensaje' }))
+  //   }
+  // }
 
 
   return (
@@ -87,7 +87,7 @@ export default function UpdateBrand({ dataUpdate, closeButton }: UpdateMarcaProp
         <div className="flex mt-3 justify-center" >
           <ButtonSubmit label="Guardar" color='success' className="me-3" disabled={!editMode} loading={loadingData} spinner />
           <Button label="Cancelar" color='danger' disabled={!editMode} loading={loadingData} onClick={cancelUpdate} />
-          {editMode && <button
+          {/* {editMode && <button
             onClick={deleteMarca}
             type="button"
             disabled={!editMode || loadingData}
@@ -98,7 +98,7 @@ export default function UpdateBrand({ dataUpdate, closeButton }: UpdateMarcaProp
               :
               <BsFillTrashFill />
             }
-          </button>}
+          </button>} */}
         </div>
       </form>
     </Windows>

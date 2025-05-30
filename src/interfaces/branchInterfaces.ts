@@ -14,6 +14,8 @@ export interface Branch {
     createdAt: string;
     updatedAt: string;
 }
+export const initialBranch:Branch ={id:'',nit:'',code:'',password:'',adminPassword:'',name:'',owner:'',logo:'',address:'',contact:'',deleted: false,createdAt:'',updatedAt: ''
+}
 
 export interface User {
     id: string;
@@ -26,11 +28,12 @@ export interface User {
     address: string;
     password: string;
     deleted: boolean;
+    warehouseId?: string;
 
     UserPermission: UserPermission[];
 }
 export const initialUser: User = {
-    id: '', branchId: '', name: '', lastName: '', ci: '', profile: '', contact: '', address: '', password: '', deleted: true, UserPermission: []
+    id: '', branchId: '', name: '', lastName: '', ci: '', profile: '', contact: '', address: '', password: '', deleted: true, warehouseId:'', UserPermission: []
 }
 
 export interface Permission {

@@ -30,7 +30,7 @@ interface UpdateProductProp {
 export default function UpdateProduct({ product, closeButton }: UpdateProductProp) {
 
     const { loadingData } = useSelector((s: RootState) => s.Aplication);
-    const { type: typeNotification, showNotification } = useSelector((s: RootState) => s.Notification);
+    // const { type: typeNotification, showNotification } = useSelector((s: RootState) => s.Notification);
     const { idDeletedProduct, categories, brands, unitMeasures } = useSelector((s: RootState) => s.Products);
     const dispatch = useDispatch<AppDispatch>();
     // const { code, name, description, categoryId, brandId, unitMeasureId } = producto;
@@ -60,14 +60,14 @@ export default function UpdateProduct({ product, closeButton }: UpdateProductPro
         setEditMode(false);
     }
 
-    const deleteProduct = () => {
-        if (typeNotification === 'WARNING' && showNotification) {
-            dispatch(deleteProductAPI(product.id));
-            dispatch(hideNotification());
-        } else {
-            dispatch(showNotificationWarning({ tittle: 'Eliminar producto', description: 'Si deseas continuar vuelve a presionar el botón de eliminación, caso contrario cierra este mensaje' }))
-        }
-    }
+    // const deleteProduct = () => {
+    //     if (typeNotification === 'WARNING' && showNotification) {
+    //         dispatch(deleteProductAPI(product.id));
+    //         dispatch(hideNotification());
+    //     } else {
+    //         dispatch(showNotificationWarning({ tittle: 'Eliminar producto', description: 'Si deseas continuar vuelve a presionar el botón de eliminación, caso contrario cierra este mensaje' }))
+    //     }
+    // }
 
     return (
         <Windows tittle={product.name} closeButton={closeButton}
@@ -185,7 +185,7 @@ export default function UpdateProduct({ product, closeButton }: UpdateProductPro
                         <div className="border-t-[1px] border-secondary mt-2 pt-2 flex" >
                             <ButtonSubmit label="Guardar" color='success' className="me-3" disabled={!editMode} loading={loadingData} spinner />
                             <Button label="Cancelar" color='danger' disabled={!editMode} loading={loadingData} onClick={cancelUpdateProduct} />
-                            {editMode &&
+                            {/* {editMode &&
                                 <button
                                     onClick={deleteProduct}
                                     type="button"
@@ -197,7 +197,8 @@ export default function UpdateProduct({ product, closeButton }: UpdateProductPro
                                         :
                                         <BsFillTrashFill />
                                     }
-                                </button>}
+                                </button>
+                            } */}
                         </div>
                     </form>
                 </div>

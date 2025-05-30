@@ -20,7 +20,7 @@ interface UpdateCategoriaProps {
 export default function UpdateCategory({ dataUpdate, closeButton }: UpdateCategoriaProps) {
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
   const { idDeletedCategory: idUltimaCategoriaEliminada } = useSelector((s: RootState) => s.Products);
-  const { type: typeNotification, showNotification } = useSelector((s: RootState) => s.Notification);
+  // const { type: typeNotification, showNotification } = useSelector((s: RootState) => s.Notification);
   const dispatch = useDispatch<AppDispatch>()
   const { data, handleInputChange, resetData } = useForm<Category>(dataUpdate);
   const [editMode, setEditMode] = useState(false);
@@ -36,18 +36,18 @@ export default function UpdateCategory({ dataUpdate, closeButton }: UpdateCatego
     dispatch(updateCategoryAPI(res));
   }
 
-  const deleteCategory = () => {
-    if (typeNotification === 'WARNING' && showNotification) {
-      dispatch(deleteCategoryAPI(dataUpdate.id));
-      dispatch(hideNotification());
-    } else {
-      dispatch(showNotificationWarning(
-        { 
-          tittle: 'Eliminar categoría', 
-          description: 'Si deseas continuar vuelve a presionar el botón de eliminación, caso contrario cierra este mensaje' 
-        }))
-    }
-  }
+  // const deleteCategory = () => {
+  //   if (typeNotification === 'WARNING' && showNotification) {
+  //     dispatch(deleteCategoryAPI(dataUpdate.id));
+  //     dispatch(hideNotification());
+  //   } else {
+  //     dispatch(showNotificationWarning(
+  //       { 
+  //         tittle: 'Eliminar categoría', 
+  //         description: 'Si deseas continuar vuelve a presionar el botón de eliminación, caso contrario cierra este mensaje' 
+  //       }))
+  //   }
+  // }
 
   return (
     <Windows tittle='Detalles de categoría' closeButton={closeButton} >
@@ -90,7 +90,7 @@ export default function UpdateCategory({ dataUpdate, closeButton }: UpdateCatego
         <div className="flex mt-3 justify-center" >
           <ButtonSubmit label="Guardar" color='success' className="me-3" disabled={!editMode || loadingData} loading={loadingData} spinner />
           <Button label="Cancelar" color='danger' disabled={!editMode || loadingData} loading={loadingData} onClick={cancelUpdate} />
-          {editMode && <button
+          {/* {editMode && <button
             onClick={deleteCategory}
             type="button"
             disabled={!editMode || loadingData}
@@ -100,7 +100,7 @@ export default function UpdateCategory({ dataUpdate, closeButton }: UpdateCatego
               :
               <BsFillTrashFill />
             }
-          </button>}
+          </button>} */}
         </div>
       </form>
     </Windows>
