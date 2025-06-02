@@ -13,6 +13,18 @@ interface InputProps {
   disabled?:boolean,
   className?:string,
   maxLenght?: number,
+  
+}
+
+interface InpuFormProps {
+  handleInputChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void,
+  name: string,
+  value: string,
+  required?:boolean,
+  disabled?:boolean,
+  className?:string,
+  maxLenght?: number,
+  step?: string
 }
 
 interface InputBlockProps {
@@ -202,6 +214,25 @@ function InputNumber({ handleInputChange, value, name, placeholder, required=fal
         }
         htmlFor={name}> {placeholder}
       </label>
+    </div>
+  )
+}
+
+function InputNumberForm({ handleInputChange, value, name, required=false, disabled=false, className='', step='1' }:InpuFormProps){
+  return(
+
+    <div className = {`${className} relative`} >
+      <input 
+        className = {`ps-1 w-full focus:outline-none rounded-t border-b-2 border-primary focus:border-info disabled:bg-light/80 disabled:cursor-not-allowed disabled:text-black/70`}
+        type="number" 
+        step={step}
+        onChange={ handleInputChange }
+        name={name}
+        id={name}
+        value={value}
+        required={required}
+        disabled={disabled}
+      />
     </div>
   )
 }
@@ -401,5 +432,6 @@ export {
   InputTextareaBlock,
   InputText, 
   InputNumber,
+  InputNumberForm,
   InputPassword, 
 }

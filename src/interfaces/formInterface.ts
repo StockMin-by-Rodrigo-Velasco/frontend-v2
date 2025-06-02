@@ -1,3 +1,5 @@
+import { ProductWarehouse } from "./warehousesInterfaces";
+
 export interface ProductWarehouseForm {
     id: string;
     productId: string;
@@ -27,7 +29,22 @@ export interface DateRange {
   to: string
 }
 
+export interface ProductStore extends ProductWarehouse {
+  selected: boolean;
+}
+
 export const initDateRange: DateRange = {
   from: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0],
   to: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split("T")[0],
+}
+
+export interface SearchFilter {
+    search: string;
+    category: string;
+    brand: string;
+}
+export const initialSerchFilter: SearchFilter = {
+    search: '',
+    category: '',
+    brand: '',
 }

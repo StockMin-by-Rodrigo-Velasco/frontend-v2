@@ -1,13 +1,14 @@
 import axios, { AxiosResponse } from "axios";
-import { CreateCustomerDto, CreateUserWarehouseSaleDto, Customer, UpdateCustomerDto, User, Warehouse } from "../../interfaces";
+import { Brand, Category, CreateCustomerDto, CreateExchangeRateDto, CreateUserWarehouseSaleDto, Currency, Customer, ExchangeRate, Product, UnitMeasure, UnitMeasureBranch, UpdateCustomerDto, UpdateExchangeRateDto, UpdateProductPriceDto, User, Warehouse } from "../../interfaces";
 import { AppDispatch, RootState } from "../store"
 import { finishLoadingData, finishLoadingModule, startLoadingData, startLoadingModule } from "../aplication/aplicationSlice";
 import api from "../../api/config";
-import { createCustomer, getCustomers, updateCustomer } from "./salesSlice";
-import { hideNotification, showNotificationError, showNotificationSuccess } from "../notification/notificationSlice";
+import { createCustomer, createExchangeRate, getCurrencies, getCustomers, getExchangeRates, toggleFavoriteExchangeRate, updateCustomer, updateExchangeRate } from "./salesSlice";
+import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from "../notification/notificationSlice";
 import { NavigateFunction } from "react-router";
-import { createUserWarehouseSale, deleteUserWarehouseSale, getWarehauses, updateWarehouse } from "../warehouses/warehousesSlice";
+import { createUserWarehouseSale, deleteUserWarehouseSale, getWarehauses, updatePriceProductWarehouse, updateProductWarehouse, updateWarehouse } from "../warehouses/warehousesSlice";
 import { updateUser } from "../branch/branchSlice";
+import { getBrands, getCategories, getUnitMeasures, getUnitMeasuresBranch, updateProduct } from "../products/productSlice";
 
 
 export const getSalesModuleDataAPI = (navigate?: NavigateFunction) => {
@@ -24,6 +25,30 @@ export const getSalesModuleDataAPI = (navigate?: NavigateFunction) => {
             const resWarehouses: AxiosResponse = await api.get(`warehouse/get-warehouses/${branchId}`);
             const {data:warehouses}:{data:Warehouse[]} = resWarehouses.data;
             dispatch(getWarehauses(warehouses));
+
+            const resBrand: AxiosResponse = await api.get(`brand/get-brands/${branchId}`);
+            const { data:brands }: { data: Brand[] } = resBrand.data;
+            dispatch(getBrands(brands));
+
+            const resCategory: AxiosResponse = await api.get(`category/get-categories/${branchId}`);
+            const { data:categories }: { data: Category[] } = resCategory.data;
+            dispatch(getCategories(categories));
+
+            const resUnitMeasure: AxiosResponse = await api.get(`unit-measure/get-unit-measures`);
+            const { data:unitMeasures }: { data: UnitMeasure[] } = resUnitMeasure.data;
+            dispatch(getUnitMeasures(unitMeasures));
+
+            const resUnitMeasureBranch: AxiosResponse = await api.get(`unit-measure/get-unit-measures-branch/${branchId}`);
+            const { data:unitMeasuresBranch }: { data: UnitMeasureBranch[] } = resUnitMeasureBranch.data;
+            dispatch(getUnitMeasuresBranch(unitMeasuresBranch));
+
+            const resCurrencies: AxiosResponse = await api.get(`currency/get-currencies`);
+            const { data:currencies }: { data: Currency[] } = resCurrencies.data;
+            dispatch(getCurrencies(currencies));
+
+            const resExchangeRate: AxiosResponse = await api.get(`exchange-rate/get-exchange-rate/${branchId}`);
+            const { data:exchangeRates }: { data: ExchangeRate[] } = resExchangeRate.data;
+            dispatch(getExchangeRates(exchangeRates));
 
 
             // if(navigate) navigate('/main/products/list');
@@ -169,6 +194,151 @@ export const deleteUserWarehouseSaleAPI = (userId: string) => {
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'ELIMINACION DE VENDEDOR', description: data.message }));
+                setTimeout(() => dispatch(hideNotification()), 5000);
+            } else console.log(error);
+            dispatch(finishLoadingData());
+        }
+    }
+}
+
+//* ------------------------ PRODUCTSALES ---------------------------------
+
+export const updateProductPriceAPI = (updateProductPriceDto:UpdateProductPriceDto) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {userData} = getState().Branch;
+        const verifyPrice = parseFloat(updateProductPriceDto.price);
+        if(isNaN(verifyPrice) || verifyPrice <= 0){
+            dispatch(showNotificationWarning({tittle: 'ACTUALIZACIÓN DE PRECIO', description:'El precio no debe ser menor a 0, por favor modifíquelo e intente de nuevo.'}));
+            return;
+        }
+        try {
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.patch(`product-price/update-product-price`, updateProductPriceDto,
+                { headers: { "X-User-Id": userData.id } }
+            );
+            const {data, message}:{data:Product, message: string} = response.data;
+            
+            dispatch(updateProduct(data));
+            dispatch(updatePriceProductWarehouse(data));
+            dispatch(showNotificationSuccess({ tittle: 'ACTUALIZACIÓN DE PRECIO', description: message }));
+            setTimeout(() => dispatch(hideNotification()), 5000);
+            dispatch(finishLoadingData());
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                const { data } = error.response;
+                dispatch(showNotificationError({ tittle: 'ACTUALIZACIÓN DE PRECIO', description: data.message }));
+                setTimeout(() => dispatch(hideNotification()), 5000);
+            } else console.log(error);
+            dispatch(finishLoadingData());
+        }
+    }
+}
+
+//* ------------------------ EXCHANGE RATE ---------------------------------
+
+export const createExchangeRateAPI = (createExchangeRateDto: CreateExchangeRateDto) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {userData} = getState().Branch;
+        try {
+            dispatch(startLoadingData());
+            const verifyRateTopUSD =  parseFloat(createExchangeRateDto.rateToUSD);
+            if(isNaN(verifyRateTopUSD) || verifyRateTopUSD <= 0){
+                dispatch(showNotificationWarning({ tittle: 'REGISTRO DE TIPO DE CAMBIO', description: 'El valor de la conversión debe ser un numero valido mayor a “0”.' }));
+                setTimeout(() => dispatch(hideNotification()), 5000);
+                dispatch(finishLoadingData());
+                return;
+            }
+            const response: AxiosResponse = await api.post(`exchange-rate/create-exchange-rate`, createExchangeRateDto,
+                { headers: { "X-User-Id": userData.id } }
+            );
+            const { data, message }: { data: ExchangeRate, message: string } = response.data;
+            dispatch(createExchangeRate(data));     
+            dispatch(showNotificationSuccess({ tittle: 'REGISTRO DE TIPO DE CAMBIO', description: message }));
+            setTimeout(() => dispatch(hideNotification()), 5000);
+            dispatch(finishLoadingData());            
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                const { data } = error.response;
+                dispatch(showNotificationError({ tittle: 'REGISTRO DE TIPO DE CAMBIO', description: data.message }));
+                setTimeout(() => dispatch(hideNotification()), 5000);
+            } else console.log(error);
+            dispatch(finishLoadingData());
+        }
+    }
+}
+
+export const updateExchangeRateAPI = (updateExchangeRateDto: UpdateExchangeRateDto) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {userData} = getState().Branch;
+        try {
+            dispatch(startLoadingData());
+            const verifyRateTopUSD =  parseFloat(updateExchangeRateDto.rateToUSD);
+            if(isNaN(verifyRateTopUSD) || verifyRateTopUSD <= 0){
+                dispatch(showNotificationWarning({ tittle: 'TIPO DE CAMBIO', description: 'El valor de la conversión debe ser un numero valido mayor a “0”.' }));
+                setTimeout(() => dispatch(hideNotification()), 5000);
+                dispatch(finishLoadingData());
+                return;
+            }
+            const response: AxiosResponse = await api.patch(`exchange-rate/update-exchange-rate`, updateExchangeRateDto,
+                { headers: { "X-User-Id": userData.id } }
+            );
+            const { data, message }: { data: ExchangeRate, message: string } = response.data;
+            dispatch(updateExchangeRate(data));     
+            dispatch(showNotificationSuccess({ tittle: 'TIPO DE CAMBIO', description: message }));
+            setTimeout(() => dispatch(hideNotification()), 5000);
+            dispatch(finishLoadingData());            
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                const { data } = error.response;
+                dispatch(showNotificationError({ tittle: 'TIPO DE CAMBIO', description: data.message }));
+                setTimeout(() => dispatch(hideNotification()), 5000);
+            } else console.log(error);
+            dispatch(finishLoadingData());
+        }
+    }
+}
+
+export const toggleFavoriteExchangeRateAPI = (exchangeRateId: string) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {userData} = getState().Branch;
+        try {
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.patch(`exchange-rate/toggle-favorite-exchange-rate/${exchangeRateId}`, {},
+                { headers: { "X-User-Id": userData.id } }
+            );
+            const { data, message }: { data: ExchangeRate, message: string } = response.data;
+            dispatch(toggleFavoriteExchangeRate(data));    
+            dispatch(showNotificationSuccess({ tittle: 'TIPO DE CAMBIO', description: message }));
+            setTimeout(() => dispatch(hideNotification()), 5000);
+            dispatch(finishLoadingData());            
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                const { data } = error.response;
+                dispatch(showNotificationError({ tittle: 'TIPO DE CAMBIO', description: data.message }));
+                setTimeout(() => dispatch(hideNotification()), 5000);
+            } else console.log(error);
+            dispatch(finishLoadingData());
+        }
+    }
+}
+
+export const deleteExchangeRateAPI = (exchangeRateId: string) => {
+    return async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {userData} = getState().Branch;
+        try {
+            dispatch(startLoadingData());
+            const response: AxiosResponse = await api.delete(`exchange-rate/update-exchange-rate/${exchangeRateId}`,
+                { headers: { "X-User-Id": userData.id } }
+            );
+            const { data, message }: { data: ExchangeRate, message: string } = response.data;
+            console.log(data);       
+            dispatch(showNotificationSuccess({ tittle: 'ELIMINACION DE TIPO DE CAMBIO', description: message }));
+            setTimeout(() => dispatch(hideNotification()), 5000);
+            dispatch(finishLoadingData());            
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                const { data } = error.response;
+                dispatch(showNotificationError({ tittle: 'ELIMINACION DE TIPO DE CAMBIO', description: data.message }));
                 setTimeout(() => dispatch(hideNotification()), 5000);
             } else console.log(error);
             dispatch(finishLoadingData());

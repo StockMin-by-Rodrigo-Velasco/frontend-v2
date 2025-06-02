@@ -34,6 +34,7 @@ interface Module{
 
 export default function Navbar() {
     const { pathname } = useLocation();
+    const { loadingModule } = useSelector((s: RootState) => s.Aplication);
     const { userData, permissions: listaPermisos } = useSelector((s: RootState) => s.Branch);
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
@@ -108,7 +109,7 @@ export default function Navbar() {
                     title: 'Tienda', 
                     path: '/main/sales/store', 
                     icon: <AiOutlineShop size='14px'/>,
-                    access: false//userPermissionsSet.has(salesModulePermissions['sa-01'])
+                    access: userPermissionsSet.has(salesModulePermissions['sa-01'])
 
                 },
                 { 
@@ -160,6 +161,14 @@ export default function Navbar() {
             <img src={logos.logoVerticalWhite} width={'150px'} className="mt-3 mb-10" />
             {modules.map(i => (
                 <div key={i.path} className="mb-2" >
+                    {loadingModule?
+                    <div
+                        className={`bg-info bg-opacity-60 mb-2 w-[180px] px-3 py-1 rounded-full flex items-center cursor-wait`}
+                    >
+                        {i.icon}
+                        {i.title}
+                    </div>
+                    :
                     <NavLink
                         to={i.path}
                         className={
@@ -169,6 +178,7 @@ export default function Navbar() {
                         {i.icon}
                         {i.title}
                     </NavLink>
+                    }
                     {(pathname.includes(i.path)) && i.subTitles.map(subI => (
                         subI.access?
                         <NavLink to={subI.path} key={subI.title}

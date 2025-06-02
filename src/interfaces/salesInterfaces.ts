@@ -16,7 +16,7 @@ export interface Currency {
     symbol: string;
     description?: string;
 }
-export const initialCurrency: Currency = {id:'',code:'',name:'',symbol:'', description:''}
+export const initialCurrency: Currency = { id: '', code: '', name: '', symbol: '', description: '' }
 
 export interface WarehouseSale {
     id: string;
@@ -25,7 +25,21 @@ export interface WarehouseSale {
     branchId: string;
     warehouseId: string;
 }
-export const initialWarehouseSale: WarehouseSale = {id:'', deleted:false, userId:'', branchId:'', warehouseId:''}
+export const initialWarehouseSale: WarehouseSale = { id: '', deleted: false, userId: '', branchId: '', warehouseId: '' }
+
+export interface ExchangeRate {
+    id: string;
+    rateToUSD: string;
+    deleted: boolean;
+    favorite:boolean;
+    branchId: string;
+    currencyId: string;
+    createdAt?: string;
+    updatedAt?: string;
+
+    Currency: Currency
+}
+export const initialExchangeRate:ExchangeRate = {id:'', rateToUSD:'', branchId:'', currencyId:'', deleted:false, favorite:false, createdAt:'', updatedAt:'', Currency: initialCurrency}
 
 //* ------------------ DTOs -------------------------
 
@@ -51,4 +65,20 @@ export interface UpdateCustomerDto {
 export interface CreateUserWarehouseSaleDto {
     warehouseId: string;
     userId: string;
+}
+
+export interface UpdateProductPriceDto {
+    id: string;
+    price: string
+}
+
+export interface CreateExchangeRateDto {
+    branchId: string;
+    currencyId: string;
+    rateToUSD: string;
+}
+
+export interface UpdateExchangeRateDto {
+    id: string;
+    rateToUSD: string;
 }

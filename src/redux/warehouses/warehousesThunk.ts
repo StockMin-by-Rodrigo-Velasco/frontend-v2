@@ -203,7 +203,7 @@ export const getProductsWarehouseAPI = (warehouseId?: string, functionReturn?: (
             const resProduct: AxiosResponse = await api.get(`product-warehouse/get-products-warehouse/${warehouseId||warehouseSelected.id}`);
             const { data: products }: { data: ProductWarehouse[] } = resProduct.data;
             if(functionReturn) functionReturn(products);
-            else dispatch(getProductsWarehouse(products));
+            dispatch(getProductsWarehouse(products));
             
             dispatch(finishLoadingData());
         } catch (error) {

@@ -1,6 +1,5 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
-import { DocEntry, DocTransfer, initialWarehouse, Log, ProductWarehouse, User, Warehouse } from "../../interfaces";
-
+import { DocEntry, DocTransfer, initialWarehouse, Log, Product, ProductWarehouse, User, Warehouse } from "../../interfaces";
 
 export interface ProductoAlmacenWithOutIdInterface {
     productoId: string;
@@ -80,6 +79,11 @@ const WarehousesSlice = createSlice({
 
             state.productsWarehouse = [...productWarehouse];
         },
+        updatePriceProductWarehouse: (state, action: PayloadAction<Product>) => {
+            const productWarehouse: ProductWarehouse[] = current(state.productsWarehouse)
+                .map(p => p.productId === action.payload.id? {...p, Product: action.payload} : p);
+            state.productsWarehouse = [...productWarehouse];
+        },
         updateManyProductsWarehouse: (state, action: PayloadAction<ProductWarehouse[]>) => {
             const productsWarehouseObj = action.payload.reduce((acc, p) => { acc[p.id] = p; return acc; }, {} as Record<string, ProductWarehouse>);
 
@@ -121,6 +125,7 @@ export const {
     createManyProductsWarehouse,
     createProductWarehouse,
     updateProductWarehouse,
+    updatePriceProductWarehouse,
     updateManyProductsWarehouse,
 
     getDocTransfers,

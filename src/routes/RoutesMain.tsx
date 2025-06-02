@@ -23,6 +23,7 @@ import Transfers from "./warehouses/sm-traspasos/Transfers";
 import Customers from "./sales/sm-customers/Customers";
 import SalesHistory from "./sales/sm-history/SalesHistory";
 import SalesOptions from "./sales/sm-options/SalesOptions";
+import Store from "./sales/sm-tienda/Store";
 
 export default function RoutesMain() {
 
@@ -48,7 +49,7 @@ export default function RoutesMain() {
           </Route>
 
           <Route path="sales" element={<Sales/>}>
-            {/* <Route path="store" element={<TiendaVentas/>}/> */}
+            <Route path="store" element={<Store/>}/>
             <Route path="customers" element={<Customers/>}/>
             <Route path="options" element={<SalesOptions/>}/>
             <Route path="history" element={<SalesHistory/>} />
