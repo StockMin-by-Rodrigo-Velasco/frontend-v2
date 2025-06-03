@@ -7,9 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { FaEdit } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
-import { deleteCategoryAPI, updateCategoryAPI } from "../../../../redux/products/productsThunk";
-import { hideNotification, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
-import { BsFillTrashFill } from "react-icons/bs";
+import { updateCategoryAPI } from "../../../../redux/products/productsThunk";
 import { Category } from "../../../../interfaces";
 
 interface UpdateCategoriaProps {

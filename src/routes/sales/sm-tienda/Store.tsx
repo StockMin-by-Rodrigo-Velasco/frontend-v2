@@ -3,13 +3,10 @@ import HeaderSection from "../../../components/HeaderSection";
 import { AppDispatch, RootState } from "../../../redux/store";
 import { useEffect, useState } from "react";
 // import { CreateOpcionesVentaDto, TransactionProductoAlmacenDto, ListTransactionProductosAlmacenDto, ProductoTienda, PrecioVenta } from "../../../interface";
-import { InputSearch, InputSelect, InputSelectSearch } from "../../../components/Input";
+import { InputSearch, InputSelectSearch } from "../../../components/Input";
 import BodySection from "../../../components/BodySection";
 import { LuSettings } from "react-icons/lu";
 import { AiOutlineLoading } from "react-icons/ai";
-import { MdShoppingCart } from "react-icons/md";
-import { IoDocumentsOutline } from "react-icons/io5";
-import { ProductWarehouse } from "../../../interfaces";
 import { useForm } from "../../../hooks";
 import { getProductsWarehouseAPI } from '../../../redux/warehouses/warehousesThunk';
 import { hideNotification, showNotificationWarning } from "../../../redux/notification/notificationSlice";
@@ -21,7 +18,7 @@ import { calculatorMultiply } from "../../../helpers/calculator";
 
 export default function Store() {
     const { loadingData } = useSelector((s: RootState) => s.Aplication);
-    const { id: branchId, userData } = useSelector((s: RootState) => s.Branch);
+    const { userData } = useSelector((s: RootState) => s.Branch);
     const { exchangeRateFavorite } = useSelector((s: RootState) => s.Sales);
     const { warehouses, productsWarehouse } = useSelector((s: RootState) => s.Warehouses);
     const { brands, categories } = useSelector((s: RootState) => s.Products);
@@ -30,8 +27,8 @@ export default function Store() {
 
     const [productsStore, setProductsStore] = useState<ProductStore[]>([]);
     // const [checkedProductos, setCheckedProductos] = useState(0);
-    const [openProformaVenta, setOpenProformaVenta] = useState(false);
-    const [openListaVentasCotizaciones, setOpenListaVentasCotizaciones] = useState(false);
+    // const [openProformaVenta, setOpenProformaVenta] = useState(false);
+    // const [openListaVentasCotizaciones, setOpenListaVentasCotizaciones] = useState(false);
     const [openSettings, setOpenSettings] = useState(false);
 
 

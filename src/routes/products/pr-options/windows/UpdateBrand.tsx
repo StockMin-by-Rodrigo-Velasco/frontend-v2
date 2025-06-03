@@ -3,13 +3,11 @@ import Windows from "../../../../components/Windows";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { useForm } from "../../../../hooks";
 import { FormEvent, useState } from "react";
-import { deleteBrandAPI, updateBrandAPI } from "../../../../redux/products/productsThunk";
+import { updateBrandAPI } from "../../../../redux/products/productsThunk";
 import { FaEdit } from "react-icons/fa";
 import { AiOutlineLoading } from "react-icons/ai";
 import { InputText, InputTextarea } from "../../../../components/Input";
 import { Button, ButtonSubmit } from "../../../../components/Buttons";
-import { BsFillTrashFill } from "react-icons/bs";
-import { hideNotification, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
 import { Brand } from "../../../../interfaces";
 
 interface UpdateMarcaProps {
