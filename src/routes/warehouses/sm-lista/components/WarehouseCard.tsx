@@ -25,12 +25,8 @@ export default function WarehouseCard({ warehouse }: WarehouseCardProp) {
             <div
                 className="overflow-hidden bg-secondary flex flex-col items-center rounded m-2 w-[250px] transition-all duration-300 text-white text-[100px] hover:text-[110px]"
             >
-
-
                 <div className="relative flex items-center py-1 w-full text-[16px]" >
-                    <div className="text-center w-full flex flex-col" >{warehouse.name.toLocaleUpperCase()}
-                        <span className="text-[10px] opacity-50" >ID: {warehouse.id}</span>
-                    </div>
+                    <div className="text-center w-full flex flex-col" >{warehouse.name.toLocaleUpperCase()}</div>
                     <button
                         className="absolute top-1 right-1 w-7 h-7 rounded-full flex justify-center items-center transition-all duration-200 hover:bg-white hover:text-secondary"
                         onClick={() => {setOpenUpdateAlmacen(true)}}

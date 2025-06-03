@@ -11,18 +11,18 @@ import { AiOutlineLoading } from "react-icons/ai";
 import { FaEdit } from "react-icons/fa";
 import { ProductStore } from "../../../../interfaces/formInterface";
 import { updateProductPriceAPI } from "../../../../redux/sales/salesThunk";
+import { calculatorDivide } from "../../../../helpers/calculator";
 
 
 interface ProductCardProp {
     product: ProductStore,
     toggleProduct:(productId: string) => void
-    // checkProducto: (productId: string) => void,
-    // setLista?:React.Dispatch<React.SetStateAction<ProductoTienda[]>>
 }
 
 
 export default function ProductCard({ product, toggleProduct }: ProductCardProp) {
     const { loadingData } = useSelector((s: RootState) => s.Aplication);
+    const { exchangeRateFavorite } = useSelector((s: RootState) => s.Sales);
 
     const dispatch = useDispatch<AppDispatch>();
 
@@ -33,7 +33,8 @@ export default function ProductCard({ product, toggleProduct }: ProductCardProp)
     );
 
     const updatePriceProductWarehouse = () => {
-        dispatch(updateProductPriceAPI({ id: product.Product.id, price: formPrice.price }));
+        // console.log({ id: product.Product.id, price: calculatorDivide({num1:formPrice.price, num2: exchangeRateFavorite.rateToUSD, decimals:2})})
+        dispatch(updateProductPriceAPI({ id: product.Product.id, price: calculatorDivide({num1:formPrice.price, num2: exchangeRateFavorite.rateToUSD, decimals:2})}));
     }
 
     return (
@@ -69,7 +70,7 @@ export default function ProductCard({ product, toggleProduct }: ProductCardProp)
                             value={formPrice.price}
                         />
                         <div className="border border-secondary bg-secondary text-white rounded-e-md text-[12px] px-1" >
-                            {/* {opcionesVenta.TipoMonedaVenta.abreviatura.toLocaleUpperCase()} */} $
+                            {exchangeRateFavorite.Currency.symbol}
                         </div>
 
                         {loadingData ?
@@ -98,7 +99,7 @@ export default function ProductCard({ product, toggleProduct }: ProductCardProp)
                         {(product.Product.price && (product.Product.price !== '')) ?
                             <div className="flex" >
                                 {product.Product.price}
-                                <span className="font-medium ms-1" > $ </span>
+                                <span className="font-medium ms-1" > {exchangeRateFavorite.Currency.symbol} </span>
                                 <button
                                     type="button"
                                     className="text-secondary/80 ms-2 text-[14px] hover:text-secondary"

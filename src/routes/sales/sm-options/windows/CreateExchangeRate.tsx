@@ -2,9 +2,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { InputNumberForm, InputSelect } from "../../../../components/Input";
 import Windows from "../../../../components/Windows";
 import { AppDispatch, RootState } from "../../../../redux/store";
-import { FormEvent } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useForm } from "../../../../hooks";
-import { CreateExchangeRateDto } from "../../../../interfaces";
+import { CreateExchangeRateDto, Currency } from "../../../../interfaces";
 import { createExchangeRateAPI } from "../../../../redux/sales/salesThunk";
 import { ButtonSubmit } from "../../../../components/Buttons";
 
@@ -19,6 +19,7 @@ export default function CreateExchangeRate({ closeButton }: CreateExchangeRatePr
     const { currencies } = useSelector((s: RootState) => s.Sales);
 
     const dispatch = useDispatch<AppDispatch>();
+    const [listCurrencies, setListCurrencies] = useState<Currency[]>([]);
 
     const { data, handleInputChange } = useForm<{ currencyId: string, rateToUSD: string }>({ currencyId: '', rateToUSD: '0' });
 
@@ -31,6 +32,10 @@ export default function CreateExchangeRate({ closeButton }: CreateExchangeRatePr
         }
         dispatch(createExchangeRateAPI(createExchangeRateDto));
     }
+    useEffect(() => {
+      setListCurrencies(currencies.filter(c => c.code!=='usd'))
+    }, [])
+    
     return (
         <Windows tittle="Creación de cambio de moneda" closeButton={closeButton} >
             <form onSubmit={createExchangeRate} className="p-2 flex flex-col justify-center items-center" >
@@ -38,7 +43,7 @@ export default function CreateExchangeRate({ closeButton }: CreateExchangeRatePr
                     <InputSelect
                         handleInputChange={handleInputChange}
                         name="currencyId"
-                        options={currencies.map(c => ({ name: `${c.code}-${c.name}`, value: c.id }))}
+                        options={listCurrencies.map(c => ({ name: `${c.code}-${c.name}`, value: c.id }))}
                         optionDefault="Sin seleccion"
                         placeholder="Tipo de moneda"
                         value={data.currencyId}

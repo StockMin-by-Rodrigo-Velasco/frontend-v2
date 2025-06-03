@@ -1,12 +1,12 @@
 import axios, { AxiosResponse } from "axios";
-import { Brand, Category, CreateCustomerDto, CreateExchangeRateDto, CreateUserWarehouseSaleDto, Currency, Customer, ExchangeRate, Product, UnitMeasure, UnitMeasureBranch, UpdateCustomerDto, UpdateExchangeRateDto, UpdateProductPriceDto, User, Warehouse } from "../../interfaces";
+import { Brand, Category, CreateCustomerDto, CreateExchangeRateDto, CreateUserWarehouseSaleDto, Currency, Customer, ExchangeRate, initialCurrency, Product, UnitMeasure, UnitMeasureBranch, UpdateCustomerDto, UpdateExchangeRateDto, UpdateProductPriceDto, User, Warehouse } from "../../interfaces";
 import { AppDispatch, RootState } from "../store"
 import { finishLoadingData, finishLoadingModule, startLoadingData, startLoadingModule } from "../aplication/aplicationSlice";
 import api from "../../api/config";
-import { createCustomer, createExchangeRate, getCurrencies, getCustomers, getExchangeRates, toggleFavoriteExchangeRate, updateCustomer, updateExchangeRate } from "./salesSlice";
+import { createCustomer, createExchangeRate, getCurrencies, getCustomers, getExchangeRateFavorite, getExchangeRates, toggleFavoriteExchangeRate, updateCustomer, updateExchangeRate } from "./salesSlice";
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from "../notification/notificationSlice";
 import { NavigateFunction } from "react-router";
-import { createUserWarehouseSale, deleteUserWarehouseSale, getWarehauses, updatePriceProductWarehouse, updateProductWarehouse, updateWarehouse } from "../warehouses/warehousesSlice";
+import { createUserWarehouseSale, deleteUserWarehouseSale, getWarehauses, updatePriceProductWarehouse, updateWarehouse } from "../warehouses/warehousesSlice";
 import { updateUser } from "../branch/branchSlice";
 import { getBrands, getCategories, getUnitMeasures, getUnitMeasuresBranch, updateProduct } from "../products/productSlice";
 
@@ -49,9 +49,25 @@ export const getSalesModuleDataAPI = (navigate?: NavigateFunction) => {
             const resExchangeRate: AxiosResponse = await api.get(`exchange-rate/get-exchange-rate/${branchId}`);
             const { data:exchangeRates }: { data: ExchangeRate[] } = resExchangeRate.data;
             dispatch(getExchangeRates(exchangeRates));
+            const exchangeRateFavorite:ExchangeRate|undefined = exchangeRates.find(er => er.favorite);
+
+            if(exchangeRateFavorite)dispatch(getExchangeRateFavorite(exchangeRateFavorite));
+            else{
+                const Currency = currencies.find(c => c.code === 'usd') || initialCurrency;
+                const exchangeRateFavoriteDefault:ExchangeRate ={
+                    id:branchId,
+                    branchId,
+                    Currency,
+                    currencyId: Currency.id,
+                    favorite:true,
+                    rateToUSD:'1',
+                    deleted:false
+                };
+                dispatch(getExchangeRateFavorite(exchangeRateFavoriteDefault));
+            }
 
 
-            // if(navigate) navigate('/main/products/list');
+            if(navigate) navigate('/main/sales/store');
 
             dispatch(finishLoadingModule());
         } catch (error) {
@@ -283,7 +299,8 @@ export const updateExchangeRateAPI = (updateExchangeRateDto: UpdateExchangeRateD
                 { headers: { "X-User-Id": userData.id } }
             );
             const { data, message }: { data: ExchangeRate, message: string } = response.data;
-            dispatch(updateExchangeRate(data));     
+            dispatch(updateExchangeRate(data));
+            if(data.favorite) dispatch(getExchangeRateFavorite(data));  
             dispatch(showNotificationSuccess({ tittle: 'TIPO DE CAMBIO', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
             dispatch(finishLoadingData());            
@@ -300,14 +317,32 @@ export const updateExchangeRateAPI = (updateExchangeRateDto: UpdateExchangeRateD
 
 export const toggleFavoriteExchangeRateAPI = (exchangeRateId: string) => {
     return async (dispatch: AppDispatch, getState: () => RootState) => {
-        const {userData} = getState().Branch;
+        const {id: branchId, userData} = getState().Branch;
+        const {currencies} = getState().Sales;
         try {
             dispatch(startLoadingData());
             const response: AxiosResponse = await api.patch(`exchange-rate/toggle-favorite-exchange-rate/${exchangeRateId}`, {},
                 { headers: { "X-User-Id": userData.id } }
             );
             const { data, message }: { data: ExchangeRate, message: string } = response.data;
-            dispatch(toggleFavoriteExchangeRate(data));    
+            dispatch(toggleFavoriteExchangeRate(data)); 
+
+            const exchangeRateFavorite:ExchangeRate|undefined = data.favorite? data:undefined;
+            if(exchangeRateFavorite)dispatch(getExchangeRateFavorite(exchangeRateFavorite));
+            else{
+                const Currency = currencies.find(c => c.code === 'usd') || initialCurrency;
+                const exchangeRateFavoriteDefault:ExchangeRate ={
+                    id:branchId,
+                    branchId,
+                    Currency,
+                    currencyId: Currency.id,
+                    favorite:true,
+                    rateToUSD:'1',
+                    deleted:false
+                };
+                dispatch(getExchangeRateFavorite(exchangeRateFavoriteDefault));
+            }
+            
             dispatch(showNotificationSuccess({ tittle: 'TIPO DE CAMBIO', description: message }));
             setTimeout(() => dispatch(hideNotification()), 5000);
             dispatch(finishLoadingData());            

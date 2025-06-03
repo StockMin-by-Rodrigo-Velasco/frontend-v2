@@ -16,12 +16,13 @@ import { hideNotification, showNotificationWarning } from "../../../redux/notifi
 import ProductCard from "./components/ProductCard";
 import { initialSerchFilter, ProductStore, SearchFilter } from "../../../interfaces/formInterface";
 import { TbReportAnalytics } from "react-icons/tb";
+import { calculatorMultiply } from "../../../helpers/calculator";
 
 
 export default function Store() {
     const { loadingData } = useSelector((s: RootState) => s.Aplication);
     const { id: branchId, userData } = useSelector((s: RootState) => s.Branch);
-    const { } = useSelector((s: RootState) => s.Sales);
+    const { exchangeRateFavorite } = useSelector((s: RootState) => s.Sales);
     const { warehouses, productsWarehouse } = useSelector((s: RootState) => s.Warehouses);
     const { brands, categories } = useSelector((s: RootState) => s.Products);
 
@@ -51,8 +52,8 @@ export default function Store() {
     }
 
     const toggleProduct = (productId: string) => {
-        setProductsStore(products => (products.map(p => p.Product.id === productId? {...p, selected:!p.selected}:p)));
-        
+        setProductsStore(products => (products.map(p => p.Product.id === productId ? { ...p, selected: !p.selected } : p)));
+
     }
 
     // const handleCheckProducto = (productoId: string) => {
@@ -103,9 +104,27 @@ export default function Store() {
 
     useEffect(() => {
         if (userData.warehouseId && (userData.warehouseId !== '') && productsStore.length === 0) { //* LLama al API solo si no hay productos
-            dispatch(getProductsWarehouseAPI(userData.warehouseId, (products) => { setProductsStore(products.map(p => ({ ...p, selected: false }))) }));
+            dispatch(getProductsWarehouseAPI(
+                userData.warehouseId, (products) => {
+                    setProductsStore(products.map(p => ({
+                        ...p,
+                        Product: {
+                            ...p.Product,
+                            price: p.Product.price ? calculatorMultiply({ num1: p.Product.price, num2: exchangeRateFavorite.rateToUSD, decimals: 2 }) : undefined
+                        },
+                        selected: false
+                    })))
+                })
+            );
         } else if (productsStore.length > 0) { //* Modifica las actualizaciones de los productos
-            setProductsStore(productsWarehouse.map(p => ({ ...p, selected: false })));
+            setProductsStore(productsWarehouse.map(p => ({
+                ...p,
+                Product: {
+                    ...p.Product,
+                    price: p.Product.price ? calculatorMultiply({ num1: p.Product.price, num2: exchangeRateFavorite.rateToUSD, decimals: 2 }) : undefined
+                },
+                selected: false
+            })));
         } else {
             if (userData.warehouseId !== '') {
                 dispatch(showNotificationWarning({
