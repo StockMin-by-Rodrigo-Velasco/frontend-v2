@@ -6,7 +6,6 @@ import HeaderSection from "../../../components/HeaderSection";
 import { InputSearch, InputSelectSearch } from "../../../components/Input";
 import { TbLogout2, TbReportAnalytics } from "react-icons/tb";
 import BodySection from "../../../components/BodySection";
-import { FaPlus } from "react-icons/fa";
 import { logoutWarehouse } from "../../../redux/warehouses/warehousesSlice";
 import { initialProductWarehouse, ProductWarehouse } from "../../../interfaces";
 import logos from "../../../assets/logos";
@@ -15,6 +14,9 @@ import CreateManyProductsWarehouse from "./windows/CreateManyProductsWarehouse";
 import ProductWarehouseSelected from "./windows/ProductWarehouseSelected";
 import CreateDocEntry from "./windows/CreateDocEntry";
 import DocEntries from "./windows/DocEntries";
+import FooterSection from "../../../components/FooterSection";
+import { MdOutlineLibraryAdd } from "react-icons/md";
+import { IoDocumentTextOutline } from "react-icons/io5";
 
 interface FilterInterface {
   search: string;
@@ -38,7 +40,6 @@ export default function WarehouseSelected() {
 
   const [filter, setFilter] = useState<FilterInterface>(filterInitialState);
   const [filteredProducts, setFilteredProducts] = useState<ProductWarehouse[]>([]);
-  const [createOptions, setCreateOptions] = useState(false);
 
   const [openCreateManyProductsWarehouse, setOpenCreateManyProductsWarehouse] = useState(false);
   const [openProductWarehouseSelected, setOpenProductWarehouseSelected] = useState(false);
@@ -71,25 +72,15 @@ export default function WarehouseSelected() {
     setFilter(newFilter);
   }
 
-  const goToCreateManyProductsWarehouse = () => {
-    setOpenCreateManyProductsWarehouse(true);
-    setCreateOptions(s => !s)
-  }
-
-  const goToCreateDocEntry = () => {
-    setOpenCreateDocEntry(true);
-    setCreateOptions(s => !s)
-  }
-
   useEffect(() => {
     setFilteredProducts(productsWarehouse);
   }, [productsWarehouse])
   return (
     <>
-      {openCreateManyProductsWarehouse && <CreateManyProductsWarehouse closeButton={() => { setOpenCreateManyProductsWarehouse(false)}} />}
-      {openProductWarehouseSelected && <ProductWarehouseSelected product={productWarehouseSelected} closeButton={() => {setOpenProductWarehouseSelected(false)}} />}
-      {openCreateDocEntry && <CreateDocEntry closeButton={() => setOpenCreateDocEntry(false)}/>}
-      {openDocEntries && <DocEntries closeButton={() => setOpenDocEntries(false)}/> }
+      {openCreateManyProductsWarehouse && <CreateManyProductsWarehouse closeButton={() => { setOpenCreateManyProductsWarehouse(false) }} />}
+      {openProductWarehouseSelected && <ProductWarehouseSelected product={productWarehouseSelected} closeButton={() => { setOpenProductWarehouseSelected(false) }} />}
+      {openCreateDocEntry && <CreateDocEntry closeButton={() => setOpenCreateDocEntry(false)} />}
+      {openDocEntries && <DocEntries closeButton={() => setOpenDocEntries(false)} />}
 
 
       <HeaderSection>
@@ -150,7 +141,7 @@ export default function WarehouseSelected() {
             </tr>
           </thead>
           <tbody>
-            {(loadingData && (filteredProducts.length === 0))&& <tr>
+            {(loadingData && (filteredProducts.length === 0)) && <tr>
               <td className="p-3" colSpan={7}>
                 <div className="flex justify-center" >
                   <span>Cargando datos...</span>
@@ -174,7 +165,7 @@ export default function WarehouseSelected() {
                     <div className="w-full h-full flex justify-center items-center">
                       {(p.quantity > (p.minQuantity * 2)) && <div className="bg-success rounded h-5 w-2"></div>}
                       {((p.quantity <= (p.minQuantity * 2)) && (p.quantity > p.minQuantity)) && <div className="bg-warning rounded h-5 w-2"></div>}
-                      {(p.quantity<= p.minQuantity) && <div className="bg-danger rounded h-5 w-2"></div>}
+                      {(p.quantity <= p.minQuantity) && <div className="bg-danger rounded h-5 w-2"></div>}
                     </div>
                     :
                     <div className="w-full h-full flex justify-center items-center">
@@ -190,19 +181,24 @@ export default function WarehouseSelected() {
           </tbody>
         </table>
       </BodySection>
-      <div className='absolute bottom-2 right-2 flex flex-col items-end ' >
-        {createOptions && <div className='flex flex-col bg-primary mb-3 rounded text-white' >
-          <span className='px-3 py-1 cursor-pointer hover:bg-white/10' onClick={goToCreateManyProductsWarehouse} >REGISTRAR PRODUCTOS</span>
-          <span className='px-3 py-1 cursor-pointer hover:bg-white/10' onClick={goToCreateDocEntry} >INGRESAR PRODUCTOS</span>
-        </div>}
+
+      <FooterSection>
+        <span className="bg-secondary text-white text-[12px] px-2 rounded-full" > {productsWarehouse.length} Productos</span>
         <button
-          onClick={() => { setCreateOptions(s => !s) }}
-          type="button"
-          className={`${createOptions && 'rotate-[135deg]'} transition-all duration-300 flex justify-center items-center bg-primary bg-opacity-80 text-white text-[22px] hover:bg-opacity-100 w-14 h-14 rounded-full`}
-        >
-          <FaPlus />
-        </button>
-      </div>
+            onClick={() => setOpenCreateDocEntry(true)}
+            type="button"
+            className="ms-auto py-1 px-2 rounded-full flex justify-center items-center bg-primary bg-opacity-80 text-white hover:bg-opacity-100"
+          >
+            <IoDocumentTextOutline className="me-2" /> Ingresar
+          </button>
+          <button
+            onClick={() => setOpenCreateManyProductsWarehouse(true)}
+            type="button"
+            className="ms-2 py-1 px-2 rounded-full flex justify-center items-center bg-success bg-opacity-80 text-white hover:bg-opacity-100"
+          >
+            <MdOutlineLibraryAdd className="me-2" /> Registrar
+          </button>
+      </FooterSection>
     </>
   );
 }

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router";
 import CreateWarehouse from "./windows/CreateWarehouse";
 import { getProductsWarehouseAPI } from "../../../redux/warehouses/warehousesThunk";
+import FooterSection from "../../../components/FooterSection";
 
 export default function WarehouseList() {
   const navigate = useNavigate();
@@ -16,19 +17,19 @@ export default function WarehouseList() {
   const [openCreateAlmacenWindow, setOpenCreateAlmacenWindow] = useState(false);
 
   useEffect(() => {
-    if(warehouseSelected.id !== '') {
+    if (warehouseSelected.id !== '') {
       dispatch(getProductsWarehouseAPI());
       navigate(`/main/warehouses/list/${warehouseSelected.id}`);
     }
   }, [warehouseSelected.id])
-  
-  return ( warehouseSelected.id?
+
+  return (warehouseSelected.id ?
     <>
-        <Outlet/>
+      <Outlet />
     </>
     :
     <>
-      {openCreateAlmacenWindow&& <CreateWarehouse closeButton={() => {setOpenCreateAlmacenWindow(false)}}/>}
+      {openCreateAlmacenWindow && <CreateWarehouse closeButton={() => { setOpenCreateAlmacenWindow(false) }} />}
 
       <BodySection>
         <h1 className="text-[30px] text-secondary border-b-2 border-secondary mb-5" >ALMACENES</h1>
@@ -38,14 +39,17 @@ export default function WarehouseList() {
           ))}
         </div>
       </BodySection>
+      <FooterSection>
+        <span className="bg-secondary text-white text-[12px] px-2 rounded-full" > {warehouses.length} Almacenes</span>
+        <button
+          onClick={() => { setOpenCreateAlmacenWindow(true) }}
+          type="button"
+          className="ms-auto py-1 px-2 rounded-full flex justify-center items-center bg-primary bg-opacity-80 text-white hover:bg-opacity-100"
+        >
+          <FaPlus className="me-2" /> Agregar
+        </button>
+      </FooterSection>
 
-      <button
-        onClick={() => { setOpenCreateAlmacenWindow(true) }}
-        type="button"
-        className="absolute bottom-2 right-2 flex justify-center items-center bg-primary bg-opacity-80 text-white text-[22px] hover:bg-opacity-100 w-14 h-14 rounded-full"
-      >
-        <FaPlus />
-      </button>
     </>
   );
 }

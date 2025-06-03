@@ -16,7 +16,7 @@ export default function Products() {
   
   return (
     <>
-      {loadingModule&& <LoadingModule title="Cargando datos de productos…" />}
+      {loadingModule&& <LoadingModule title="Cargando datos de productos..." />}
       <Outlet/>
     </>
   );

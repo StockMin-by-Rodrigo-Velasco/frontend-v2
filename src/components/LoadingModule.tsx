@@ -10,7 +10,7 @@ export default function LoadingModule({ title }: LoadingSectionPropInterface) {
         
             <img src={logos.logoColor} width={'100px'} />
             <div className="flex mt-3 items-center" >
-                <h1 className="text-secondary" >{title}...</h1>
+                <h1 className="text-secondary" >{title}</h1>
             </div>
         </div>
     );

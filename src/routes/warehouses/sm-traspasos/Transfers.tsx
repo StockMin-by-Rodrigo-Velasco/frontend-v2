@@ -16,6 +16,7 @@ import { DateRange, initDateRange } from "../../../interfaces/formInterface";
 import { DocTransfer, GetDocTransfersDto, initialDocTransfer, Warehouse } from "../../../interfaces";
 import { getDocTransfersAPI } from "../../../redux/warehouses/warehousesThunk";
 import ViewDocTransfer from "./windows/ViewDocTransfer";
+import FooterSection from "../../../components/FooterSection";
 
 export default function Transfers() {
     const { loadingApplication, loadingData } = useSelector((s: RootState) => s.Aplication);
@@ -50,7 +51,7 @@ export default function Transfers() {
         hastaStr.setHours(hastaStr.getHours() + 28); // Ajustamos a la hora de Bolivia
         const to = hastaStr.getTime().toString();
 
-        const getTraspasosAlmacenDto: GetDocTransfersDto = {branchId, from, to};
+        const getTraspasosAlmacenDto: GetDocTransfersDto = { branchId, from, to };
         dispatch(getDocTransfersAPI(getTraspasosAlmacenDto));
     }
 
@@ -62,7 +63,7 @@ export default function Transfers() {
         <>
             {loadingApplication && <LoadingModule title="Cargando historial" />}
             {openCreateDocTransfer && <CreateDocTransfer closeButton={() => { setOpenCreateDocTransfer(false) }} getDocTransfer={getDocTransfer} />}
-            {openViewDocTransfer && <ViewDocTransfer closeButton={() => {setOpenViewDocTransfer(false)}} data={traspasoSelected} />}
+            {openViewDocTransfer && <ViewDocTransfer closeButton={() => { setOpenViewDocTransfer(false) }} data={traspasoSelected} />}
 
             <HeaderSection>
                 <InputDateSearch
@@ -104,25 +105,29 @@ export default function Transfers() {
                     <tbody>
                         {docTransfers.map(t => (
                             <tr key={t.id} className="border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase">
-                                <td className="py-2 text-center"> {dateLocalWhitTime(t.createdAt||'')} </td>
+                                <td className="py-2 text-center"> {dateLocalWhitTime(t.createdAt || '')} </td>
                                 <td className="py-2 text-center"> {`${t.User.name} ${t.User.lastName}`} </td>
                                 <td className="py-2 text-center">{warehousesObj[t.originWarehouseId].name}</td>
                                 <td className="py-2 text-center">{warehousesObj[t.destinationWarehouseId].name}</td>
                                 <td className="text-center text-secondary" >
-                                    <button type="button" onClick={() => {getDocTransfer(t)}} ><BsBoxArrowInUpRight /></button>
+                                    <button type="button" onClick={() => { getDocTransfer(t) }} ><BsBoxArrowInUpRight /></button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </BodySection>
-            <button
-                onClick={() => { setOpenCreateDocTransfer(true) }}
-                type="button"
-                className="absolute bottom-2 right-2 flex justify-center items-center bg-primary bg-opacity-80 text-white text-[22px] hover:bg-opacity-100 w-14 h-14 rounded-full"
-            >
-                <FaPlus />
-            </button>
+
+            <FooterSection>
+                <span className="bg-secondary text-white text-[12px] px-2 rounded-full" > {docTransfers.length} Traspasos</span>
+                <button
+                    onClick={() => { setOpenCreateDocTransfer(true) }}
+                    type="button"
+                    className="ms-auto py-1 px-2 rounded-full flex justify-center items-center bg-primary bg-opacity-80 text-white hover:bg-opacity-100"
+                >
+                    <FaPlus className="me-2" /> Agregar
+                </button>
+            </FooterSection>
         </>
     );
 }

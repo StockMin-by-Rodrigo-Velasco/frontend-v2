@@ -9,6 +9,7 @@ import { FaPlus } from 'react-icons/fa';
 import { Customer, initialCustomer } from '../../../interfaces';
 import CreateCustomer from './windows/CreateCustomer';
 import UpdateCustomer from './windows/UpdateCustomer';
+import FooterSection from '../../../components/FooterSection';
 
 
 const columns: DataTableColumnInterface<Customer>[] = [
@@ -59,14 +60,17 @@ export default function Customers() {
             </HeaderSection>
             <BodySection>
                 <DataTable<Customer> columns={columns} data={filteredCustomer} details={{ name: 'MAS', action: getCustomer }} />
+            </BodySection>
+            <FooterSection>
+                <span className="bg-secondary text-white text-[12px] px-2 rounded-full" > {customers.length} Clientes</span>
                 <button
                     onClick={() => { setOpenCreateCustomer(true) }}
                     type="button"
-                    className="absolute bottom-2 right-2 flex justify-center items-center bg-primary bg-opacity-80 text-white text-[22px] hover:bg-opacity-100 w-14 h-14 rounded-full"
+                    className="ms-auto py-1 px-2 rounded-full flex justify-center items-center bg-primary bg-opacity-80 text-white hover:bg-opacity-100"
                 >
-                    <FaPlus />
+                    <FaPlus className="me-2" /> Agregar
                 </button>
-            </BodySection>
+            </FooterSection>
         </>
     );
 }

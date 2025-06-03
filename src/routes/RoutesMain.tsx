@@ -23,7 +23,7 @@ import Transfers from "./warehouses/sm-traspasos/Transfers";
 import Customers from "./sales/sm-customers/Customers";
 import SalesHistory from "./sales/sm-history/SalesHistory";
 import SalesOptions from "./sales/sm-options/SalesOptions";
-import Store from "./sales/sm-tienda/Store";
+import Store from "./sales/sm-store/Store";
 
 export default function RoutesMain() {
 

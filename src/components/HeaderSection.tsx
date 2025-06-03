@@ -4,7 +4,7 @@ interface HeaderSectionPropInterface{
 
 export default function HeaderSection({children}: HeaderSectionPropInterface) {
   return (
-    <div className="h-[40px] overflow-hidden flex mb-2" >
+    <div className="h-[40px] overflow-hidden flex mb-2 items-center" >
       {children}
     </div>
   );
