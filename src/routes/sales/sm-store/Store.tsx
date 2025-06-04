@@ -11,8 +11,11 @@ import ProductCard from "./components/ProductCard";
 import { initialSerchFilter, ProductStore, SearchFilter } from "../../../interfaces/formInterface";
 import { TbReportAnalytics } from "react-icons/tb";
 import { calculatorMultiply } from "../../../helpers/calculator";
-import FooterSection from "../../../components/FooterSection";
 import { MdOutlineShoppingCart } from "react-icons/md";
+import FooterSection from "../../../components/FooterSection";
+import { IoIosArrowUp } from "react-icons/io";
+import { ProductWarehouse } from "../../../interfaces";
+import ProductShoppingCart from "./components/ProductShoppingCart";
 
 
 export default function Store() {
@@ -25,6 +28,9 @@ export default function Store() {
     const dispatch = useDispatch<AppDispatch>();
 
     const [productsStore, setProductsStore] = useState<ProductStore[]>([]);
+    const [productsShoppingCart, setProductsShoppingCart] = useState<ProductWarehouse[]>([])
+
+    const [openShoppingCart, setOpenShoppingCart] = useState(false);
 
     const { data: filter, handleInputChange } = useForm<SearchFilter>(initialSerchFilter);
     const filterProducts = (p: ProductStore) => {
@@ -34,7 +40,23 @@ export default function Store() {
     }
 
     const toggleProduct = (productId: string) => {
-        setProductsStore(products => (products.map(p => p.Product.id === productId ? { ...p, selected: !p.selected } : p)));
+        let newProductsShoppingCart: ProductWarehouse[] = productsShoppingCart;
+        let newProductsStore: ProductStore[] = productsStore;
+        for (let i = 0; i < newProductsStore.length; i++) {
+            if (newProductsStore[i].Product.id === productId) {
+                if (newProductsStore[i].selected) {
+                    newProductsStore[i].selected = false;
+                    const { Product } = newProductsStore[i];
+                    newProductsShoppingCart = newProductsShoppingCart.filter(ps => ps.Product.id !== Product.id);
+                } else {
+                    newProductsStore[i].selected = true;
+                    const { selected, ...res } = newProductsStore[i];
+                    newProductsShoppingCart = [res, ...newProductsShoppingCart];
+                }
+            }
+        }
+        setProductsStore([...newProductsStore]);
+        setProductsShoppingCart([...newProductsShoppingCart]);
     }
 
     useEffect(() => {
@@ -121,15 +143,27 @@ export default function Store() {
                     ))}
                 </div>
             </BodySection>
-            <FooterSection>
-                {/* <span className="bg-secondary text-white text-[12px] px-2 rounded-full" > {customers.length} Clientes</span> */}
+            <div className={`${openShoppingCart ? 'h-[90vh]' : 'h-8'} bg-white w-96 absolute bottom-0 right-5 transition-all duration-300`} >
                 <button
-                    onClick={() => { console.log('opciones') }}
+                    onClick={() => { setOpenShoppingCart(s => !s) }}
                     type="button"
-                    className="ms-auto py-1 px-2 rounded-full flex justify-center items-center bg-primary bg-opacity-80 text-white hover:bg-opacity-100"
+                    className="w-full ms-auto py-1 px-2 rounded-t-lg flex justify-center items-center bg-primary bg-opacity-80 text-white hover:bg-opacity-100 focus:outline-none"
                 >
-                    <MdOutlineShoppingCart className="me-2" /> Carrito
+                    <MdOutlineShoppingCart className="me-2" />
+                    <span>Carrito</span>
+                    {(productsShoppingCart.length !== 0) &&
+                        <span className="bg-danger text-[12px] w-4 rounded-lg flex justify-center items-center ms-2" >{productsShoppingCart.length}</span>
+                    }
+                    <IoIosArrowUp className={`${openShoppingCart && 'rotate-180'} ms-auto transition-all duration-300`} />
                 </button>
+                <div className="h-full p-2 overflow-y-scroll scroll-custom" >
+                    {productsShoppingCart.map(p => (
+                        <ProductShoppingCart key={p.id} product={p} toggleProduct={toggleProduct} />
+                    ))}
+                </div>
+            </div>
+            <FooterSection>
+                <p>footer</p>
             </FooterSection>
         </>
     );

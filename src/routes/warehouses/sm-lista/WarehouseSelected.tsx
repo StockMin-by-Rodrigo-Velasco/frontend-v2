@@ -172,6 +172,14 @@ export default function WarehouseSelected() {
                       <div className="bg-secondary rounded h-5 w-2" ></div>
                     </div>
                   }
+                  {/* <meter 
+                  className="w-full h-3 rounded-md [&::-webkit-meter-bar]:bg-gray-200 [&::-webkit-meter-optimum-value]:bg-green-500"
+                  value={p.quantity} 
+                  min={0} 
+                  max={p.minQuantity * 10} 
+                  low={p.minQuantity} 
+                  high={p.minQuantity * 2} 
+                  /> */}
                 </td>
                 <td className="text-center text-secondary" >
                   <button type="button" onClick={() => { getProduct(p) }} ><BsBoxArrowInUpRight /></button>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { IconType } from "react-icons";
 import { FaCloudUploadAlt, FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
 import { MdBlockFlipped } from "react-icons/md";
@@ -48,6 +49,7 @@ interface InputFileProps {
 interface InputSelectProps extends InputProps {
   options: {name: string, value: string}[],
   optionDefault?: string
+  iconClick?: {icon: IconType, click:()=>void},
 }
 
 const InputFileImage = ({setFileValue, name, imageDefault, placeholder, required=false, disabled=false }:InputFileProps) => {
@@ -258,15 +260,15 @@ function InputTextBlock({ value, name, placeholder, className='', uppercase }:In
   )
 }
 
-function InputSelect({handleInputChange, value, name, placeholder, required=false, disabled=false, className='', options, optionDefault}:InputSelectProps) {
+function InputSelect({handleInputChange, value, name, placeholder, required=false, disabled=false, className='', options, optionDefault, iconClick}:InputSelectProps) {
   return(
     <div className = {`${className} relative mt-6`} >
+
       <select
         className='border-[1px] border-secondary rounded-md focus:outline-none focus:bg-secondary-1 disabled:bg-light/80 disabled:cursor-not-allowed'
         name={name}
         id={name}
         onChange={handleInputChange}
-        // defaultValue={value}
         value={value}
         required={required}
         disabled={disabled || (options.length === 0)}
@@ -277,7 +279,10 @@ function InputSelect({handleInputChange, value, name, placeholder, required=fals
           <option key={o.value} value={o.value} >{o.name.toUpperCase()}</option>
         ))}      
       </select>
-      <label className="absolute left-0 text-secondary top-[-20px] text-[12px]" htmlFor={name}>{placeholder}</label>
+      <label className="absolute left-0 text-secondary top-[-20px] text-[12px] flex items-center" htmlFor={name}>
+        {placeholder}
+        {iconClick&& <span className="bg-primary rounded-full text-white ms-2 cursor-pointer opacity-50 hover:opacity-100" onClick={iconClick.click}>{<iconClick.icon/>}</span>}
+      </label>
     </div>
   )  
 }

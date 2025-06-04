@@ -33,7 +33,6 @@ export default function ProductCard({ product, toggleProduct }: ProductCardProp)
     );
 
     const updatePriceProductWarehouse = () => {
-        // console.log({ id: product.Product.id, price: calculatorDivide({num1:formPrice.price, num2: exchangeRateFavorite.rateToUSD, decimals:2})})
         dispatch(updateProductPriceAPI({ id: product.Product.id, price: calculatorDivide({num1:formPrice.price, num2: exchangeRateFavorite.rateToUSD, decimals:2})}));
     }
 
@@ -119,7 +118,7 @@ export default function ProductCard({ product, toggleProduct }: ProductCardProp)
                 }
             </div>
             <button
-                disabled={(product.Product.price === '') || (product.Product.price === null)}
+                disabled={(product.Product.price === '') || (product.Product.price === undefined)}
                 type="button"
                 className={` ${product.selected ? 'bg-primary text-white' : 'text-primary'} 
                         border-2 border-primary flex justify-center items-center absolute bottom-0 right-0 left-0 m-2 rounded-lg cursor-pointer
