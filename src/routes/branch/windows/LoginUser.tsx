@@ -46,6 +46,7 @@ export default function LoginUser({ userId: id, branchId, closeButton }: LoginUs
           type="password"
           autoFocus
           disabled={loadingData}
+          autoComplete="off"
         />
         <span className={`bg-danger px-2 rounded-lg flex items-center ${!description && 'opacity-0'}`}> <MdError className="me-2" />{description}</span>
         <button className="bg-info/70 rounded-full py-1 px-4 hover:bg-info" type="submit">Iniciar sesión</button>

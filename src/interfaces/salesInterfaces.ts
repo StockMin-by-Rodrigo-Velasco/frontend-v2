@@ -1,3 +1,5 @@
+import { initialUser, User } from './branchInterfaces';
+import { initialProduct, Product } from './productsInterface';
 export interface Customer {
     id: string;
     code: string;
@@ -31,7 +33,7 @@ export interface ExchangeRate {
     id: string;
     rateToUSD: string;
     deleted: boolean;
-    favorite:boolean;
+    favorite: boolean;
     branchId: string;
     currencyId: string;
     createdAt?: string;
@@ -39,7 +41,58 @@ export interface ExchangeRate {
 
     Currency: Currency
 }
-export const initialExchangeRate:ExchangeRate = {id:'', rateToUSD:'', branchId:'', currencyId:'', deleted:false, favorite:false, createdAt:'', updatedAt:'', Currency: initialCurrency}
+export const initialExchangeRate: ExchangeRate = { id: '', rateToUSD: '', branchId: '', currencyId: '', deleted: false, favorite: false, createdAt: '', updatedAt: '', Currency: initialCurrency }
+
+export interface ProductSale {
+    id: string;
+    quantity: number;
+    price: string;
+    docSaleId: string;
+    productId: string;
+
+    Product: Product;
+}
+export const initialProductSale: ProductSale = { id: '', quantity: 0, price: '', docSaleId: '', productId: '', Product: initialProduct }
+
+export interface PaymentMethod {
+    id: string;
+    code: string;
+    name: string;
+    description: string;
+    image?: string;
+    deleted: boolean;
+}
+export const initialPaymentMethod: PaymentMethod = { id: '', code: '', name: '', description: '', image: '', deleted: false }
+
+export interface Payment {
+    id: string;
+    amount: string;
+    description?: string;
+    currencyId: string;
+    docSaleId: string;
+    paymentMethodId: string;
+
+    Currency: Currency;
+    PaymentMethod: PaymentMethod;
+}
+export const initialPayment: Payment = { id: '', amount: '', description: '', currencyId: '', docSaleId: '', paymentMethodId: '', Currency: initialCurrency, PaymentMethod: initialPaymentMethod }
+
+export interface DocSale {
+    id: string;
+    paymentType: 'PAID' | 'CREDIT';
+    customerName: string;
+    details?: string;
+    customerId?: string;
+    branchId: string;
+    userId: string;
+    createdAt?: string;
+
+    User: User;
+    Customer?: Customer;
+    Payment: Payment[];
+    ProductSale: ProductSale[];
+}
+export const initialDocSale:DocSale={id:'', paymentType:'PAID', customerName:'', details:'', customerId:'', branchId:'', userId:'', createdAt:'', User: initialUser, Customer:initialCustomer, Payment:[], ProductSale:[]}
 
 //* ------------------ DTOs -------------------------
 
@@ -81,4 +134,33 @@ export interface CreateExchangeRateDto {
 export interface UpdateExchangeRateDto {
     id: string;
     rateToUSD: string;
+}
+
+export interface CreatePaymentDto {
+    docSaleId?: string;
+    currencyId: string;
+    paymentMethodId: string;
+    amount: string;
+    description?: string;
+}
+
+export interface CreateProductSaleDto {
+    productId: string;
+    docSaleId?: string;
+    quantity: number;
+    price: string;
+}
+
+export interface CreateDocSaleDto {
+    branchId: string;
+    userId: string;
+    customerId?: string;
+    paymentType: 'PAID' | 'CREDIT';
+    customerName: string;
+    details?: string;
+    productsSale: CreateProductSaleDto[]
+    payments: CreatePaymentDto[]
+
+    //* Solo para hacer un descuento en las cantidades 
+    productWarehouseId: string;
 }
