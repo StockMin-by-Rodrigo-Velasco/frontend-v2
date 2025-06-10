@@ -16,7 +16,7 @@ import { calculatorDivide } from "../../../../helpers/calculator";
 
 interface ProductCardProp {
     product: ProductStore,
-    toggleProduct:(productId: string) => void
+    toggleProduct: (productId: string) => void
 }
 
 
@@ -28,19 +28,18 @@ export default function ProductCard({ product, toggleProduct }: ProductCardProp)
 
     const [editPrice, setEditPrice] = useState(false);
 
-    const { data: formPrice, handleInputChange, resetData } = useForm<{ price: string }>({ 
-        price: (product.Product.price && (product.Product.price !== '')) ? product.Product.price : '0' }
+    const { data: formPrice, handleInputChange, resetData } = useForm<{ price: string }>({
+        price: (product.Product.price && (product.Product.price !== '')) ? product.Product.price : '0'
+    }
     );
 
     const updatePriceProductWarehouse = () => {
-        dispatch(updateProductPriceAPI({ id: product.Product.id, price: calculatorDivide({num1:formPrice.price, num2: exchangeRateFavorite.rateToUSD, decimals:2})}));
+        dispatch(updateProductPriceAPI({ id: product.Product.id, price: calculatorDivide({ num1: formPrice.price, num2: exchangeRateFavorite.rateToUSD, decimals: 2 }) }));
     }
 
     return (
         <div className="w-[200px] h-[300px] m-[10px] transition-all duration-200 rounded overflow-hidden relative shadow-[0px_2px_5px_rgba(0,0,0,0.3)]
                     hover:w-[210px] hover:h-[310px] hover:m-[5px] hover:shadow-[0px_5px_10px_rgba(0,0,0,0.3)]">
-
-
             <div className="flex justify-center" >
                 <img src={product.Product.image || logos.logoNoImage} alt={product.Product.name} className="h-[120px]" />
             </div>
@@ -49,10 +48,10 @@ export default function ProductCard({ product, toggleProduct }: ProductCardProp)
                 {product.quantity} <span>{product.Product.UnitMeasure.abbreviation.toLocaleUpperCase()}</span>
             </div>
 
-            <div className="flex flex-col p-2">
+            <div className="flex flex-col p-2 h-[42%]">
                 <p className="uppercase font-bold">{product.Product.name}</p>
                 <p className="uppercase text-[12px] text-secondary leading-none">{product.Product.code}</p>
-                <div className="h-[50px] overflow-y-scroll scroll-custom" >
+                <div className="overflow-y-scroll scroll-custom" >
                     <p className="text-[14px] mt-1" >{product.Product.description}</p>
                 </div>
             </div>
@@ -102,7 +101,7 @@ export default function ProductCard({ product, toggleProduct }: ProductCardProp)
                                 <button
                                     type="button"
                                     className="text-secondary/80 ms-2 text-[14px] hover:text-secondary"
-                                    onClick={() => { setEditPrice(true); resetData()}}
+                                    onClick={() => { setEditPrice(true); resetData() }}
                                 ><FaEdit />
                                 </button>
                             </div>

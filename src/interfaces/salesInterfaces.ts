@@ -68,14 +68,12 @@ export interface Payment {
     id: string;
     amount: string;
     description?: string;
-    currencyId: string;
     docSaleId: string;
     paymentMethodId: string;
 
-    Currency: Currency;
     PaymentMethod: PaymentMethod;
 }
-export const initialPayment: Payment = { id: '', amount: '', description: '', currencyId: '', docSaleId: '', paymentMethodId: '', Currency: initialCurrency, PaymentMethod: initialPaymentMethod }
+export const initialPayment: Payment = { id: '', amount: '', description: '', docSaleId: '', paymentMethodId: '', PaymentMethod: initialPaymentMethod }
 
 export interface DocSale {
     id: string;
@@ -85,14 +83,16 @@ export interface DocSale {
     customerId?: string;
     branchId: string;
     userId: string;
+    currencyId: string;
     createdAt?: string;
 
     User: User;
+    Currency: Currency;
     Customer?: Customer;
     Payment: Payment[];
     ProductSale: ProductSale[];
 }
-export const initialDocSale:DocSale={id:'', paymentType:'PAID', customerName:'', details:'', customerId:'', branchId:'', userId:'', createdAt:'', User: initialUser, Customer:initialCustomer, Payment:[], ProductSale:[]}
+export const initialDocSale: DocSale = { id: '', paymentType: 'PAID', customerName: '', details: '', customerId: '', branchId: '', userId: '', currencyId: '', createdAt: '', User: initialUser, Currency: initialCurrency, Customer: initialCustomer, Payment: [], ProductSale: [] }
 
 //* ------------------ DTOs -------------------------
 
@@ -138,7 +138,6 @@ export interface UpdateExchangeRateDto {
 
 export interface CreatePaymentDto {
     docSaleId?: string;
-    currencyId: string;
     paymentMethodId: string;
     amount: string;
     description?: string;
@@ -149,18 +148,19 @@ export interface CreateProductSaleDto {
     docSaleId?: string;
     quantity: number;
     price: string;
+
+    //* Solo para hacer un descuento en las cantidades 
+    productWarehouseId: string;
 }
 
 export interface CreateDocSaleDto {
     branchId: string;
     userId: string;
     customerId?: string;
+    currencyId: string;
     paymentType: 'PAID' | 'CREDIT';
     customerName: string;
     details?: string;
     productsSale: CreateProductSaleDto[]
     payments: CreatePaymentDto[]
-
-    //* Solo para hacer un descuento en las cantidades 
-    productWarehouseId: string;
 }

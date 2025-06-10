@@ -25,12 +25,17 @@ export interface ProductWarehouseForm {
 }
 
 export interface DateRange {
-  from: string,
-  to: string
+  from: string;
+  to: string;
 }
 
 export interface ProductStore extends ProductWarehouse {
   selected: boolean;
+}
+
+export interface ProductCart extends ProductWarehouse {
+  quantityCart: number;
+  priceCart: string;
 }
 
 export const initDateRange: DateRange = {

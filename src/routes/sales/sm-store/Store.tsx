@@ -4,18 +4,15 @@ import { AppDispatch, RootState } from "../../../redux/store";
 import { useEffect, useState } from "react";
 import { InputSearch, InputSelectSearch } from "../../../components/Input";
 import BodySection from "../../../components/BodySection";
-import { useForm } from "../../../hooks";
+import { useForm, useFormArray } from "../../../hooks";
 import { getProductsWarehouseAPI } from '../../../redux/warehouses/warehousesThunk';
 import { hideNotification, showNotificationWarning } from "../../../redux/notification/notificationSlice";
 import ProductCard from "./components/ProductCard";
-import { initialSerchFilter, ProductStore, SearchFilter } from "../../../interfaces/formInterface";
+import { initialSerchFilter, ProductCart, ProductStore, SearchFilter } from "../../../interfaces/formInterface";
 import { TbReportAnalytics } from "react-icons/tb";
 import { calculatorMultiply } from "../../../helpers/calculator";
-import { MdOutlineShoppingCart } from "react-icons/md";
 import FooterSection from "../../../components/FooterSection";
-import { IoIosArrowUp } from "react-icons/io";
-import { ProductWarehouse } from "../../../interfaces";
-import ProductShoppingCart from "./components/ProductShoppingCart";
+import ShoppingCart from "./components/ShoppingCart";
 
 
 export default function Store() {
@@ -28,9 +25,7 @@ export default function Store() {
     const dispatch = useDispatch<AppDispatch>();
 
     const [productsStore, setProductsStore] = useState<ProductStore[]>([]);
-    const [productsShoppingCart, setProductsShoppingCart] = useState<ProductWarehouse[]>([])
-
-    const [openShoppingCart, setOpenShoppingCart] = useState(false);
+    const { arrayData: productsCart, handleInputChange: handleShoppingCart, replaceData } = useFormArray<ProductCart>([]);
 
     const { data: filter, handleInputChange } = useForm<SearchFilter>(initialSerchFilter);
     const filterProducts = (p: ProductStore) => {
@@ -40,23 +35,24 @@ export default function Store() {
     }
 
     const toggleProduct = (productId: string) => {
-        let newProductsShoppingCart: ProductWarehouse[] = productsShoppingCart;
+        let newProductsCart: ProductCart[] = productsCart;
         let newProductsStore: ProductStore[] = productsStore;
+
         for (let i = 0; i < newProductsStore.length; i++) {
             if (newProductsStore[i].Product.id === productId) {
                 if (newProductsStore[i].selected) {
                     newProductsStore[i].selected = false;
                     const { Product } = newProductsStore[i];
-                    newProductsShoppingCart = newProductsShoppingCart.filter(ps => ps.Product.id !== Product.id);
+                    newProductsCart = newProductsCart.filter(ps => ps.Product.id !== Product.id);
                 } else {
                     newProductsStore[i].selected = true;
                     const { selected, ...res } = newProductsStore[i];
-                    newProductsShoppingCart = [res, ...newProductsShoppingCart];
+                    newProductsCart = [{ ...res, quantityCart: 1, priceCart: res.Product.price || '0' }, ...newProductsCart];
                 }
             }
         }
         setProductsStore([...newProductsStore]);
-        setProductsShoppingCart([...newProductsShoppingCart]);
+        replaceData([...newProductsCart]);
     }
 
     useEffect(() => {
@@ -74,13 +70,14 @@ export default function Store() {
                 })
             );
         } else if (productsStore.length > 0) { //* Modifica las actualizaciones de los productos
+            const productsCartObj = productsCart.reduce((acc, p) => { acc[p.id] = p; return acc }, {} as Record<string, ProductCart>);
             setProductsStore(productsWarehouse.map(p => ({
                 ...p,
                 Product: {
                     ...p.Product,
                     price: p.Product.price ? calculatorMultiply({ num1: p.Product.price, num2: exchangeRateFavorite.rateToUSD, decimals: 2 }) : undefined
                 },
-                selected: false
+                selected: productsCartObj[p.id] ? true : false
             })));
         } else {
             if (userData.warehouseId !== '') {
@@ -143,27 +140,9 @@ export default function Store() {
                     ))}
                 </div>
             </BodySection>
-            <div className={`${openShoppingCart ? 'h-[90vh]' : 'h-8'} bg-white w-96 absolute bottom-0 right-5 transition-all duration-300`} >
-                <button
-                    onClick={() => { setOpenShoppingCart(s => !s) }}
-                    type="button"
-                    className="w-full ms-auto py-1 px-2 rounded-t-lg flex justify-center items-center bg-primary bg-opacity-80 text-white hover:bg-opacity-100 focus:outline-none"
-                >
-                    <MdOutlineShoppingCart className="me-2" />
-                    <span>Carrito</span>
-                    {(productsShoppingCart.length !== 0) &&
-                        <span className="bg-danger text-[12px] w-4 rounded-lg flex justify-center items-center ms-2" >{productsShoppingCart.length}</span>
-                    }
-                    <IoIosArrowUp className={`${openShoppingCart && 'rotate-180'} ms-auto transition-all duration-300`} />
-                </button>
-                <div className="h-full p-2 overflow-y-scroll scroll-custom" >
-                    {productsShoppingCart.map(p => (
-                        <ProductShoppingCart key={p.id} product={p} toggleProduct={toggleProduct} />
-                    ))}
-                </div>
-            </div>
+            <ShoppingCart handleShoppingCart={handleShoppingCart} productsCart={productsCart} toggleProduct={toggleProduct} />
             <FooterSection>
-                <p>footer</p>
+                <p></p>
             </FooterSection>
         </>
     );

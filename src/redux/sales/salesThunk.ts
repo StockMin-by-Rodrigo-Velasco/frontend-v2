@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { Brand, Category, CreateCustomerDto, CreateExchangeRateDto, CreateUserWarehouseSaleDto, Currency, Customer, ExchangeRate, initialCurrency, Product, UnitMeasure, UnitMeasureBranch, UpdateCustomerDto, UpdateExchangeRateDto, UpdateProductPriceDto, User, Warehouse } from "../../interfaces";
+import { Brand, Category, CreateCustomerDto, CreateDocSaleDto, CreateExchangeRateDto, CreatePaymentDto, CreateUserWarehouseSaleDto, Currency, Customer, DocSale, ExchangeRate, initialCurrency, Payment, Product, UnitMeasure, UnitMeasureBranch, UpdateCustomerDto, UpdateExchangeRateDto, UpdateProductPriceDto, User, Warehouse } from "../../interfaces";
 import { AppDispatch, RootState } from "../store"
 import { finishLoadingData, finishLoadingModule, startLoadingData, startLoadingModule } from "../aplication/aplicationSlice";
 import api from "../../api/config";
@@ -9,6 +9,7 @@ import { NavigateFunction } from "react-router";
 import { createUserWarehouseSale, deleteUserWarehouseSale, getWarehauses, updatePriceProductWarehouse, updateWarehouse } from "../warehouses/warehousesSlice";
 import { updateUser } from "../branch/branchSlice";
 import { getBrands, getCategories, getUnitMeasures, getUnitMeasuresBranch, updateProduct } from "../products/productSlice";
+import { GetDocSaleDto } from '../../../../backend/src/modules/sales/sale/dto/get-doc-sale.dto';
 
 
 export const getSalesModuleDataAPI = (navigate?: NavigateFunction) => {
@@ -65,7 +66,6 @@ export const getSalesModuleDataAPI = (navigate?: NavigateFunction) => {
                 };
                 dispatch(getExchangeRateFavorite(exchangeRateFavoriteDefault));
             }
-
 
             if(navigate) navigate('/main/sales/store');
 
@@ -377,6 +377,59 @@ export const deleteExchangeRateAPI = (exchangeRateId: string) => {
                 setTimeout(() => dispatch(hideNotification()), 5000);
             } else console.log(error);
             dispatch(finishLoadingData());
+        }
+    }
+}
+
+//* --------------------------------- SALES ---------------------------------
+
+export const getDocSalesAPI = (getDocSales:GetDocSaleDto, functionReturn?:(doc:DocSale[])=>void) => {
+    return async (dispatch: AppDispatch) => {
+        try {
+            dispatch(startLoadingData());
+            const resDocSales: AxiosResponse = await api.post(`sale/get-doc-sales`, getDocSales);
+            const {data:docSales}:{data:DocSale[]} = resDocSales.data;
+            if(functionReturn) functionReturn(docSales)
+            dispatch(finishLoadingData());
+        } catch (error) {
+            console.log(error);
+            dispatch(finishLoadingData());
+        }
+    }
+}
+
+export const createDocSaleAPI = (createDocSaleDto:CreateDocSaleDto, functionReturn?:(doc: DocSale)=>void) => {
+    return async (dispatch: AppDispatch) => {
+        try {
+            dispatch(startLoadingData());
+            const resDocSale: AxiosResponse = await api.post(`sale/create-doc-sale`, createDocSaleDto);
+            const {data:docSale}:{data:DocSale} = resDocSale.data;
+            if(functionReturn) functionReturn(docSale)
+            dispatch(finishLoadingData());
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                const { data } = error.response;
+                dispatch(showNotificationError({ tittle: 'DOCUMENTO DE VENTA', description: data.message }));
+                setTimeout(() => dispatch(hideNotification()), 5000);
+            } else console.log(error);
+        }
+    }
+}
+
+export const createPaymentAPI = (createPaymentDto:CreatePaymentDto, functionReturn?:(doc: Payment)=>void) => {
+    return async (dispatch: AppDispatch) => {
+        try {
+            dispatch(startLoadingData());
+            const resPayment: AxiosResponse = await api.post(`sale/create-payment`, createPaymentDto);
+            const {data:payment}:{data:Payment} = resPayment.data;
+            if(functionReturn) functionReturn(payment);
+            dispatch(finishLoadingData());
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                const { data } = error.response;
+                dispatch(showNotificationError({ tittle: 'REGISTRO DE PAGO', description: data.message }));
+                setTimeout(() => dispatch(hideNotification()), 5000);
+            } else console.log(error);
         }
     }
 }

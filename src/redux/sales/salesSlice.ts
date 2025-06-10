@@ -3,30 +3,18 @@ import { Currency, Customer, ExchangeRate, Log } from "../../interfaces";
 import { initialExchangeRate } from '../../interfaces/salesInterfaces';
 
 interface SalesInitialState {
-    // idUltimoTipoMonedaVentaEliminado: string,
-    // idUltimoPrecioVentaEliminado: string,
-    // opcionesVenta: OpcionesVenta,
-    // listaProductosTienda: ProductoTienda[],
     customers: Customer[];
     currencies: Currency[];
     exchangeRates: ExchangeRate[];
     exchangeRateFavorite: ExchangeRate;
-    // listaPrecioVenta: PrecioVenta[];
-    // listaPrecioVentaObj: Record<string, PrecioVenta>;
     logs: Log[];
 }
 
 const initialState: SalesInitialState = {
-    // idUltimoTipoMonedaVentaEliminado:'',
-    // idUltimoPrecioVentaEliminado: '',
-    // opcionesVenta: initialOpciones,
-    // listaProductosTienda: [],
     customers: [],
     currencies: [],
     exchangeRates:[],
     exchangeRateFavorite: initialExchangeRate,
-    // listaPrecioVenta: [],
-    // listaPrecioVentaObj:{},
     logs:[]
 }
 

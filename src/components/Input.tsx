@@ -14,7 +14,7 @@ interface InputProps {
   disabled?:boolean,
   className?:string,
   maxLenght?: number,
-  
+  step?: string  
 }
 
 interface InpuFormProps {
@@ -194,13 +194,14 @@ function InputText({ handleInputChange, value, name, placeholder, required=false
   )
 }
 
-function InputNumber({ handleInputChange, value, name, placeholder, required=false, disabled=false, className='' }:InputProps){
+function InputNumber({ handleInputChange, value, name, placeholder, required=false, disabled=false, className='', step='1' }:InputProps){
   return(
 
     <div className = {`${className} relative mt-6`} >
       <input 
         className = {`ps-1 w-full focus:outline-none rounded-t border-b-2 border-primary focus:border-info peer disabled:bg-light/80 disabled:cursor-not-allowed disabled:text-black/70`}
         type="number" 
+        step={step}
         onChange={ handleInputChange }
         name={name}
         id={name}
