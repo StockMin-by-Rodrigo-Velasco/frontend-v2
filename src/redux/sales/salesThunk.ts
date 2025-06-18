@@ -1,9 +1,9 @@
 import axios, { AxiosResponse } from "axios";
-import { Brand, Category, CreateCustomerDto, CreateDocSaleDto, CreateExchangeRateDto, CreatePaymentDto, CreateUserWarehouseSaleDto, Currency, Customer, DocSale, ExchangeRate, initialCurrency, Payment, Product, UnitMeasure, UnitMeasureBranch, UpdateCustomerDto, UpdateExchangeRateDto, UpdateProductPriceDto, User, Warehouse } from "../../interfaces";
+import { Brand, Category, CreateCustomerDto, CreateDocSaleDto, CreateExchangeRateDto, CreatePaymentDto, CreateUserWarehouseSaleDto, Currency, Customer, DocSale, ExchangeRate, initialCurrency, Payment, PaymentMethod, Product, UnitMeasure, UnitMeasureBranch, UpdateCustomerDto, UpdateExchangeRateDto, UpdateProductPriceDto, User, Warehouse } from "../../interfaces";
 import { AppDispatch, RootState } from "../store"
 import { finishLoadingData, finishLoadingModule, startLoadingData, startLoadingModule } from "../aplication/aplicationSlice";
 import api from "../../api/config";
-import { createCustomer, createExchangeRate, getCurrencies, getCustomers, getExchangeRateFavorite, getExchangeRates, toggleFavoriteExchangeRate, updateCustomer, updateExchangeRate } from "./salesSlice";
+import { createCustomer, createExchangeRate, getCurrencies, getCustomers, getExchangeRateFavorite, getExchangeRates, getPaymentMethods, toggleFavoriteExchangeRate, updateCustomer, updateExchangeRate } from "./salesSlice";
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from "../notification/notificationSlice";
 import { NavigateFunction } from "react-router";
 import { createUserWarehouseSale, deleteUserWarehouseSale, getWarehauses, updatePriceProductWarehouse, updateWarehouse } from "../warehouses/warehousesSlice";
@@ -46,6 +46,10 @@ export const getSalesModuleDataAPI = (navigate?: NavigateFunction) => {
             const resCurrencies: AxiosResponse = await api.get(`currency/get-currencies`);
             const { data:currencies }: { data: Currency[] } = resCurrencies.data;
             dispatch(getCurrencies(currencies));
+
+            const resPaymentMethods: AxiosResponse = await api.get(`payment-method/get-payment-methods`);
+            const { data:paymentMethods }: { data: PaymentMethod[] } = resPaymentMethods.data;
+            dispatch(getPaymentMethods(paymentMethods));
 
             const resExchangeRate: AxiosResponse = await api.get(`exchange-rate/get-exchange-rate/${branchId}`);
             const { data:exchangeRates }: { data: ExchangeRate[] } = resExchangeRate.data;

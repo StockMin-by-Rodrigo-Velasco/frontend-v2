@@ -77,6 +77,7 @@ export const initialPayment: Payment = { id: '', amount: '', description: '', do
 
 export interface DocSale {
     id: string;
+    number: number; 
     paymentType: 'PAID' | 'CREDIT';
     customerName: string;
     details?: string;
@@ -92,7 +93,7 @@ export interface DocSale {
     Payment: Payment[];
     ProductSale: ProductSale[];
 }
-export const initialDocSale: DocSale = { id: '', paymentType: 'PAID', customerName: '', details: '', customerId: '', branchId: '', userId: '', currencyId: '', createdAt: '', User: initialUser, Currency: initialCurrency, Customer: initialCustomer, Payment: [], ProductSale: [] }
+export const initialDocSale: DocSale = { id: '', number:0, paymentType: 'PAID', customerName: '', details: '', customerId: '', branchId: '', userId: '', currencyId: '', createdAt: '', User: initialUser, Currency: initialCurrency, Customer: initialCustomer, Payment: [], ProductSale: [] }
 
 //* ------------------ DTOs -------------------------
 

@@ -13,6 +13,9 @@ import { TbReportAnalytics } from "react-icons/tb";
 import { calculatorMultiply } from "../../../helpers/calculator";
 import FooterSection from "../../../components/FooterSection";
 import ShoppingCart from "./components/ShoppingCart";
+import PurchaseSummary from "./windows/PurchaseSummary";
+import CustomerList from "./windows/CustomerList";
+import { Customer, initialCustomer } from "../../../interfaces";
 
 
 export default function Store() {
@@ -23,6 +26,8 @@ export default function Store() {
     const { brands, categories } = useSelector((s: RootState) => s.Products);
 
     const dispatch = useDispatch<AppDispatch>();
+
+    const [openPurchaseSummary, setOpenPurchaseSummary] = useState(false);
 
     const [productsStore, setProductsStore] = useState<ProductStore[]>([]);
     const { arrayData: productsCart, handleInputChange: handleShoppingCart, replaceData } = useFormArray<ProductCart>([]);
@@ -91,6 +96,9 @@ export default function Store() {
     }, [productsWarehouse])
     return (
         <>
+
+            {openPurchaseSummary && <PurchaseSummary closeButton={() => { setOpenPurchaseSummary(false) }} productsCart={productsCart} />}
+
             <HeaderSection>
                 <InputSearch
                     handleInputChange={handleInputChange}
@@ -140,7 +148,13 @@ export default function Store() {
                     ))}
                 </div>
             </BodySection>
-            <ShoppingCart handleShoppingCart={handleShoppingCart} productsCart={productsCart} toggleProduct={toggleProduct} />
+            <ShoppingCart
+                handleShoppingCart={handleShoppingCart}
+                productsCart={productsCart}
+                toggleProduct={toggleProduct}
+                setOpenPurchaseSummary={setOpenPurchaseSummary}
+                
+            />
             <FooterSection>
                 <p></p>
             </FooterSection>

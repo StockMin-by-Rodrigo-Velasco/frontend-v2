@@ -1,12 +1,13 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
 import { Currency, Customer, ExchangeRate, Log } from "../../interfaces";
-import { initialExchangeRate } from '../../interfaces/salesInterfaces';
+import { initialExchangeRate, PaymentMethod } from '../../interfaces/salesInterfaces';
 
 interface SalesInitialState {
     customers: Customer[];
     currencies: Currency[];
     exchangeRates: ExchangeRate[];
     exchangeRateFavorite: ExchangeRate;
+    paymentMethods: PaymentMethod[];
     logs: Log[];
 }
 
@@ -15,6 +16,7 @@ const initialState: SalesInitialState = {
     currencies: [],
     exchangeRates:[],
     exchangeRateFavorite: initialExchangeRate,
+    paymentMethods:[],
     logs:[]
 }
 
@@ -57,6 +59,9 @@ const SalesSlice = createSlice({
         getCurrencies: (state, action: PayloadAction<Currency[]>) => {
             state.currencies = action.payload;
         },
+        getPaymentMethods: (state, action: PayloadAction<PaymentMethod[]>) => {
+            state.paymentMethods = action.payload;
+        },
         getSalesLogs: (state, action: PayloadAction<Log[]>) => {
             state.logs = [...action.payload];
         },
@@ -76,6 +81,8 @@ export const {
     deleteExchangeRate,
 
     getCurrencies,
+
+    getPaymentMethods,
     
     getSalesLogs,
 

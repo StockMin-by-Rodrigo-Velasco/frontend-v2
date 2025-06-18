@@ -3,6 +3,7 @@ import { useState } from "react";
 interface FormInterface<T extends object> {
     data: T;
     handleInputChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+    replaceData: (name: keyof T, value: string) => void
     resetData: () => void
 }
 
@@ -32,12 +33,16 @@ export function useForm<T extends object>( obj: T ): FormInterface<T>
         setData({...data, [name]: value});
     }
 
+    const replaceData = (name: keyof T, value: string) => {
+        setData({...data, [name]:value})        
+    }
+
     const resetData = () => {
         setData(obj);
     }
 
 
-    return {data, handleInputChange, resetData}
+    return {data, handleInputChange, replaceData, resetData}
 }
 
 export function useFormArray<T>( array: T[])
