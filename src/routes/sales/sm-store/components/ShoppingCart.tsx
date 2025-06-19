@@ -9,26 +9,30 @@ import { AppDispatch, RootState } from "../../../../redux/store";
 import { PiMoneyDuotone } from "react-icons/pi";
 import { IoClose, IoDocumentTextOutline, IoSearch } from "react-icons/io5";
 import { hideNotification, showNotificationError, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
-import { CreateDocSaleDto, CreatePaymentDto, CreateProductSaleDto, Customer, initialCustomer } from "../../../../interfaces";
+import { CreateDocSaleDto, CreatePaymentDto, CreateProductSaleDto, Customer, DocSale, initialCustomer } from "../../../../interfaces";
 import { dateLocal, paymentMethodIcon } from "../../../../helpers";
 import { InputText, InputTextBlock } from "../../../../components/Input";
 import { useForm } from "../../../../hooks";
 import CustomerList from '../windows/CustomerList';
 import ConfirmDialog from '../../../../components/ConfirmDialog';
+import { createDocSaleAPI } from "../../../../redux/sales/salesThunk";
+import { AiOutlineLoading } from "react-icons/ai";
 
 interface ShoppingCartProp {
     productsCart: ProductCart[];
     handleShoppingCart: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
     setOpenPurchaseSummary: React.Dispatch<React.SetStateAction<boolean>>
     toggleProduct: (productId: string) => void;
+    openDocSale: (doc: DocSale) => void;
 }
 interface DataSale {
     customerName: string;
     details: string;
 }
 
-export default function ShoppingCart({ productsCart, handleShoppingCart, setOpenPurchaseSummary, toggleProduct }: ShoppingCartProp) {
+export default function ShoppingCart({ productsCart, handleShoppingCart, setOpenPurchaseSummary, toggleProduct, openDocSale }: ShoppingCartProp) {
 
+    const { loadingData } = useSelector((s: RootState) => s.Aplication);
     const { exchangeRateFavorite, paymentMethods } = useSelector((s: RootState) => s.Sales);
     const { id: branchId, logo, userData } = useSelector((s: RootState) => s.Branch);
 
@@ -74,8 +78,8 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
     }
 
     const verifyCreateDocSale = () => {
-        if(productsSale.length <= 0) {
-            dispatch(showNotificationError({tittle:'Registro de nueva venta', description:'El carrito de compras no contiene productos dentro, por favor agregue productos e inténtelo de nuevo.'}));
+        if (productsSale.length <= 0) {
+            dispatch(showNotificationError({ tittle: 'Registro de nueva venta', description: 'El carrito de compras no contiene productos dentro, por favor agregue productos e inténtelo de nuevo.' }));
             setTimeout(() => { dispatch(hideNotification()) }, 5000);
             return;
         }
@@ -83,12 +87,12 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
     }
     const createDocSale = () => {
         let payments: CreatePaymentDto[] = [];
-        if(paymentType === 'PAID') {
+        if (paymentType === 'PAID') {
             payments = [
                 {
                     paymentMethodId,
                     amount: totalAmount(),
-                    description: ''                    
+                    description: ''
                 }
             ]
         }
@@ -96,7 +100,6 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
         const doc: CreateDocSaleDto = {
             branchId,
             userId: userData.id,
-            customerId: customerSelected.id,
             currencyId: exchangeRateFavorite.Currency.id,
             paymentType,
             customerName: data.customerName,
@@ -104,7 +107,9 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
             productsSale,
             payments
         }
-        console.log(doc);
+        if(customerSelected.id !== '') doc.customerId = customerSelected.id;
+        // console.log(doc)
+        dispatch(createDocSaleAPI(doc, openDocSale));
     }
 
     useEffect(() => {
@@ -121,10 +126,10 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
     return (
         <>
             {openCustomerList && <CustomerList selectCustomer={selectCustomer} closeButton={() => setOpenCustomerList(false)} />}
-            {openConfirmDialog&& 
-                <ConfirmDialog 
-                    title="Registro de nueva venta" 
-                    description={`Se realizará una venta ${customerSelected.id !== ''? `al cliente ${customerSelected.name.toUpperCase()} ${customerSelected.lasName.toUpperCase()}`:' un cliente SIN REGISTRAR'} por un monto de ${exchangeRateFavorite.Currency.symbol} ${totalAmount()}. ¿Desea continuar?`}
+            {openConfirmDialog &&
+                <ConfirmDialog
+                    title="Registro de nueva venta"
+                    description={`Se realizará una venta ${customerSelected.id !== '' ? `al cliente ${customerSelected.name.toUpperCase()} ${customerSelected.lasName.toUpperCase()}` : ' un cliente SIN REGISTRAR'} por un monto de ${exchangeRateFavorite.Currency.symbol} ${totalAmount()}. ¿Desea continuar?`}
                     closeButton={() => setOpenConfirmDialog(false)}
                     action={createDocSale}
                 />
@@ -194,22 +199,24 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
                                 <InputTextBlock name="name" placeholder="Responsable:" value={`${userData.name.toUpperCase()} ${userData.lastName.toUpperCase()}`} />
                                 <div className=" w-full flex items-end " >
                                     <InputText
-                                        disabled={customerSelected.id !== ''}
+                                        disabled={customerSelected.id !== '' || loadingData}
                                         handleInputChange={handleInputChange}
                                         name="customerName"
                                         placeholder="Cliente:"
                                         value={data.customerName}
                                     />
                                     <button
+                                        disabled={loadingData}
                                         onClick={() => { setCustomerSelected(initialCustomer); replaceData('customerName', '') }}
-                                        className="w-[20px] h-[20px] flex justify-center items-center bg-danger/80 text-white rounded ms-3 hover:bg-danger"
+                                        className="w-[20px] h-[20px] flex justify-center items-center bg-danger/80 text-white rounded ms-3 hover:bg-danger disabled:bg-danger/50 disabled:cursor-not-allowed"
                                     >
                                         <IoClose />
                                     </button>
 
                                     <button
+                                        disabled={loadingData}
                                         onClick={() => { setOpenCustomerList(true) }}
-                                        className="h-[20px] px-2 flex justify-center items-center bg-secondary/80 text-white rounded ms-auto hover:bg-secondary"
+                                        className="h-[20px] px-2 flex justify-center items-center bg-secondary/80 text-white rounded ms-auto hover:bg-secondary disabled:bg-secondary/50 disabled:cursor-not-allowed"
                                     >
                                         <span className="me-2">Buscar</span>  <IoSearch />
                                     </button>
@@ -219,17 +226,20 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
                                     name="details"
                                     placeholder="Detalles:"
                                     value={data.details}
+                                    disabled={loadingData}
                                 />
 
                                 <div className="border border-primary mt-3 rounded" >
                                     <button
-                                        className={paymentType === 'PAID' ? "bg-primary w-[50%] text-white" : "w-[50%] text-primary"}
+                                        disabled={loadingData}
+                                        className={paymentType === 'PAID' ? "bg-primary w-[50%] text-white" : "w-[50%] text-primary disabled:cursor-not-allowed"}
                                         onClick={() => { setPaymentType('PAID') }}
                                     >
                                         PAGADO
                                     </button>
                                     <button
-                                        className={paymentType === 'CREDIT' ? "bg-primary w-[50%] text-white" : "w-[50%] text-primary"}
+                                        disabled={loadingData}
+                                        className={paymentType === 'CREDIT' ? "bg-primary w-[50%] text-white" : "w-[50%] text-primary disabled:cursor-not-allowed"}
                                         onClick={() => { setPaymentType('CREDIT') }}
                                     >
                                         CREDITO
@@ -249,9 +259,10 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
                                                 const Icon = paymentMethodIcon(pm.code);
                                                 return (
                                                     <button
+                                                        disabled={loadingData}
                                                         onClick={() => { setPaymentMethodId(pm.id) }}
                                                         key={pm.id}
-                                                        className={`${paymentMethodId === pm.id ? 'bg-info text-white' : 'text-info'} border border-info mt-2 p-2 text-[24px] flex rounded`}>
+                                                        className={`${paymentMethodId === pm.id ? 'bg-info text-white' : 'text-info'} border border-info mt-2 p-2 text-[24px] flex rounded disabled:cursor-not-allowed disabled:opacity-50`}>
                                                         <Icon />
                                                         <span className="text-[14px] ms-auto" >{pm.name}</span>
                                                     </button>
@@ -261,16 +272,18 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
                                     </>
                                 }
                                 <button
-                                    className="text-primary text-center mb-3 border border-primary w-full rounded-full hover:text-white hover:bg-primary mt-2"
+                                    disabled={loadingData}
+                                    className="text-primary text-center mb-3 border border-primary w-full rounded-full hover:text-white hover:bg-primary mt-2 disabled:cursor-not-allowed disabled:text-primary/50 disabled:border-primary/50 disabled:bg-white"
                                     onClick={() => { setOpenPurchaseSummary(true) }}
                                 >
                                     Ver resumen de compra...
                                 </button>
                             </div>
                         </div>
-                        <div className="mt-auto flex justify-center" >
-                            <Button color="danger" label="ATRAS" className="me-2" onClick={() => { setOpenCreateSale(false) }} />
-                            <Button color="success" label="REALIZAR VENTA" onClick={verifyCreateDocSale} />
+                        <div className="mt-auto flex justify-center items-center" >
+                            <Button loading={loadingData} color="danger" label="ATRAS" className="me-2" onClick={() => { setOpenCreateSale(false) }} />
+                            <Button loading={loadingData} color="success" label="REALIZAR VENTA" onClick={verifyCreateDocSale} />
+                            {loadingData&& <AiOutlineLoading className="ms-2 animate-spin text-primary"/>}
                         </div>
                     </>
                 }

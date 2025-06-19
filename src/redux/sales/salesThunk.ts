@@ -6,7 +6,7 @@ import api from "../../api/config";
 import { createCustomer, createExchangeRate, getCurrencies, getCustomers, getExchangeRateFavorite, getExchangeRates, getPaymentMethods, toggleFavoriteExchangeRate, updateCustomer, updateExchangeRate } from "./salesSlice";
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from "../notification/notificationSlice";
 import { NavigateFunction } from "react-router";
-import { createUserWarehouseSale, deleteUserWarehouseSale, getWarehauses, updatePriceProductWarehouse, updateWarehouse } from "../warehouses/warehousesSlice";
+import { createUserWarehouseSale, decrementProductsWarehouse, deleteUserWarehouseSale, getWarehauses, updatePriceProductWarehouse, updateWarehouse } from "../warehouses/warehousesSlice";
 import { updateUser } from "../branch/branchSlice";
 import { getBrands, getCategories, getUnitMeasures, getUnitMeasuresBranch, updateProduct } from "../products/productSlice";
 import { GetDocSaleDto } from '../../../../backend/src/modules/sales/sale/dto/get-doc-sale.dto';
@@ -408,7 +408,8 @@ export const createDocSaleAPI = (createDocSaleDto:CreateDocSaleDto, functionRetu
             dispatch(startLoadingData());
             const resDocSale: AxiosResponse = await api.post(`sale/create-doc-sale`, createDocSaleDto);
             const {data:docSale}:{data:DocSale} = resDocSale.data;
-            if(functionReturn) functionReturn(docSale)
+            if(functionReturn) functionReturn(docSale);
+            dispatch(decrementProductsWarehouse(createDocSaleDto.productsSale));
             dispatch(finishLoadingData());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
@@ -416,6 +417,7 @@ export const createDocSaleAPI = (createDocSaleDto:CreateDocSaleDto, functionRetu
                 dispatch(showNotificationError({ tittle: 'DOCUMENTO DE VENTA', description: data.message }));
                 setTimeout(() => dispatch(hideNotification()), 5000);
             } else console.log(error);
+            dispatch(finishLoadingData());
         }
     }
 }

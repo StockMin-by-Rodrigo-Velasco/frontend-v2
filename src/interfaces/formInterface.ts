@@ -24,11 +24,6 @@ export interface ProductWarehouseForm {
     show: boolean;
 }
 
-export interface DateRange {
-  from: string;
-  to: string;
-}
-
 export interface ProductStore extends ProductWarehouse {
   selected: boolean;
 }
@@ -36,6 +31,11 @@ export interface ProductStore extends ProductWarehouse {
 export interface ProductCart extends ProductWarehouse {
   quantityCart: number;
   priceCart: string;
+}
+
+export interface DateRange {
+  from: string;
+  to: string;
 }
 
 export const initDateRange: DateRange = {

@@ -1,5 +1,5 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
-import { DocEntry, DocTransfer, initialWarehouse, Log, Product, ProductWarehouse, User, Warehouse } from "../../interfaces";
+import { CreateProductSaleDto, DocEntry, DocTransfer, initialWarehouse, Log, Product, ProductWarehouse, User, Warehouse } from "../../interfaces";
 
 export interface ProductoAlmacenWithOutIdInterface {
     productoId: string;
@@ -91,6 +91,20 @@ const WarehousesSlice = createSlice({
                 .map(p => (p.id in productsWarehouseObj) ? {...p, ...productsWarehouseObj[p.id]}:p);
             state.productsWarehouse = [...productsWarehouse];
         },
+        decrementProductsWarehouse: (state, action: PayloadAction<CreateProductSaleDto[]>) => {
+            const productsWarehouseObj = action.payload.reduce((acc, p) => { acc[p.productWarehouseId] = p; return acc; }, {} as Record<string, CreateProductSaleDto>);
+
+            const productsWarehouse: ProductWarehouse[] = current(state.productsWarehouse)
+                .map(p => (p.id in productsWarehouseObj) ? {...p, quantity: (p.quantity - productsWarehouseObj[p.id].quantity)}:p);
+            state.productsWarehouse = [...productsWarehouse];
+        },
+        incrementProductsWarehouse: (state, action: PayloadAction<CreateProductSaleDto[]>) => {
+            const productsWarehouseObj = action.payload.reduce((acc, p) => { acc[p.productWarehouseId] = p; return acc; }, {} as Record<string, CreateProductSaleDto>);
+
+            const productsWarehouse: ProductWarehouse[] = current(state.productsWarehouse)
+                .map(p => (p.id in productsWarehouseObj) ? {...p, quantity: (p.quantity + productsWarehouseObj[p.id].quantity)}:p);
+            state.productsWarehouse = [...productsWarehouse];
+        },
         getDocTransfers:(state, action: PayloadAction<DocTransfer[]>) =>{
             state.docTransfers = action.payload;
         },
@@ -127,6 +141,8 @@ export const {
     updateProductWarehouse,
     updatePriceProductWarehouse,
     updateManyProductsWarehouse,
+    decrementProductsWarehouse,
+    incrementProductsWarehouse,
 
     getDocTransfers,
     createDocTransfer,

@@ -14,9 +14,9 @@ import { calculatorMultiply } from "../../../helpers/calculator";
 import FooterSection from "../../../components/FooterSection";
 import ShoppingCart from "./components/ShoppingCart";
 import PurchaseSummary from "./windows/PurchaseSummary";
-import CustomerList from "./windows/CustomerList";
-import { Customer, initialCustomer } from "../../../interfaces";
-
+import ViewDocSale from "./windows/ViewDocSale";
+import { DocSale, initialDocSale } from "../../../interfaces";
+import SalesAndQuotationsList from "./windows/SalesAndQuotationsList";
 
 export default function Store() {
     const { loadingData } = useSelector((s: RootState) => s.Aplication);
@@ -28,7 +28,10 @@ export default function Store() {
     const dispatch = useDispatch<AppDispatch>();
 
     const [openPurchaseSummary, setOpenPurchaseSummary] = useState(false);
+    const [openViewDocSale, setOpenViewDocSale] = useState(false);
+    const [openSalesAndQuotationsList, setOpenSalesAndQuotationsList] = useState(false);
 
+    const [docSaleSelected, setDocSaleSelected] = useState<DocSale>(initialDocSale);
     const [productsStore, setProductsStore] = useState<ProductStore[]>([]);
     const { arrayData: productsCart, handleInputChange: handleShoppingCart, replaceData } = useFormArray<ProductCart>([]);
 
@@ -37,6 +40,11 @@ export default function Store() {
         return (p.Product.Category.id === filter.category || filter.category === '') &&
             (p.Product.Brand.id === filter.brand || filter.brand === '') &&
             (p.Product.name.toLowerCase().includes(filter.search.toLowerCase()) || p.Product.code.includes(filter.search.toLocaleLowerCase()))
+    }
+
+    const openDocSale = (doc: DocSale) => {
+        setDocSaleSelected(doc);
+        setOpenViewDocSale(true);
     }
 
     const toggleProduct = (productId: string) => {
@@ -96,8 +104,9 @@ export default function Store() {
     }, [productsWarehouse])
     return (
         <>
-
             {openPurchaseSummary && <PurchaseSummary closeButton={() => { setOpenPurchaseSummary(false) }} productsCart={productsCart} />}
+            {openViewDocSale && <ViewDocSale closeButton={() => setOpenViewDocSale(false)} docSale={docSaleSelected} />}
+            {openSalesAndQuotationsList&& <SalesAndQuotationsList closeButton={() => setOpenSalesAndQuotationsList(false)}/>}
 
             <HeaderSection>
                 <InputSearch
@@ -109,7 +118,7 @@ export default function Store() {
 
                 <div
                     className="w-[200px] flex justify-center items-center border relative overflow-hidden border-primary text-primary rounded-lg ms-auto me-auto transition-all duration-300 cursor-pointer"
-                    onClick={() => { console.log('Abrir historial') }}
+                    onClick={() => {setOpenSalesAndQuotationsList(true)}}
                 >
                     <span className="uppercase flex" >{warehouses.find(w => w.id === userData.warehouseId)?.name} <span className="ms-2 text-[20px]" ><TbReportAnalytics /></span> </span>
 
@@ -153,7 +162,7 @@ export default function Store() {
                 productsCart={productsCart}
                 toggleProduct={toggleProduct}
                 setOpenPurchaseSummary={setOpenPurchaseSummary}
-                
+                openDocSale={openDocSale}
             />
             <FooterSection>
                 <p></p>

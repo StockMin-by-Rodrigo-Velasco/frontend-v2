@@ -19,21 +19,22 @@ interface InputProps {
 
 interface InpuFormProps {
   handleInputChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void,
-  name: string,
-  value: string,
-  required?:boolean,
-  disabled?:boolean,
-  className?:string,
-  maxLenght?: number,
-  step?: string
+  name: string;
+  value: string;
+  required?:boolean;
+  disabled?:boolean;
+  className?:string;
+  maxLenght?: number;
+  step?: string;
 }
 
 interface InputBlockProps {
-  name: string,
-  placeholder: string,
-  value: string,
-  className?:string
-  uppercase?: boolean
+  name: string;
+  placeholder: string;
+  value: string;
+  className?:string;
+  uppercase?: boolean;
+  disabled?:boolean;
 }
 
 interface InputFileProps {
