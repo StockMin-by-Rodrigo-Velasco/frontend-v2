@@ -15,8 +15,9 @@ import FooterSection from "../../../components/FooterSection";
 import ShoppingCart from "./components/ShoppingCart";
 import PurchaseSummary from "./windows/PurchaseSummary";
 import ViewDocSale from "./windows/ViewDocSale";
-import { DocSale, initialDocSale } from "../../../interfaces";
+import { DocQuotation, DocSale } from "../../../interfaces";
 import SalesAndQuotationsList from "./windows/SalesAndQuotationsList";
+import ViewDocQuotation from "./windows/ViewDocQuotation";
 
 export default function Store() {
     const { loadingData } = useSelector((s: RootState) => s.Aplication);
@@ -29,9 +30,11 @@ export default function Store() {
 
     const [openPurchaseSummary, setOpenPurchaseSummary] = useState(false);
     const [openViewDocSale, setOpenViewDocSale] = useState(false);
+    const [openViewDocQuotation, setOpenViewDocQuotation] = useState(false);
     const [openSalesAndQuotationsList, setOpenSalesAndQuotationsList] = useState(false);
 
-    const [docSaleSelected, setDocSaleSelected] = useState<DocSale>(initialDocSale);
+    const [docSaleIdSelected, setDocSaleIdSelected] = useState<string>('');
+    const [docQuotationIdSelected, setDocQuotationIdSelected] = useState<string>('');
     const [productsStore, setProductsStore] = useState<ProductStore[]>([]);
     const { arrayData: productsCart, handleInputChange: handleShoppingCart, replaceData } = useFormArray<ProductCart>([]);
 
@@ -43,8 +46,13 @@ export default function Store() {
     }
 
     const openDocSale = (doc: DocSale) => {
-        setDocSaleSelected(doc);
+        setDocSaleIdSelected(doc.id);
         setOpenViewDocSale(true);
+    }
+
+    const openDocQuotation = (doc: DocQuotation) => {
+        setDocQuotationIdSelected(doc.id);
+        setOpenViewDocQuotation(true);
     }
 
     const toggleProduct = (productId: string) => {
@@ -105,8 +113,15 @@ export default function Store() {
     return (
         <>
             {openPurchaseSummary && <PurchaseSummary closeButton={() => { setOpenPurchaseSummary(false) }} productsCart={productsCart} />}
-            {openViewDocSale && <ViewDocSale closeButton={() => setOpenViewDocSale(false)} docSale={docSaleSelected} />}
-            {openSalesAndQuotationsList&& <SalesAndQuotationsList closeButton={() => setOpenSalesAndQuotationsList(false)}/>}
+            {openSalesAndQuotationsList&& 
+                <SalesAndQuotationsList 
+                closeButton={() => setOpenSalesAndQuotationsList(false)}
+                openDocSale={openDocSale}
+                openDocQuotation={openDocQuotation}
+                />
+            }
+            {openViewDocSale && <ViewDocSale closeButton={() => setOpenViewDocSale(false)} docSaleId={docSaleIdSelected} />}
+            {openViewDocQuotation && <ViewDocQuotation closeButton={() => setOpenViewDocQuotation(false)} docQuotationId={docQuotationIdSelected} />}
 
             <HeaderSection>
                 <InputSearch
@@ -163,6 +178,7 @@ export default function Store() {
                 toggleProduct={toggleProduct}
                 setOpenPurchaseSummary={setOpenPurchaseSummary}
                 openDocSale={openDocSale}
+                openDocQuotation={openDocQuotation}
             />
             <FooterSection>
                 <p></p>

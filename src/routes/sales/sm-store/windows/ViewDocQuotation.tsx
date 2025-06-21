@@ -1,78 +1,45 @@
 import Windows from "../../../../components/Windows";
-import { DocSale, initialDocSale } from "../../../../interfaces";
+import { DocQuotation, initialQuotationSale } from "../../../../interfaces";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { calculatorMultiply, dateLocalWhitTime } from "../../../../helpers";
 import { useEffect, useRef, useState } from 'react';
 import html2canvas from "html2canvas";
-import { getDocSaleAPI } from "../../../../redux/sales/salesThunk";
+import { getDocQuotationAPI } from "../../../../redux/sales/salesThunk";
 import { getBase64FromUrl, printImgB64, shareImgB64 } from "../../../../helpers/imgBase64";
 import { FaPrint, FaShare } from "react-icons/fa";
 
-interface DocSaleProp {
-  docSaleId: string;
+interface DocQuotationProp {
+  docQuotationId: string;
   closeButton: () => void;
 }
 
-export default function ViewDocSale({ docSaleId, closeButton }: DocSaleProp) {
+export default function ViewDocQuotation({ docQuotationId, closeButton }: DocQuotationProp) {
   const { logo, data } = useSelector((s: RootState) => s.Branch);
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
 
   const dispatch = useDispatch<AppDispatch>();
 
-  // const tableRef = useRef<HTMLTableElement | null>(null);
   const divRef = useRef<HTMLDivElement>(null);
 
-
-  const [docSale, setDocSale] = useState<DocSale>(initialDocSale);
+  const [docSale, setDocSale] = useState<DocQuotation>(initialQuotationSale);
   const [logoB64, setLogoB64] = useState('');
 
   const totalAmount = (): string => {
     return docSale.ProductSale.reduce((acc, p) => { return acc + (p.quantity * parseFloat(p.price)) }, 0).toFixed(2);
   }
-  // const totalPayments = (): string => {
-  //   return docSale.Payment.reduce((acc, p) => { return acc + parseFloat(p.amount) }, 0).toFixed(2);
-  // }
-  // const pendingPaymet = (): boolean => {
-  //   return (parseFloat(totalAmount()) > parseFloat(totalPayments()))
-  // }
 
-  const getDocSale = async (doc: DocSale) => {
+  const getDocQuotation = async (doc: DocQuotation) => {
     const newLogoB64 = await getBase64FromUrl(logo);
     setLogoB64(newLogoB64);
     setDocSale(doc);
   }
-
-  // const downloadPDF = () => {
-  //   const tableId = tableRef.current?.id;
-
-  //   const dataSaleQuotationPdf: DataSaleQuotationPdf = {
-  //     branchAddress: data.address,
-  //     branchContact: data.contact,
-  //     customer: docSale.customerName.toUpperCase(),
-  //     date: dateLocalWhitTime(docSale.createdAt || ''),
-  //     details: docSale.details || '',
-  //     fileName: `venta-${docSale.number}`,
-  //     logoB64: logo,
-  //     number: docSale.number.toString(),
-  //     tableId,
-  //     type: "VENTA",
-  //     user: `${docSale.User.name.toUpperCase()} ${docSale.User.lastName.toUpperCase()}`
-  //   }
-  //   convertSaleQuotationToPDF({ ...dataSaleQuotationPdf });
-  // }
 
   const downloadPNG = async () => {
     if (divRef.current) {
       const canvas = await html2canvas(divRef.current, { scale: 1.5 });
       const imgB64 = canvas.toDataURL("image/png");
       shareImgB64(imgB64);
-
-      //* -- Este bloque de codigo guarda la imagen generada --
-      // const link = document.createElement("a");
-      // link.href = imgB64;
-      // link.download = `VENTA-${docSale.number}.png`;
-      // link.click();
     }
   };
   const printPNG = async() => {
@@ -84,22 +51,22 @@ export default function ViewDocSale({ docSaleId, closeButton }: DocSaleProp) {
   }
 
   useEffect(() => {
-    dispatch(getDocSaleAPI(docSaleId, getDocSale));
+    dispatch(getDocQuotationAPI(docQuotationId, getDocQuotation));
   }, [])
   return (
-    <Windows closeButton={closeButton} tittle={`detalles de venta número ${docSale.number}`}>
+    <Windows closeButton={closeButton} tittle={`detalles de cotización número ${docSale.number}`}>
       <div className="p-3 w-[600px] relative" ref={divRef}>
 
         {loadingData &&
           <div className="flex bg-white rounded justify-center items-center absolute top-0 right-0 left-0 bottom-0" >
-            Cargando datos de venta...
+            Cargando datos de cotización...
           </div>}
 
 
         <div className="flex items-center " >
           <img src={logoB64} className="w-[300px]" />
           <div className="flex flex-col justify-end items-end ms-auto" >
-            <p className="font-semibold" > Venta Nº {docSale.number}</p>
+            <p className="font-semibold" > Cotización Nº {docSale.number}</p>
             <p > {dateLocalWhitTime(docSale.createdAt || '')}</p>
             <p > <span className="font-semibold" >Vendedor: </span> <span className="uppercase">{docSale.User.name} {docSale.User.lastName}</span></p>
           </div>
@@ -144,20 +111,20 @@ export default function ViewDocSale({ docSaleId, closeButton }: DocSaleProp) {
       <div className="text-[12px] flex p-2 bg-secondary/50" >
         <div className="rounded-full overflow-hidden border border-info bg-info flex" >
           <div className="px-1">TIPO</div>
-          <div className="bg-white px-1 font-semibold" >{docSale.paymentType === 'PAID' ? 'PAGADO' : 'CRÉDITO'}</div>
+          <div className="bg-white px-1 font-semibold" >COTIZACIÓN</div>
         </div>
 
-        <div className={`${docSale.isPaid ? 'border-danger bg-danger' : 'border-success bg-success'} ms-2 rounded-full overflow-hidden border flex`}>
+        {/* <div className={`${pendingPaymet() ? 'border-danger bg-danger' : 'border-success bg-success'} ms-2 rounded-full overflow-hidden border flex`}>
           <div className="px-1">ESTADO</div>
           <div className="bg-white px-1 font-semibold" >{docSale.isPaid ? 'SIN DEUDA' : 'PENDIENTE DE PAGO'}</div>
-        </div>
+        </div> */}
 
-        <button
+        {/* <button
           disabled={loadingData}
           className={`border-warning/70 bg-warning/70 ms-2 rounded-full overflow-hidden border flex cursor-pointer hover:border-warning hover:bg-warning disabled:cursor-not-allowed disabled:border-secondary/70 disabled:bg-secondary/70 disabled:text-white`}>
           <div className="px-1">PAGOS</div>
           <div className="bg-white px-1 font-semibold" >{docSale.Payment.length}</div>
-        </button>
+        </button> */}
 
         <button
           disabled={loadingData}

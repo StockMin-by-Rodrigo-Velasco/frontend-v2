@@ -85,6 +85,7 @@ export interface DocSale {
     branchId: string;
     userId: string;
     currencyId: string;
+    isPaid: boolean;
     createdAt?: string;
 
     User: User;
@@ -93,7 +94,25 @@ export interface DocSale {
     Payment: Payment[];
     ProductSale: ProductSale[];
 }
-export const initialDocSale: DocSale = { id: '', number:0, paymentType: 'PAID', customerName: '', details: '', customerId: '', branchId: '', userId: '', currencyId: '', createdAt: '', User: initialUser, Currency: initialCurrency, Customer: initialCustomer, Payment: [], ProductSale: [] }
+export const initialDocSale: DocSale = { id: '', number:0, paymentType: 'PAID', customerName: '', details: '', customerId: '', branchId: '', userId: '', currencyId: '', isPaid:false, createdAt: '', User: initialUser, Currency: initialCurrency, Customer: initialCustomer, Payment: [], ProductSale: [] }
+
+export interface DocQuotation {
+    id: string;
+    number: number; 
+    customerName: string;
+    details?: string;
+    customerId?: string;
+    branchId: string;
+    userId: string;
+    currencyId: string;
+    createdAt?: string;
+
+    User: User;
+    Currency: Currency;
+    Customer?: Customer;
+    ProductSale: ProductSale[];
+}
+export const initialQuotationSale: DocQuotation = { id: '', number:0, customerName: '', details: '', customerId: '', branchId: '', userId: '', currencyId: '', createdAt: '', User: initialUser, Currency: initialCurrency, Customer: initialCustomer, ProductSale: [] }
 
 //* ------------------ DTOs -------------------------
 
@@ -147,11 +166,20 @@ export interface CreatePaymentDto {
 export interface CreateProductSaleDto {
     productId: string;
     docSaleId?: string;
+    docQuotationId?: string;
     quantity: number;
     price: string;
 
     //* Solo para hacer un descuento en las cantidades 
     productWarehouseId: string;
+}
+
+export interface CreateProductQuotationDto {
+    productId: string;
+    docSaleId?: string;
+    docQuotationId?: string;
+    quantity: number;
+    price: string;
 }
 
 export interface CreateDocSaleDto {
@@ -164,4 +192,20 @@ export interface CreateDocSaleDto {
     details?: string;
     productsSale: CreateProductSaleDto[]
     payments: CreatePaymentDto[]
+}
+
+export interface CreateDocQuotationDto {
+    customerId?: string;
+    branchId: string;
+    userId: string;
+    currencyId: string;
+    customerName: string;
+    details?: string;
+    productsSale: CreateProductQuotationDto[]
+}
+
+export interface GetDocSaleDto{
+    branchId: string;
+    from: string;
+    to: string;
 }

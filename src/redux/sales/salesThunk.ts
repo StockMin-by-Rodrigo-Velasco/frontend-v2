@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { Brand, Category, CreateCustomerDto, CreateDocSaleDto, CreateExchangeRateDto, CreatePaymentDto, CreateUserWarehouseSaleDto, Currency, Customer, DocSale, ExchangeRate, initialCurrency, Payment, PaymentMethod, Product, UnitMeasure, UnitMeasureBranch, UpdateCustomerDto, UpdateExchangeRateDto, UpdateProductPriceDto, User, Warehouse } from "../../interfaces";
+import { Brand, Category, CreateCustomerDto, CreateDocQuotationDto, CreateDocSaleDto, CreateExchangeRateDto, CreatePaymentDto, CreateUserWarehouseSaleDto, Currency, Customer, DocSale as DocQuotation, ExchangeRate, GetDocSaleDto, initialCurrency, Payment, PaymentMethod, Product, UnitMeasure, UnitMeasureBranch, UpdateCustomerDto, UpdateExchangeRateDto, UpdateProductPriceDto, User, Warehouse } from "../../interfaces";
 import { AppDispatch, RootState } from "../store"
 import { finishLoadingData, finishLoadingModule, startLoadingData, startLoadingModule } from "../aplication/aplicationSlice";
 import api from "../../api/config";
@@ -9,7 +9,6 @@ import { NavigateFunction } from "react-router";
 import { createUserWarehouseSale, decrementProductsWarehouse, deleteUserWarehouseSale, getWarehauses, updatePriceProductWarehouse, updateWarehouse } from "../warehouses/warehousesSlice";
 import { updateUser } from "../branch/branchSlice";
 import { getBrands, getCategories, getUnitMeasures, getUnitMeasuresBranch, updateProduct } from "../products/productSlice";
-import { GetDocSaleDto } from '../../../../backend/src/modules/sales/sale/dto/get-doc-sale.dto';
 
 
 export const getSalesModuleDataAPI = (navigate?: NavigateFunction) => {
@@ -387,12 +386,27 @@ export const deleteExchangeRateAPI = (exchangeRateId: string) => {
 
 //* --------------------------------- SALES ---------------------------------
 
-export const getDocSalesAPI = (getDocSales:GetDocSaleDto, functionReturn?:(doc:DocSale[])=>void) => {
+export const getDocSaleAPI = (docSaleId:string, functionReturn?:(doc:DocQuotation)=>void) => {
+    return async (dispatch: AppDispatch) => {
+        try {
+            dispatch(startLoadingData());
+            const resDocSale: AxiosResponse = await api.get(`sale/get-doc-sale/${docSaleId}`);
+            const {data:docSale}:{data:DocQuotation} = resDocSale.data;
+            if(functionReturn) functionReturn(docSale)
+            dispatch(finishLoadingData());
+        } catch (error) {
+            console.log(error);
+            dispatch(finishLoadingData());
+        }
+    }
+}
+
+export const getDocSalesAPI = (getDocSales:GetDocSaleDto, functionReturn?:(doc:DocQuotation[])=>void) => {
     return async (dispatch: AppDispatch) => {
         try {
             dispatch(startLoadingData());
             const resDocSales: AxiosResponse = await api.post(`sale/get-doc-sales`, getDocSales);
-            const {data:docSales}:{data:DocSale[]} = resDocSales.data;
+            const {data:docSales}:{data:DocQuotation[]} = resDocSales.data;
             if(functionReturn) functionReturn(docSales)
             dispatch(finishLoadingData());
         } catch (error) {
@@ -402,12 +416,12 @@ export const getDocSalesAPI = (getDocSales:GetDocSaleDto, functionReturn?:(doc:D
     }
 }
 
-export const createDocSaleAPI = (createDocSaleDto:CreateDocSaleDto, functionReturn?:(doc: DocSale)=>void) => {
+export const createDocSaleAPI = (createDocSaleDto:CreateDocSaleDto, functionReturn?:(doc: DocQuotation)=>void) => {
     return async (dispatch: AppDispatch) => {
         try {
             dispatch(startLoadingData());
             const resDocSale: AxiosResponse = await api.post(`sale/create-doc-sale`, createDocSaleDto);
-            const {data:docSale}:{data:DocSale} = resDocSale.data;
+            const {data:docSale}:{data:DocQuotation} = resDocSale.data;
             if(functionReturn) functionReturn(docSale);
             dispatch(decrementProductsWarehouse(createDocSaleDto.productsSale));
             dispatch(finishLoadingData());
@@ -436,6 +450,58 @@ export const createPaymentAPI = (createPaymentDto:CreatePaymentDto, functionRetu
                 dispatch(showNotificationError({ tittle: 'REGISTRO DE PAGO', description: data.message }));
                 setTimeout(() => dispatch(hideNotification()), 5000);
             } else console.log(error);
+        }
+    }
+}
+
+//* --------------------------------- QUOTATION ---------------------------------
+
+export const getDocQuotationAPI = (docQuotationId:string, functionReturn?:(doc:DocQuotation)=>void) => {
+    return async (dispatch: AppDispatch) => {
+        try {
+            dispatch(startLoadingData());
+            const resDocQuotation: AxiosResponse = await api.get(`quotation/get-doc-quotation/${docQuotationId}`);
+            const {data:docQuotation}:{data:DocQuotation} = resDocQuotation.data;
+            if(functionReturn) functionReturn(docQuotation)
+            dispatch(finishLoadingData());
+        } catch (error) {
+            console.log(error);
+            dispatch(finishLoadingData());
+        }
+    }
+}
+
+export const getDocQuotationsAPI = (getDocQuotations:GetDocSaleDto, functionReturn?:(doc:DocQuotation[])=>void) => {
+    return async (dispatch: AppDispatch) => {
+        try {
+            dispatch(startLoadingData());
+            const resDocQuotations: AxiosResponse = await api.post(`quotation/get-doc-quotations`, getDocQuotations);
+            const {data:docQuotations}:{data:DocQuotation[]} = resDocQuotations.data;
+            if(functionReturn) functionReturn(docQuotations)
+            dispatch(finishLoadingData());
+        } catch (error) {
+            console.log(error);
+            dispatch(finishLoadingData());
+        }
+    }
+}
+
+export const createDocQuotationAPI = (createDocQuotationDto:CreateDocQuotationDto, functionReturn?:(doc: DocQuotation)=>void) => {
+    return async (dispatch: AppDispatch) => {
+        try {
+            dispatch(startLoadingData());
+            const resDocQuotation: AxiosResponse = await api.post(`quotation/create-doc-quotation`, createDocQuotationDto);
+            const {data:docQuotation}:{data:DocQuotation} = resDocQuotation.data;
+            // console.log(docQuotation);
+            if(functionReturn) functionReturn(docQuotation);
+            dispatch(finishLoadingData());
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                const { data } = error.response;
+                dispatch(showNotificationError({ tittle: 'DOCUMENTO DE COTIZACIÓN', description: data.message }));
+                // setTimeout(() => dispatch(hideNotification()), 5000);
+            } else console.log(error);
+            dispatch(finishLoadingData());
         }
     }
 }

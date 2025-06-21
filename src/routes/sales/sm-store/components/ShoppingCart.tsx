@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "../../../../components/Buttons";
 import ProductShoppingCart from "./ProductShoppingCart";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { IoIosArrowUp } from "react-icons/io";
@@ -9,14 +8,15 @@ import { AppDispatch, RootState } from "../../../../redux/store";
 import { PiMoneyDuotone } from "react-icons/pi";
 import { IoClose, IoDocumentTextOutline, IoSearch } from "react-icons/io5";
 import { hideNotification, showNotificationError, showNotificationWarning } from "../../../../redux/notification/notificationSlice";
-import { CreateDocSaleDto, CreatePaymentDto, CreateProductSaleDto, Customer, DocSale, initialCustomer } from "../../../../interfaces";
+import { CreateDocQuotationDto, CreateDocSaleDto, CreatePaymentDto, CreateProductSaleDto, Customer, DocQuotation, DocSale, initialCustomer } from "../../../../interfaces";
 import { dateLocal, paymentMethodIcon } from "../../../../helpers";
 import { InputText, InputTextBlock } from "../../../../components/Input";
 import { useForm } from "../../../../hooks";
 import CustomerList from '../windows/CustomerList';
 import ConfirmDialog from '../../../../components/ConfirmDialog';
-import { createDocSaleAPI } from "../../../../redux/sales/salesThunk";
+import { createDocQuotationAPI, createDocSaleAPI } from "../../../../redux/sales/salesThunk";
 import { AiOutlineLoading } from "react-icons/ai";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 interface ShoppingCartProp {
     productsCart: ProductCart[];
@@ -24,13 +24,14 @@ interface ShoppingCartProp {
     setOpenPurchaseSummary: React.Dispatch<React.SetStateAction<boolean>>
     toggleProduct: (productId: string) => void;
     openDocSale: (doc: DocSale) => void;
+    openDocQuotation: (doc: DocQuotation) => void;
 }
 interface DataSale {
     customerName: string;
     details: string;
 }
 
-export default function ShoppingCart({ productsCart, handleShoppingCart, setOpenPurchaseSummary, toggleProduct, openDocSale }: ShoppingCartProp) {
+export default function ShoppingCart({ productsCart, handleShoppingCart, setOpenPurchaseSummary, toggleProduct, openDocSale, openDocQuotation }: ShoppingCartProp) {
 
     const { loadingData } = useSelector((s: RootState) => s.Aplication);
     const { exchangeRateFavorite, paymentMethods } = useSelector((s: RootState) => s.Sales);
@@ -42,6 +43,8 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
     const [paymentMethodId, setPaymentMethodId] = useState<string>('');
     const [customerSelected, setCustomerSelected] = useState<Customer>(initialCustomer);
     const [productsSale, setProductsSale] = useState<CreateProductSaleDto[]>([]);
+    const [docType, setDocType] = useState<'SALE'|'QUOTATION'>('SALE');
+    
     const { data, handleInputChange, replaceData } = useForm<DataSale>({ customerName: '', details: '' });
 
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
@@ -60,13 +63,7 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
         setOpenCustomerList(false);
     }
 
-    const verifyCart = () => {
-        const insufficientQuantity = productsCart.find(p => p.quantityCart > p.quantity);
-        if (insufficientQuantity) {
-            dispatch(showNotificationWarning({ tittle: 'VENTA', description: 'Uno o mas productos no cuentan con las cantidades suficientes para su venta.' }));
-            setTimeout(() => { dispatch(hideNotification()) }, 5000);
-            return;
-        }
+    const generateProductsSale = () => {
         const createProductSaleDto: CreateProductSaleDto[] = productsCart.map(p => ({
             productId: p.Product.id,
             productWarehouseId: p.id, // ID por que ProductSale es un extend de ProductWarehouse
@@ -78,14 +75,33 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
     }
 
     const verifyCreateDocSale = () => {
+        const insufficientQuantity = productsCart.find(p => p.quantityCart > p.quantity);
+        if (insufficientQuantity) {
+            dispatch(showNotificationWarning({ tittle: 'VENTA', description: 'Uno o mas productos no cuentan con las cantidades suficientes para su venta.' }));
+            setTimeout(() => { dispatch(hideNotification()) }, 5000);
+            return;
+        }
+
         if (productsSale.length <= 0) {
             dispatch(showNotificationError({ tittle: 'Registro de nueva venta', description: 'El carrito de compras no contiene productos dentro, por favor agregue productos e inténtelo de nuevo.' }));
             setTimeout(() => { dispatch(hideNotification()) }, 5000);
             return;
         }
+        setDocType('SALE');
         setOpenConfirmDialog(true);
     }
-    const createDocSale = () => {
+
+    const createDocQuotation = () => {
+        if (productsSale.length <= 0) {
+            dispatch(showNotificationError({ tittle: 'Registro de nueva venta', description: 'El carrito de compras no contiene productos dentro, por favor agregue productos e inténtelo de nuevo.' }));
+            setTimeout(() => { dispatch(hideNotification()) }, 5000);
+            return;
+        }
+        setDocType('QUOTATION');
+        setOpenConfirmDialog(true);
+    }
+
+    const createDocSaleOrQuotation = () => {
         let payments: CreatePaymentDto[] = [];
         if (paymentType === 'PAID') {
             payments = [
@@ -97,19 +113,34 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
             ]
         }
 
-        const doc: CreateDocSaleDto = {
-            branchId,
-            userId: userData.id,
-            currencyId: exchangeRateFavorite.Currency.id,
-            paymentType,
-            customerName: data.customerName,
-            details: data.details,
-            productsSale,
-            payments
+        if(docType === 'SALE'){
+            const doc: CreateDocSaleDto = {
+                branchId,
+                userId: userData.id,
+                currencyId: exchangeRateFavorite.Currency.id,
+                paymentType,
+                customerName: data.customerName,
+                details: data.details,
+                productsSale,
+                payments
+            }
+            if (customerSelected.id !== '') doc.customerId = customerSelected.id;
+            // console.log('venta',doc);
+            dispatch(createDocSaleAPI(doc, openDocSale));
+        }else if (docType === 'QUOTATION'){
+            const newProductsSale = productsSale.map(({productWarehouseId, ...p})=>p);
+            const doc: CreateDocQuotationDto = {
+                branchId,
+                userId: userData.id,
+                currencyId: exchangeRateFavorite.Currency.id,
+                customerName: data.customerName,
+                details: data.details,
+                productsSale: newProductsSale
+            }
+            if (customerSelected.id !== '') doc.customerId = customerSelected.id;
+            // console.log('cotizacion',doc);
+            dispatch(createDocQuotationAPI(doc, openDocQuotation));
         }
-        if(customerSelected.id !== '') doc.customerId = customerSelected.id;
-        // console.log(doc)
-        dispatch(createDocSaleAPI(doc, openDocSale));
     }
 
     useEffect(() => {
@@ -129,13 +160,13 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
             {openConfirmDialog &&
                 <ConfirmDialog
                     title="Registro de nueva venta"
-                    description={`Se realizará una venta ${customerSelected.id !== '' ? `al cliente ${customerSelected.name.toUpperCase()} ${customerSelected.lasName.toUpperCase()}` : ' un cliente SIN REGISTRAR'} por un monto de ${exchangeRateFavorite.Currency.symbol} ${totalAmount()}. ¿Desea continuar?`}
+                    description={`Se realizará una ${docType === 'SALE'? 'venta':'cotización'} ${customerSelected.id !== '' ? `al cliente ${customerSelected.name.toUpperCase()} ${customerSelected.lasName.toUpperCase()}` : ' un cliente SIN REGISTRAR'} por un monto de ${exchangeRateFavorite.Currency.symbol} ${totalAmount()}. ¿Desea continuar?`}
                     closeButton={() => setOpenConfirmDialog(false)}
-                    action={createDocSale}
+                    action={createDocSaleOrQuotation}
                 />
             }
 
-            <div className={`${openShoppingCart ? 'h-[90vh]' : 'h-8'} bg-white rounded-t-lg w-[400px] absolute bottom-0 right-5 transition-all duration-300`} >
+            <div className={`${openShoppingCart ? 'h-[90vh] shadow-2xl' : 'h-8'} bg-white rounded-t-lg w-[400px] absolute bottom-0 right-5 transition-all duration-300`} >
 
                 <button
                     onClick={() => { setOpenShoppingCart(s => !s) }}
@@ -166,18 +197,10 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
                         <div className="flex justify-center" >
                             <div className="mt-auto flex justify-center" >
                                 <button
-                                    className="bg-primary bg-opacity-80 flex items-center rounded-full px-4 py-1 text-white text-[14px] hover:bg-opacity-100 disabled:bg-secondary disabled:cursor-not-allowed"
+                                    onClick={generateProductsSale}
+                                    className="ms-3 bg-primary bg-opacity-80 flex items-center rounded-full px-4 py-1 text-white text-[14px] hover:bg-opacity-100 disabled:bg-secondary disabled:cursor-not-allowed"
                                 >
-                                    <span className="me-2">COTIZAR</span> <IoDocumentTextOutline />
-                                </button>
-                            </div>
-
-                            <div className="mt-auto flex justify-center" >
-                                <button
-                                    onClick={verifyCart}
-                                    className="ms-3 bg-success bg-opacity-80 flex items-center rounded-full px-4 py-1 text-white text-[14px] hover:bg-opacity-100 disabled:bg-secondary disabled:cursor-not-allowed"
-                                >
-                                    <span className="me-2">VENDER</span> <PiMoneyDuotone />
+                                    <span className="me-2">SIGUIENTE</span> <FaArrowRight />
                                 </button>
                             </div>
                         </div>
@@ -281,9 +304,31 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
                             </div>
                         </div>
                         <div className="mt-auto flex justify-center items-center" >
-                            <Button loading={loadingData} color="danger" label="ATRAS" className="me-2" onClick={() => { setOpenCreateSale(false) }} />
-                            <Button loading={loadingData} color="success" label="REALIZAR VENTA" onClick={verifyCreateDocSale} />
-                            {loadingData&& <AiOutlineLoading className="ms-2 animate-spin text-primary"/>}
+                            <button
+                                disabled={loadingData}
+                                onClick={() => { setOpenCreateSale(false) }}
+                                className="me-3 bg-danger bg-opacity-80 flex items-center rounded-full px-2 py-1 text-white text-[14px] hover:bg-opacity-100 disabled:bg-secondary disabled:cursor-not-allowed"
+                            >
+                                <FaArrowLeft /><span className="ms-2">ATRAS</span>
+                            </button>
+
+                            <button
+                                disabled={loadingData}
+                                onClick={createDocQuotation}
+                                className="me-3 bg-info bg-opacity-80 flex items-center rounded-full px-2 py-1 text-white text-[14px] hover:bg-opacity-100 disabled:bg-secondary disabled:cursor-not-allowed"
+                            >
+                                <IoDocumentTextOutline /><span className="ms-2">COTIZAR</span>
+                            </button>
+
+                            <button
+                                disabled={loadingData}
+                                onClick={verifyCreateDocSale}
+                                className="bg-success bg-opacity-80 flex items-center rounded-full px-2 py-1 text-white text-[14px] hover:bg-opacity-100 disabled:bg-secondary disabled:cursor-not-allowed"
+                            >
+                                <PiMoneyDuotone /><span className="ms-2">VENDER</span>
+                            </button>
+
+                            {loadingData && <AiOutlineLoading className="ms-2 animate-spin text-primary" />}
                         </div>
                     </>
                 }

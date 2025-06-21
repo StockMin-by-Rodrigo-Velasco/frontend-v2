@@ -8,21 +8,26 @@ import { AiOutlineLoading } from "react-icons/ai";
 import { IoSearch } from "react-icons/io5";
 import { dateLocalWhitTime } from "../../../../helpers";
 import { BsBoxArrowInUpRight } from "react-icons/bs";
-import { getDocSalesAPI } from "../../../../redux/sales/salesThunk";
+import { getDocQuotationsAPI, getDocSalesAPI } from "../../../../redux/sales/salesThunk";
 import { DateRange, initDateRange } from "../../../../interfaces/formInterface";
-import { DocSale } from "../../../../interfaces";
+import { DocQuotation, DocSale } from "../../../../interfaces";
+import { IoIosCheckmarkCircle } from "react-icons/io";
+import { TiWarning } from "react-icons/ti";
 
 interface ListaVentasCotizacionesProp {
     closeButton: () => void;
+    openDocSale: (doc: DocSale) => void;
+    openDocQuotation: (doc: DocQuotation) => void;
 }
 
 
-export default function SalesAndQuotationsList({ closeButton }: ListaVentasCotizacionesProp) {
+export default function SalesAndQuotationsList({ closeButton, openDocSale, openDocQuotation }: ListaVentasCotizacionesProp) {
     const { loadingData } = useSelector((s: RootState) => s.Aplication);
     const { id: branchId } = useSelector((s: RootState) => s.Branch);
 
     // const [listaCotizacionesVenta, setListaCotizacionesVenta] = useState<CotizacionVenta[]>([])
-    const [docSales, setDocSales] = useState<DocSale[]>([])
+    const [docSales, setDocSales] = useState<DocSale[]>([]);
+    const [docQuotations, setDocQuotations] = useState<DocQuotation[]>([]);
 
     // const [cotizacionData, setCotizacionData] = useState<CotizacionVenta>(initialCotizacion);
     // const [openViewCotizacion, setOpenViewCotizacion] = useState(false);
@@ -33,7 +38,7 @@ export default function SalesAndQuotationsList({ closeButton }: ListaVentasCotiz
     const dispatch = useDispatch<AppDispatch>();
 
     const { data: dateRange, handleInputChange } = useForm<DateRange>(initDateRange);
-    const { data: dataVer, handleInputChange: verHandleChange } = useForm<{ ver: string }>({ ver: 'ventas' });
+    const { data: dataView, handleInputChange: verHandleChange } = useForm<{ ver: string }>({ ver: 'ventas' });
 
     // const getCotizacion = (data: CotizacionVenta) => {
     //     setCotizacionData(data);
@@ -54,8 +59,8 @@ export default function SalesAndQuotationsList({ closeButton }: ListaVentasCotiz
         toStr.setHours(toStr.getHours() + 28); // Ajustamos a la hora de Bolivia
         const to = toStr.getTime().toString();
 
-        // dispatch(getCotizacionesVentaAPI({ desde, hasta, sucursalId }, setListaCotizacionesVenta, "LOADING-DATA-COMPLETE"));
         dispatch(getDocSalesAPI({ from, to, branchId }, setDocSales));
+        dispatch(getDocQuotationsAPI({ from, to, branchId }, setDocQuotations));
     }
 
     useEffect(() => {
@@ -103,7 +108,7 @@ export default function SalesAndQuotationsList({ closeButton }: ListaVentasCotiz
                     name="ver"
                     options={[{ name: 'VENTAS', value: 'ventas' }, { name: 'COTIZACIONES', value: 'cotizaciones' }]}
                     placeholder="Ver: "
-                    value={dataVer.ver}
+                    value={dataView.ver}
                 />
 
             </div>
@@ -111,32 +116,61 @@ export default function SalesAndQuotationsList({ closeButton }: ListaVentasCotiz
             <div className="h-[40vh] overflow-y-scroll scroll-custom ps-2" >
                 <table className=" table-fixed text-left w-full border-collapse border-secondary" >
                     <thead className="bg-secondary text-white sticky top-0 rounded-t-lg">
-                        <tr>
-                            <th className="uppercase text-center w-[40px]">#</th>
-                            <th className="uppercase text-center w-[180px]">FECHA</th>
-                            <th className="uppercase text-center">{dataVer.ver === 'ventas' ? 'CLIENTE':'DETALLE'}</th>
-                            <th className="uppercase text-center w-[80px]">MAS</th>
-                        </tr>
+                        {dataView.ver === 'ventas' ?
+                            <tr>
+                                <th className="uppercase text-center w-[40px]">#</th>
+                                <th className="uppercase text-center w-[180px]">FECHA</th>
+                                <th className="uppercase text-center">CLIENTE</th>
+                                <th className="uppercase text-center w-[100px]">PAGO</th>
+                                <th className="uppercase text-center w-[80px]">MAS</th>
+                            </tr>
+                            :
+                            <tr>
+                                <th className="uppercase text-center w-[40px]">#</th>
+                                <th className="uppercase text-center w-[180px]">FECHA</th>
+                                <th className="uppercase text-center w-[200px]">CLIENTE</th>
+                                <th className="uppercase text-center">DETALLE</th>
+                                <th className="uppercase text-center w-[80px]">MAS</th>
+                            </tr>
+                        }
                     </thead>
                     <tbody>
-                        {dataVer.ver === 'ventas' ?
+                        {dataView.ver === 'ventas' ?
                             <>
-                                {(docSales.length <= 0) && <tr><td colSpan={4}  className="text-center text-secondary" >No se registraron ventas en este rango de fechas.</td></tr>}
-                                {docSales.map(i => (
-                                    <tr key={i.id} className="border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase">
-                                        <td className="text-center" >{i.number}</td>
-                                        <td className="text-center">{dateLocalWhitTime(i.createdAt || '')}</td>
-                                        <td className="text-center">{i.customerName.toUpperCase()}</td>
+                                {(docSales.length <= 0) && <tr><td colSpan={4} className="text-center text-secondary" >No se registraron ventas en este rango de fechas.</td></tr>}
+                                {docSales.map(doc => (
+                                    <tr key={doc.id} className="border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase">
+                                        <td className="text-center" >{doc.number}</td>
+                                        <td className="text-center">{dateLocalWhitTime(doc.createdAt || '')}</td>
+                                        <td className="text-center">{doc.customerName.toUpperCase()}</td>
+                                        <td className="text-center">
+                                            {doc.isPaid ?
+                                                <span className="rounded-full px-2 bg-success/80 text-[12px] flex items-center "><IoIosCheckmarkCircle className="me-auto" /> PAGADO</span>
+                                                :
+                                                <span className="rounded-full px-2 bg-warning text-[12px] flex items-center"><TiWarning className="me-auto" />PENDIENTE</span>
+                                            }
+                                        </td>
                                         <td className="text-center text-secondary">
-                                            <button type="button" onClick={() => {}} ><BsBoxArrowInUpRight /></button>
+                                            <button type="button" onClick={() => { openDocSale(doc) }} ><BsBoxArrowInUpRight /></button>
                                         </td>
                                     </tr>
                                 ))}
                             </>
                             :
                             <>
-                            <h1>Cotizaciones</h1>
-                            {/* {(listaCotizacionesVenta.length <= 0) && <tr><td colSpan={4}  className="text-center text-secondary" >No se registraron cotizaciones en este rango de fechas.</td></tr>}
+                                {(docQuotations.length <= 0) && <tr><td colSpan={4} className="text-center text-secondary" >No se registraron cotizaciones en este rango de fechas.</td></tr>}
+                                {docQuotations.map(doc => (
+                                    <tr key={doc.id} className="border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase">
+                                        <td className="text-center" >{doc.number}</td>
+                                        <td className="text-center">{dateLocalWhitTime(doc.createdAt || '')}</td>
+                                        <td className="text-center">{doc.customerName.toUpperCase()}</td>
+                                        <td className="text-center">{doc.details ? doc.details.toUpperCase() : ''}</td>
+                                        <td className="text-center text-secondary">
+                                            <button type="button" onClick={() => { openDocQuotation(doc) }} ><BsBoxArrowInUpRight /></button>
+                                        </td>
+                                    </tr>
+                                ))}
+                                {/* {(listaCotizacionesVenta.length <= 0) && <tr><td colSpan={4}  className="text-center text-secondary" >No se registraron cotizaciones en este rango de fechas.</td></tr>}
                                 {listaCotizacionesVenta.map(i => (
                                     <tr key={i.id} className="border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase">
                                         <td className="text-center" >{i.numero}</td>
