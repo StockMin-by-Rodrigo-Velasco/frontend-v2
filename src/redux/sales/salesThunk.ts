@@ -5,7 +5,7 @@ import { finishLoadingData, finishLoadingModule, startLoadingData, startLoadingM
 import api from "../../api/config";
 import { createCustomer, createExchangeRate, getCurrencies, getCustomers, getExchangeRateFavorite, getExchangeRates, getPaymentMethods, toggleFavoriteExchangeRate, updateCustomer, updateExchangeRate } from "./salesSlice";
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from "../notification/notificationSlice";
-import { NavigateFunction } from "react-router";
+import { data, NavigateFunction } from "react-router";
 import { createUserWarehouseSale, decrementProductsWarehouse, deleteUserWarehouseSale, getWarehauses, updatePriceProductWarehouse, updateWarehouse } from "../warehouses/warehousesSlice";
 import { updateUser } from "../branch/branchSlice";
 import { getBrands, getCategories, getUnitMeasures, getUnitMeasuresBranch, updateProduct } from "../products/productSlice";
@@ -436,13 +436,14 @@ export const createDocSaleAPI = (createDocSaleDto:CreateDocSaleDto, functionRetu
     }
 }
 
-export const createPaymentAPI = (createPaymentDto:CreatePaymentDto, functionReturn?:(doc: Payment)=>void) => {
+export const createPaymentAPI = (createPaymentDto:CreatePaymentDto, functionReturn?:(payment: Payment, totalAmount:number)=>void) => {
     return async (dispatch: AppDispatch) => {
         try {
             dispatch(startLoadingData());
             const resPayment: AxiosResponse = await api.post(`sale/create-payment`, createPaymentDto);
-            const {data:payment}:{data:Payment} = resPayment.data;
-            if(functionReturn) functionReturn(payment);
+            const {data} = resPayment.data;
+            const {payment, totalAmount}:{payment: Payment, totalAmount:number} = data;
+            if(functionReturn) functionReturn(payment,totalAmount);
             dispatch(finishLoadingData());
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
@@ -450,6 +451,7 @@ export const createPaymentAPI = (createPaymentDto:CreatePaymentDto, functionRetu
                 dispatch(showNotificationError({ tittle: 'REGISTRO DE PAGO', description: data.message }));
                 setTimeout(() => dispatch(hideNotification()), 5000);
             } else console.log(error);
+            dispatch(finishLoadingData());
         }
     }
 }

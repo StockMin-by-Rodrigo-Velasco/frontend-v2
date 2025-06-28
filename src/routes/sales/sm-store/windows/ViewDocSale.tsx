@@ -1,5 +1,5 @@
 import Windows from "../../../../components/Windows";
-import { DocSale, initialDocSale } from "../../../../interfaces";
+import { DocSale, initialDocSale, Payment } from "../../../../interfaces";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { calculatorMultiply, dateLocalWhitTime } from "../../../../helpers";
@@ -8,6 +8,7 @@ import html2canvas from "html2canvas";
 import { getDocSaleAPI } from "../../../../redux/sales/salesThunk";
 import { getBase64FromUrl, printImgB64, shareImgB64 } from "../../../../helpers/imgBase64";
 import { FaPrint, FaShare } from "react-icons/fa";
+import ViewPayments from "./ViewPayments";
 
 interface DocSaleProp {
   docSaleId: string;
@@ -27,6 +28,8 @@ export default function ViewDocSale({ docSaleId, closeButton }: DocSaleProp) {
   const [docSale, setDocSale] = useState<DocSale>(initialDocSale);
   const [logoB64, setLogoB64] = useState('');
 
+  const [openViewPayments, setOpenViewPayments] = useState(false);
+
   const totalAmount = (): string => {
     return docSale.ProductSale.reduce((acc, p) => { return acc + (p.quantity * parseFloat(p.price)) }, 0).toFixed(2);
   }
@@ -41,6 +44,10 @@ export default function ViewDocSale({ docSaleId, closeButton }: DocSaleProp) {
     const newLogoB64 = await getBase64FromUrl(logo);
     setLogoB64(newLogoB64);
     setDocSale(doc);
+  }
+  const addPayment = (payment: Payment, totalAmount:number) => {
+    const total = docSale.ProductSale.reduce((acc, p) => { return acc + (p.quantity * parseFloat(p.price)) }, 0)
+    setDocSale(d => ({...d, Payment: [...d.Payment, payment], isPaid: (totalAmount === total)}));
   }
 
   // const downloadPDF = () => {
@@ -75,7 +82,7 @@ export default function ViewDocSale({ docSaleId, closeButton }: DocSaleProp) {
       // link.click();
     }
   };
-  const printPNG = async() => {
+  const printPNG = async () => {
     if (divRef.current) {
       const canvas = await html2canvas(divRef.current, { scale: 1.5 });
       const imgB64 = canvas.toDataURL("image/png");
@@ -88,6 +95,18 @@ export default function ViewDocSale({ docSaleId, closeButton }: DocSaleProp) {
   }, [])
   return (
     <Windows closeButton={closeButton} tittle={`detalles de venta número ${docSale.number}`}>
+      {openViewPayments &&
+        <ViewPayments 
+        closeButton={() => setOpenViewPayments(false)} 
+        addPayment={addPayment}
+        totalAmount={totalAmount()}
+        currency={docSale.Currency} 
+        docName={`VENTA ${docSale.number}`} 
+        payments={docSale.Payment}
+        docSaleId={docSaleId}
+        />
+      }
+
       <div className="p-3 w-[600px] relative" ref={divRef}>
 
         {loadingData &&
@@ -147,12 +166,13 @@ export default function ViewDocSale({ docSaleId, closeButton }: DocSaleProp) {
           <div className="bg-white px-1 font-semibold" >{docSale.paymentType === 'PAID' ? 'PAGADO' : 'CRÉDITO'}</div>
         </div>
 
-        <div className={`${docSale.isPaid ? 'border-danger bg-danger' : 'border-success bg-success'} ms-2 rounded-full overflow-hidden border flex`}>
+        <div className={`${docSale.isPaid? 'border-success bg-success' : 'border-danger bg-danger'} ms-2 rounded-full overflow-hidden border flex`}>
           <div className="px-1">ESTADO</div>
           <div className="bg-white px-1 font-semibold" >{docSale.isPaid ? 'SIN DEUDA' : 'PENDIENTE DE PAGO'}</div>
         </div>
 
         <button
+          onClick={() => setOpenViewPayments(true)}
           disabled={loadingData}
           className={`border-warning/70 bg-warning/70 ms-2 rounded-full overflow-hidden border flex cursor-pointer hover:border-warning hover:bg-warning disabled:cursor-not-allowed disabled:border-secondary/70 disabled:bg-secondary/70 disabled:text-white`}>
           <div className="px-1">PAGOS</div>

@@ -70,6 +70,7 @@ export interface Payment {
     description?: string;
     docSaleId: string;
     paymentMethodId: string;
+    createdAt?: string;
 
     PaymentMethod: PaymentMethod;
 }

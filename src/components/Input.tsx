@@ -267,7 +267,7 @@ function InputSelect({handleInputChange, value, name, placeholder, required=fals
     <div className = {`${className} relative mt-6`} >
 
       <select
-        className='border-[1px] border-secondary rounded-md focus:outline-none focus:bg-secondary-1 disabled:bg-light/80 disabled:cursor-not-allowed'
+        className='w-full border-[1px] border-secondary rounded-md focus:outline-none focus:bg-secondary-1 disabled:bg-light/80 disabled:cursor-not-allowed'
         name={name}
         id={name}
         onChange={handleInputChange}
