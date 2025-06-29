@@ -5,7 +5,7 @@ import { CreatePaymentDto, Currency, Payment } from "../../../../interfaces";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { InputNumber, InputSelect, InputText } from "../../../../components/Input";
 import { useForm } from "../../../../hooks";
-import { FaCheck } from "react-icons/fa";
+import { FaCheck, FaPlus } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import { FormEvent, useState } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
@@ -14,7 +14,7 @@ import { hideNotification, showNotificationError } from "../../../../redux/notif
 
 interface ViewPaymentsProp {
     closeButton: () => void;
-    addPayment: (payment: Payment, totalAmount:number) => void;
+    addPayment: (payment: Payment, totalAmount: number) => void;
     totalAmount: string;
     payments: Payment[];
     currency: Currency;
@@ -42,8 +42,8 @@ export default function ViewPayments({ closeButton, addPayment, totalAmount, pay
         e.preventDefault();
         const residue = parseFloat(totalAmount) - parseFloat(totalPayment());
 
-        if (residue < parseFloat(data.amount)){ // Verifica que no se este pagando mas que el saldo
-            dispatch(showNotificationError({tittle: 'REGISTRO DE PAGO', description: 'Los pagos superan el monto total de la venta. Verifica el monto cobrado y vuelve a intentar.'}))
+        if (residue < parseFloat(data.amount)) { // Verifica que no se este pagando mas que el saldo
+            dispatch(showNotificationError({ tittle: 'REGISTRO DE PAGO', description: 'Los pagos superan el monto total de la venta. Verifica el monto cobrado y vuelve a intentar.' }))
             setTimeout(() => dispatch(hideNotification()), 5000);
             return;
         }
@@ -75,7 +75,7 @@ export default function ViewPayments({ closeButton, addPayment, totalAmount, pay
                     <tbody>
                         {payments.length === 0 && <tr><td colSpan={4} className="text-center p-3 text-secondary" > No se registró ningún pago </td></tr>}
                         {payments.map((p, i) => (
-                            <tr key={p.id} className={(i%2 === 0)? 'bg-secondary/20':''} >
+                            <tr key={p.id} className={(i % 2 === 0) ? 'bg-secondary/20' : ''} >
                                 <td className="text-center" > <span className="translate-y-[-7px]">{dateLocal(p.createdAt || '')}</span></td>
                                 <td className="text-center" > <span className="translate-y-[-7px]">{p.description}</span></td>
                                 <td className="text-center" > <span className="translate-y-[-7px]">{p.PaymentMethod.name}</span></td>
@@ -88,7 +88,7 @@ export default function ViewPayments({ closeButton, addPayment, totalAmount, pay
                         </tr>
                         <tr className="font-semibold bg-primary/50" >
                             <td colSpan={3} className="text-center"> <span className="translate-y-[-7px]">SALDO</span></td>
-                            <td className="text-end" >{ (parseFloat(totalAmount) - parseFloat(totalPayment())).toFixed(2) }</td>
+                            <td className="text-end" >{(parseFloat(totalAmount) - parseFloat(totalPayment())).toFixed(2)}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -99,14 +99,21 @@ export default function ViewPayments({ closeButton, addPayment, totalAmount, pay
                     {!registerPayment &&
                         <div className="absolute top-0 bottom-0 right-0 left-0 bg-white z-20 flex justify-center items-center">
                             <button
-                                disabled={loadingData}
+                                disabled={loadingData || ((parseFloat(totalAmount) - parseFloat(totalPayment()))<=0)}
                                 onClick={() => setRegisterPayment(true)}
                                 type="button"
                                 className="border-2 border-secondary text-secondary border-dashed w-full h-full px-4 rounded-full hover:bg-secondary/10 disabled:cursor-not-allowed flex justify-center items-center">
-                                {loadingData ? 
-                                    <span className="flex"><AiOutlineLoading className="me-2 animate-spin"/>Registrando pago</span>
+                                {loadingData ?
+                                    <span className="flex"><AiOutlineLoading className="me-2 animate-spin" />Registrando pago</span>
                                     :
-                                    <span>Registrar nuevo pago</span>}
+                                    <>
+                                        {(parseFloat(totalAmount) - parseFloat(totalPayment()))<=0 ?
+                                            <span className="flex items-center" > <FaCheck className="me-2" /> Sin saldo pendiente</span>
+                                            :
+                                            <span className="flex items-center"> <FaPlus className="me-2" /> Registrar nuevo pago</span>
+                                        }
+                                    </>
+                                }
                             </button>
                         </div>
                     }

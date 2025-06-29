@@ -1,12 +1,12 @@
 import axios, { AxiosResponse } from "axios";
-import { Brand, Category, CreateCustomerDto, CreateDocQuotationDto, CreateDocSaleDto, CreateExchangeRateDto, CreatePaymentDto, CreateUserWarehouseSaleDto, Currency, Customer, DocSale as DocQuotation, ExchangeRate, GetDocSaleDto, initialCurrency, Payment, PaymentMethod, Product, UnitMeasure, UnitMeasureBranch, UpdateCustomerDto, UpdateExchangeRateDto, UpdateProductPriceDto, User, Warehouse } from "../../interfaces";
+import { Brand, CancelDocSaleDto, Category, CreateCustomerDto, CreateDocQuotationDto, CreateDocSaleDto, CreateExchangeRateDto, CreatePaymentDto, CreateUserWarehouseSaleDto, Currency, Customer, DocSale as DocQuotation, DocSale, ExchangeRate, GetDocSaleDto, initialCurrency, Payment, PaymentMethod, Product, UnitMeasure, UnitMeasureBranch, UpdateCustomerDto, UpdateExchangeRateDto, UpdateProductPriceDto, User, Warehouse } from "../../interfaces";
 import { AppDispatch, RootState } from "../store"
 import { finishLoadingData, finishLoadingModule, startLoadingData, startLoadingModule } from "../aplication/aplicationSlice";
 import api from "../../api/config";
 import { createCustomer, createExchangeRate, getCurrencies, getCustomers, getExchangeRateFavorite, getExchangeRates, getPaymentMethods, toggleFavoriteExchangeRate, updateCustomer, updateExchangeRate } from "./salesSlice";
 import { hideNotification, showNotificationError, showNotificationSuccess, showNotificationWarning } from "../notification/notificationSlice";
-import { data, NavigateFunction } from "react-router";
-import { createUserWarehouseSale, decrementProductsWarehouse, deleteUserWarehouseSale, getWarehauses, updatePriceProductWarehouse, updateWarehouse } from "../warehouses/warehousesSlice";
+import { NavigateFunction } from "react-router";
+import { createUserWarehouseSale, decrementProductsWarehouse, deleteUserWarehouseSale, getWarehauses, incrementProductsWarehouse, updatePriceProductWarehouse, updateWarehouse } from "../warehouses/warehousesSlice";
 import { updateUser } from "../branch/branchSlice";
 import { getBrands, getCategories, getUnitMeasures, getUnitMeasuresBranch, updateProduct } from "../products/productSlice";
 
@@ -416,12 +416,12 @@ export const getDocSalesAPI = (getDocSales:GetDocSaleDto, functionReturn?:(doc:D
     }
 }
 
-export const createDocSaleAPI = (createDocSaleDto:CreateDocSaleDto, functionReturn?:(doc: DocQuotation)=>void) => {
+export const createDocSaleAPI = (createDocSaleDto:CreateDocSaleDto, functionReturn?:(doc: DocSale)=>void) => {
     return async (dispatch: AppDispatch) => {
         try {
             dispatch(startLoadingData());
             const resDocSale: AxiosResponse = await api.post(`sale/create-doc-sale`, createDocSaleDto);
-            const {data:docSale}:{data:DocQuotation} = resDocSale.data;
+            const {data:docSale}:{data:DocSale} = resDocSale.data;
             if(functionReturn) functionReturn(docSale);
             dispatch(decrementProductsWarehouse(createDocSaleDto.productsSale));
             dispatch(finishLoadingData());
@@ -429,6 +429,26 @@ export const createDocSaleAPI = (createDocSaleDto:CreateDocSaleDto, functionRetu
             if (axios.isAxiosError(error) && error.response) {
                 const { data } = error.response;
                 dispatch(showNotificationError({ tittle: 'DOCUMENTO DE VENTA', description: data.message }));
+                setTimeout(() => dispatch(hideNotification()), 5000);
+            } else console.log(error);
+            dispatch(finishLoadingData());
+        }
+    }
+}
+
+export const cancelDocSaleAPI = (cancelDocSaleDto:CancelDocSaleDto, functionReturn?:(doc: DocSale)=>void) => {
+    return async (dispatch: AppDispatch) => {
+        try {
+            dispatch(startLoadingData());
+            const resDocSale: AxiosResponse = await api.post(`sale/cancel-doc-sale`, cancelDocSaleDto);
+            const {data:docSale}:{data:DocSale} = resDocSale.data;
+            if(functionReturn) functionReturn(docSale);
+            dispatch(incrementProductsWarehouse(cancelDocSaleDto.productsSale));
+            dispatch(finishLoadingData());
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                const { data } = error.response;
+                dispatch(showNotificationError({ tittle: 'ANULACIÓN DE VENTA', description: data.message }));
                 setTimeout(() => dispatch(hideNotification()), 5000);
             } else console.log(error);
             dispatch(finishLoadingData());

@@ -9,13 +9,16 @@ import { getDocSaleAPI } from "../../../../redux/sales/salesThunk";
 import { getBase64FromUrl, printImgB64, shareImgB64 } from "../../../../helpers/imgBase64";
 import { FaPrint, FaShare } from "react-icons/fa";
 import ViewPayments from "./ViewPayments";
+import CancelDocSale from "./CancelDocSale";
+import { TiDelete } from "react-icons/ti";
 
-interface DocSaleProp {
+interface ViewDocSaleProp {
   docSaleId: string;
   closeButton: () => void;
+  completePayment: (docSaleId: string) => void;
 }
 
-export default function ViewDocSale({ docSaleId, closeButton }: DocSaleProp) {
+export default function ViewDocSale({ docSaleId, closeButton, completePayment }: ViewDocSaleProp) {
   const { logo, data } = useSelector((s: RootState) => s.Branch);
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
 
@@ -24,11 +27,11 @@ export default function ViewDocSale({ docSaleId, closeButton }: DocSaleProp) {
   // const tableRef = useRef<HTMLTableElement | null>(null);
   const divRef = useRef<HTMLDivElement>(null);
 
-
   const [docSale, setDocSale] = useState<DocSale>(initialDocSale);
   const [logoB64, setLogoB64] = useState('');
 
   const [openViewPayments, setOpenViewPayments] = useState(false);
+  const [openCancelDocSale, setOpenCancelDocSale] = useState(false);
 
   const totalAmount = (): string => {
     return docSale.ProductSale.reduce((acc, p) => { return acc + (p.quantity * parseFloat(p.price)) }, 0).toFixed(2);
@@ -48,6 +51,7 @@ export default function ViewDocSale({ docSaleId, closeButton }: DocSaleProp) {
   const addPayment = (payment: Payment, totalAmount:number) => {
     const total = docSale.ProductSale.reduce((acc, p) => { return acc + (p.quantity * parseFloat(p.price)) }, 0)
     setDocSale(d => ({...d, Payment: [...d.Payment, payment], isPaid: (totalAmount === total)}));
+    if (totalAmount === total) completePayment(docSale.id);
   }
 
   // const downloadPDF = () => {
@@ -106,6 +110,7 @@ export default function ViewDocSale({ docSaleId, closeButton }: DocSaleProp) {
         docSaleId={docSaleId}
         />
       }
+      {openCancelDocSale && <CancelDocSale closeButton={() => setOpenCancelDocSale(false)} docSale={docSale} />}
 
       <div className="p-3 w-[600px] relative" ref={divRef}>
 
@@ -171,12 +176,25 @@ export default function ViewDocSale({ docSaleId, closeButton }: DocSaleProp) {
           <div className="bg-white px-1 font-semibold" >{docSale.isPaid ? 'SIN DEUDA' : 'PENDIENTE DE PAGO'}</div>
         </div>
 
+        {/* <div className={`border-success bg-success ms-2 rounded-full overflow-hidden border flex`} onClick={() => completePayment(docSale.id)}>
+          <div className="px-1">E</div>
+          <div className="bg-white px-1 font-semibold" >Prueba</div>
+        </div> */}
+
         <button
           onClick={() => setOpenViewPayments(true)}
           disabled={loadingData}
           className={`border-warning/70 bg-warning/70 ms-2 rounded-full overflow-hidden border flex cursor-pointer hover:border-warning hover:bg-warning disabled:cursor-not-allowed disabled:border-secondary/70 disabled:bg-secondary/70 disabled:text-white`}>
           <div className="px-1">PAGOS</div>
           <div className="bg-white px-1 font-semibold" >{docSale.Payment.length}</div>
+        </button>
+
+        <button
+          disabled={loadingData}
+          onClick={() => setOpenCancelDocSale(true)}
+          className="ms-auto flex justify-center items-center px-2 rounded-full border border-danger text-danger bg-white/70 hover:bg-danger hover:text-white disabled:cursor-not-allowed  disabled:bg-secondary/70 disabled:text-white disabled:border-secondary"
+        >
+          <TiDelete className="me-2" /> ANULAR
         </button>
 
         <button

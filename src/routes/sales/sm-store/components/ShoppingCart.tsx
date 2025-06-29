@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ProductShoppingCart from "./ProductShoppingCart";
-import { MdOutlineShoppingCart } from "react-icons/md";
+import { MdOutlineShoppingCart, MdRemoveShoppingCart } from "react-icons/md";
 import { IoIosArrowUp } from "react-icons/io";
 import { ProductCart } from "../../../../interfaces/formInterface";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,13 +25,14 @@ interface ShoppingCartProp {
     toggleProduct: (productId: string) => void;
     openDocSale: (doc: DocSale) => void;
     openDocQuotation: (doc: DocQuotation) => void;
+    cleanProductsCart: () => void;
 }
 interface DataSale {
     customerName: string;
     details: string;
 }
 
-export default function ShoppingCart({ productsCart, handleShoppingCart, setOpenPurchaseSummary, toggleProduct, openDocSale, openDocQuotation }: ShoppingCartProp) {
+export default function ShoppingCart({ productsCart, handleShoppingCart, setOpenPurchaseSummary, toggleProduct, openDocSale, openDocQuotation, cleanProductsCart }: ShoppingCartProp) {
 
     const { loadingData } = useSelector((s: RootState) => s.Aplication);
     const { exchangeRateFavorite, paymentMethods } = useSelector((s: RootState) => s.Sales);
@@ -191,12 +192,25 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
                     <>
                         <div className="h-[82vh] p-2 overflow-y-scroll scroll-custom">
                             {productsCart.map((p, i) => (
-                                <ProductShoppingCart key={p.id} index={i} product={p} toggleProduct={toggleProduct} handleShoppingCart={handleShoppingCart} />
+                                <ProductShoppingCart 
+                                key={p.id} 
+                                index={i} 
+                                product={p} 
+                                toggleProduct={toggleProduct} 
+                                handleShoppingCart={handleShoppingCart} />
                             ))}
                         </div>
                         <div className="flex justify-center" >
                             <div className="mt-auto flex justify-center" >
                                 <button
+                                    disabled = {productsCart.length === 0}
+                                    onClick={cleanProductsCart}
+                                    className="ms-3 bg-danger bg-opacity-80 flex items-center rounded-full px-4 py-1 text-white text-[14px] hover:bg-opacity-100 disabled:bg-secondary disabled:cursor-not-allowed"
+                                >
+                                    <span className="me-2">LIMPIAR</span> <MdRemoveShoppingCart />
+                                </button>
+                                <button
+                                    disabled = {productsCart.length === 0}
                                     onClick={generateProductsSale}
                                     className="ms-3 bg-primary bg-opacity-80 flex items-center rounded-full px-4 py-1 text-white text-[14px] hover:bg-opacity-100 disabled:bg-secondary disabled:cursor-not-allowed"
                                 >

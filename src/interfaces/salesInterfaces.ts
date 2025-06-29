@@ -210,3 +210,13 @@ export interface GetDocSaleDto{
     from: string;
     to: string;
 }
+
+export interface IncrementProductDto {
+    productWarehouseId: string;
+    quantity: number;
+}
+
+export interface CancelDocSaleDto {
+    docSaleId: string;
+    productsSale: IncrementProductDto[]
+}

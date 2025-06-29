@@ -3,7 +3,7 @@ import { InputDateSearch, InputSelectSearch } from "../../../../components/Input
 import Windows from "../../../../components/Windows";
 import { useForm } from "../../../../hooks";
 import { AppDispatch, RootState } from "../../../../redux/store";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
 import { IoSearch } from "react-icons/io5";
 import { dateLocalWhitTime } from "../../../../helpers";
@@ -18,37 +18,24 @@ interface ListaVentasCotizacionesProp {
     closeButton: () => void;
     openDocSale: (doc: DocSale) => void;
     openDocQuotation: (doc: DocQuotation) => void;
+    docSales: DocSale[];
+    setDocSales: React.Dispatch<React.SetStateAction<DocSale[]>>;
+    docQuotations: DocQuotation[];
+    setDocQuotations: React.Dispatch<React.SetStateAction<DocQuotation[]>>
 }
 
 
-export default function SalesAndQuotationsList({ closeButton, openDocSale, openDocQuotation }: ListaVentasCotizacionesProp) {
+export default function SalesAndQuotationsList({ closeButton, openDocSale, openDocQuotation, docSales, setDocSales, docQuotations, setDocQuotations }: ListaVentasCotizacionesProp) {
     const { loadingData } = useSelector((s: RootState) => s.Aplication);
     const { id: branchId } = useSelector((s: RootState) => s.Branch);
 
-    // const [listaCotizacionesVenta, setListaCotizacionesVenta] = useState<CotizacionVenta[]>([])
-    const [docSales, setDocSales] = useState<DocSale[]>([]);
-    const [docQuotations, setDocQuotations] = useState<DocQuotation[]>([]);
-
-    // const [cotizacionData, setCotizacionData] = useState<CotizacionVenta>(initialCotizacion);
-    // const [openViewCotizacion, setOpenViewCotizacion] = useState(false);
-
-    // const [ventaData, setVentaData] = useState<Venta>(initialVenta);
-    // const [openViewVenta, setOpenViewVenta] = useState(false);
+    // const [docSales, setDocSales] = useState<DocSale[]>([]);
+    // const [docQuotations, setDocQuotations] = useState<DocQuotation[]>([]);
 
     const dispatch = useDispatch<AppDispatch>();
 
     const { data: dateRange, handleInputChange } = useForm<DateRange>(initDateRange);
     const { data: dataView, handleInputChange: verHandleChange } = useForm<{ ver: string }>({ ver: 'ventas' });
-
-    // const getCotizacion = (data: CotizacionVenta) => {
-    //     setCotizacionData(data);
-    //     setOpenViewCotizacion(true);
-    // }
-
-    // const getVenta = (data: Venta) => {
-    //     setVentaData(data);
-    //     setOpenViewVenta(true);
-    // }
 
     const filterDocs = () => {
         const fromStr = new Date(dateRange.from);
@@ -67,16 +54,8 @@ export default function SalesAndQuotationsList({ closeButton, openDocSale, openD
         filterDocs();
     }, [])
 
-
     return (
         <Windows tittle="LISTA DE VENTAS Y COTIZACIONES" closeButton={closeButton} >
-
-            {/* {openViewCotizacion && <ViewCotizacion
-                decrementProductos={decrementProductos}
-                cotizacion={cotizacionData}
-                closeButton={() => { setOpenViewCotizacion(false) }}
-            />}
-            {openViewVenta && <ViewVenta venta={ventaData} closeButton={() => { setOpenViewVenta(false) }} />} */}
 
             <div className="flex m-2 ">
                 <InputDateSearch
@@ -170,19 +149,7 @@ export default function SalesAndQuotationsList({ closeButton, openDocSale, openD
                                         </td>
                                     </tr>
                                 ))}
-                                {/* {(listaCotizacionesVenta.length <= 0) && <tr><td colSpan={4}  className="text-center text-secondary" >No se registraron cotizaciones en este rango de fechas.</td></tr>}
-                                {listaCotizacionesVenta.map(i => (
-                                    <tr key={i.id} className="border-b-[1px] border-secondary/50 hover:bg-secondary-1 uppercase">
-                                        <td className="text-center" >{i.numero}</td>
-                                        <td className="text-center">{dateLocalWhitTime(i.createdAt)}</td>
-                                        <td className="text-center">{i.ClienteVenta.nombre} {i.ClienteVenta.apellido}</td>
-                                        <td className="text-center text-secondary">
-                                            <button type="button" onClick={() => { }} ><BsBoxArrowInUpRight /></button>
-                                        </td>
-                                    </tr>
-                                ))} */}
                             </>
-
                         }
                     </tbody>
                 </table>

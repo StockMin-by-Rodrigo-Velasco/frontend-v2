@@ -36,13 +36,21 @@ export default function Store() {
     const [docSaleIdSelected, setDocSaleIdSelected] = useState<string>('');
     const [docQuotationIdSelected, setDocQuotationIdSelected] = useState<string>('');
     const [productsStore, setProductsStore] = useState<ProductStore[]>([]);
-    const { arrayData: productsCart, handleInputChange: handleShoppingCart, replaceData } = useFormArray<ProductCart>([]);
+    const { arrayData: productsCart, handleInputChange: handleShoppingCart, replaceData, resetData } = useFormArray<ProductCart>([]);
+
+    const [docSales, setDocSales] = useState<DocSale[]>([]);
+    const [docQuotations, setDocQuotations] = useState<DocQuotation[]>([]);
 
     const { data: filter, handleInputChange } = useForm<SearchFilter>(initialSerchFilter);
     const filterProducts = (p: ProductStore) => {
         return (p.Product.Category.id === filter.category || filter.category === '') &&
             (p.Product.Brand.id === filter.brand || filter.brand === '') &&
             (p.Product.name.toLowerCase().includes(filter.search.toLowerCase()) || p.Product.code.includes(filter.search.toLocaleLowerCase()))
+    }
+
+    const cleanProductsCart = () => {
+        resetData();
+        setProductsStore(productsStore => productsStore.map(p => ({...p, selected: false})));
     }
 
     const openDocSale = (doc: DocSale) => {
@@ -53,6 +61,11 @@ export default function Store() {
     const openDocQuotation = (doc: DocQuotation) => {
         setDocQuotationIdSelected(doc.id);
         setOpenViewDocQuotation(true);
+    }
+
+    const completePayment = (docSaleId: string) => {
+        const newDocSales = docSales.map(d => d.id === docSaleId? {...d, isPaid:true}:d);
+        setDocSales([...newDocSales]);        
     }
 
     const toggleProduct = (productId: string) => {
@@ -113,14 +126,18 @@ export default function Store() {
     return (
         <>
             {openPurchaseSummary && <PurchaseSummary closeButton={() => { setOpenPurchaseSummary(false) }} productsCart={productsCart} />}
-            {openSalesAndQuotationsList&& 
-                <SalesAndQuotationsList 
-                closeButton={() => setOpenSalesAndQuotationsList(false)}
-                openDocSale={openDocSale}
-                openDocQuotation={openDocQuotation}
+            {openSalesAndQuotationsList &&
+                <SalesAndQuotationsList
+                    closeButton={() => setOpenSalesAndQuotationsList(false)}
+                    openDocSale={openDocSale}
+                    openDocQuotation={openDocQuotation}
+                    docSales={docSales}
+                    setDocSales={setDocSales}
+                    docQuotations={docQuotations}
+                    setDocQuotations={setDocQuotations}
                 />
             }
-            {openViewDocSale && <ViewDocSale closeButton={() => setOpenViewDocSale(false)} docSaleId={docSaleIdSelected} />}
+            {openViewDocSale && <ViewDocSale closeButton={() => setOpenViewDocSale(false)} docSaleId={docSaleIdSelected} completePayment={completePayment} />}
             {openViewDocQuotation && <ViewDocQuotation closeButton={() => setOpenViewDocQuotation(false)} docQuotationId={docQuotationIdSelected} />}
 
             <HeaderSection>
@@ -133,7 +150,7 @@ export default function Store() {
 
                 <div
                     className="w-[200px] flex justify-center items-center border relative overflow-hidden border-primary text-primary rounded-lg ms-auto me-auto transition-all duration-300 cursor-pointer"
-                    onClick={() => {setOpenSalesAndQuotationsList(true)}}
+                    onClick={() => { setOpenSalesAndQuotationsList(true) }}
                 >
                     <span className="uppercase flex" >{warehouses.find(w => w.id === userData.warehouseId)?.name} <span className="ms-2 text-[20px]" ><TbReportAnalytics /></span> </span>
 
@@ -179,6 +196,7 @@ export default function Store() {
                 setOpenPurchaseSummary={setOpenPurchaseSummary}
                 openDocSale={openDocSale}
                 openDocQuotation={openDocQuotation}
+                cleanProductsCart={cleanProductsCart}
             />
             <FooterSection>
                 <p></p>
