@@ -15,7 +15,7 @@ export default function CancelDocSale({ closeButton, docSale }: CancelDocSalePro
 
                 <p className="px-3 text-[12px]">La <span className="font-bold">VENTA {docSale.number}</span> será anulada, lo que significa que los productos que fueron vendidos volverán al almacén de tu elección. Por favor, <span className="font-bold">verifica el almacén de destino</span> y presiona aceptar para realizar la anulación.</p>
 
-                
+                <div className="border border-secondary w-full flex justify-center items-center text-secondary p-2 rounded-full mt-2 cursor-not-allowed" >Anulación de venta en desarrollo</div>
             </div>
         </Windows>
     );
