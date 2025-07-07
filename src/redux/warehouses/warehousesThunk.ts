@@ -213,6 +213,19 @@ export const getProductsWarehouseAPI = (warehouseId?: string, functionReturn?: (
     }
 }
 
+export const getSimpleProductsWarehouseAPI = (warehouseId: string, functionReturn?: (p:ProductWarehouse[]) => void) => {
+    //* Solo devuelve los productos del almacen sin modificar el state global y sin disparar el loading
+    return async () => {
+        try {
+            const resProduct: AxiosResponse = await api.get(`product-warehouse/get-products-warehouse/${warehouseId}`);
+            const { data: products }: { data: ProductWarehouse[] } = resProduct.data;
+            if(functionReturn) functionReturn(products);            
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
 //* ------------------------------- DOC ENTRIES ----------------------------------
 
 export const getDocEntriesAPI = (getDocEntryDto: GetDocEntryDto) => {

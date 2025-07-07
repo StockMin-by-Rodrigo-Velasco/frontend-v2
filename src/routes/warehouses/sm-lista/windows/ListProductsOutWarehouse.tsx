@@ -4,16 +4,16 @@ import logos from "../../../../assets/logos";
 import { FaCheckCircle } from "react-icons/fa";
 import { ProductWarehouseForm } from "../../../../interfaces/formInterface";
 
-
 interface ListProductsOutWarehouseProp {
     closeButton: () => void;
     products: ProductWarehouseForm[]
     setProducts: React.Dispatch<React.SetStateAction<ProductWarehouseForm[]>>;
     checkProduct: (productId: string, e?: React.ChangeEvent<HTMLInputElement>) => void
+    checkAllProducts: (check: boolean) => void;
 }
 
 
-export default function ListProductsOutWarehouse({ closeButton, products, setProducts, checkProduct }: ListProductsOutWarehouseProp) {
+export default function ListProductsOutWarehouse({ closeButton, products, setProducts, checkProduct, checkAllProducts }: ListProductsOutWarehouseProp) {
     const filterProductos = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
         const newData: ProductWarehouseForm[] = products.map(i => (i.name.includes(value) || i.code.includes(value)) ? { ...i, show: true } : { ...i, show: false }
@@ -24,8 +24,8 @@ export default function ListProductsOutWarehouse({ closeButton, products, setPro
     return (
         <Windows tittle="Productos disponibles" closeButton={closeButton} >
             <div className="flex py-2" >
-                <div className="p-2 w-[300px] me-auto">
-                    <div className={` flex items-center rounded-full border-[1px] border-primary px-2`}>
+                <div className="p-2 flex items-center w-full">
+                    <div className={`flex items-center rounded-full border-[1px] border-primary px-2`}>
                         <input
                             className="w-full focus:outline-none"
                             type="search"
@@ -40,6 +40,10 @@ export default function ListProductsOutWarehouse({ closeButton, products, setPro
                         >
                             <IoSearch />
                         </label>
+                    </div>
+                    <div className="ms-auto me-5 flex items-center">
+                        <label htmlFor="check-all" className="me-2 text-secondary text-[14px]">Seleccionar todo</label>
+                        <input type="checkbox" id="check-all" onChange={(e) => checkAllProducts(e.target.checked)} />
                     </div>
                 </div>
             </div>

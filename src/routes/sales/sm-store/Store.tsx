@@ -67,6 +67,11 @@ export default function Store() {
         const newDocSales = docSales.map(d => d.id === docSaleId? {...d, isPaid:true}:d);
         setDocSales([...newDocSales]);        
     }
+    const completeCalcellation = (docSaleId: string) => {
+        const newDocSales = docSales.map(d => d.id === docSaleId? {...d, canceled:true}:d);
+        setDocSales([...newDocSales]);        
+    }
+
 
     const toggleProduct = (productId: string) => {
         let newProductsCart: ProductCart[] = productsCart;
@@ -113,6 +118,7 @@ export default function Store() {
                 },
                 selected: productsCartObj[p.id] ? true : false
             })));
+            cleanProductsCart();
         } else {
             if (userData.warehouseId !== '') {
                 dispatch(showNotificationWarning({
@@ -137,7 +143,7 @@ export default function Store() {
                     setDocQuotations={setDocQuotations}
                 />
             }
-            {openViewDocSale && <ViewDocSale closeButton={() => setOpenViewDocSale(false)} docSaleId={docSaleIdSelected} completePayment={completePayment} />}
+            {openViewDocSale && <ViewDocSale closeButton={() => setOpenViewDocSale(false)} docSaleId={docSaleIdSelected} completeCalcellation={completeCalcellation} completePayment={completePayment} />}
             {openViewDocQuotation && <ViewDocQuotation closeButton={() => setOpenViewDocQuotation(false)} docQuotationId={docQuotationIdSelected} />}
 
             <HeaderSection>

@@ -26,7 +26,7 @@ export default function CreateManyProductsWarehouse({ closeButton }: CreateManyP
   const [openListaProductosRegistrarAlmacenWindow, setOpenListaProductosRegistrarAlmacenWindow] = useState(false);
 
   const createManyProducts = () => {
-    const productsWarehouse: CreateProductWarehouseDto[] = productsForm.filter(p=>p.selected).map(p => {
+    const productsWarehouse: CreateProductWarehouseDto[] = productsForm.filter(p => p.selected && !p.registered).map(p => {
       const quantityInt = typeof p.quantity !== 'number' ? parseInt(p.quantity) : p.quantity;
       const minQuantityInt = typeof p.minQuantity !== 'number' ? parseInt(p.minQuantity) : p.minQuantity;
       return {
@@ -43,6 +43,9 @@ export default function CreateManyProductsWarehouse({ closeButton }: CreateManyP
   const checkProduct = (productId: string, e?: React.ChangeEvent<HTMLInputElement>,) => {
     if (e?.target.checked) setProductsForm(pro => pro.map(p => (p.productId === productId) ? { ...p, selected: true } : p));
     else setProductsForm(pro => pro.map(p => (p.productId === productId) ? { ...p, selected: false, quantity: '0', minQuantity: '0' } : p));
+  }
+  const checkAllProducts = (check: boolean) => {
+    setProductsForm(pro => pro.map(p => (!p.registered) ? { ...p, selected: check } : p));
   }
 
   const changeMinQuantity = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,6 +91,7 @@ export default function CreateManyProductsWarehouse({ closeButton }: CreateManyP
           products={productsForm}
           setProducts={setProductsForm}
           checkProduct={checkProduct}
+          checkAllProducts={checkAllProducts}
         />
       }
       <div className="relative  flex flex-col h-[80vh] overflow-y-scroll scroll-custom ms-2 my-2 ">

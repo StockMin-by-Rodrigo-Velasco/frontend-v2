@@ -5,7 +5,7 @@ import { useForm } from "../../../../hooks";
 import { AppDispatch, RootState } from "../../../../redux/store";
 import { useEffect } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
-import { IoSearch } from "react-icons/io5";
+import { IoCloseCircle, IoSearch } from "react-icons/io5";
 import { dateLocalWhitTime } from "../../../../helpers";
 import { BsBoxArrowInUpRight } from "react-icons/bs";
 import { getDocQuotationsAPI, getDocSalesAPI } from "../../../../redux/sales/salesThunk";
@@ -100,7 +100,7 @@ export default function SalesAndQuotationsList({ closeButton, openDocSale, openD
                                 <th className="uppercase text-center w-[40px]">#</th>
                                 <th className="uppercase text-center w-[180px]">FECHA</th>
                                 <th className="uppercase text-center">CLIENTE</th>
-                                <th className="uppercase text-center w-[100px]">PAGO</th>
+                                <th className="uppercase text-center w-[100px]">ESTADO</th>
                                 <th className="uppercase text-center w-[80px]">MAS</th>
                             </tr>
                             :
@@ -123,10 +123,14 @@ export default function SalesAndQuotationsList({ closeButton, openDocSale, openD
                                         <td className="text-center">{dateLocalWhitTime(doc.createdAt || '')}</td>
                                         <td className="text-center">{doc.customerName.toUpperCase()}</td>
                                         <td className="text-center">
-                                            {doc.isPaid ?
+                                            {(doc.isPaid && !doc.canceled) &&
                                                 <span className="rounded-full px-2 bg-success/80 text-[12px] flex items-center "><IoIosCheckmarkCircle className="me-auto" /> PAGADO</span>
-                                                :
-                                                <span className="rounded-full px-2 bg-warning text-[12px] flex items-center"><TiWarning className="me-auto" />PENDIENTE</span>
+                                            }
+                                            {(!doc.isPaid && !doc.canceled) &&
+                                                <span className="rounded-full px-2 bg-warning text-[12px] flex items-center"><TiWarning className="me-auto" />POR PAGAR</span>
+                                            }
+                                            {doc.canceled &&
+                                                <span className="rounded-full px-2 bg-danger text-[12px] flex items-center"><IoCloseCircle className="me-auto" />ANULADO</span>
                                             }
                                         </td>
                                         <td className="text-center text-secondary">

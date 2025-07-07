@@ -16,9 +16,10 @@ interface ViewDocSaleProp {
   docSaleId: string;
   closeButton: () => void;
   completePayment: (docSaleId: string) => void;
+  completeCalcellation: (docSaleId: string) => void;
 }
 
-export default function ViewDocSale({ docSaleId, closeButton, completePayment }: ViewDocSaleProp) {
+export default function ViewDocSale({ docSaleId, closeButton, completePayment, completeCalcellation }: ViewDocSaleProp) {
   const { logo, data } = useSelector((s: RootState) => s.Branch);
   const { loadingData } = useSelector((s: RootState) => s.Aplication);
 
@@ -48,9 +49,9 @@ export default function ViewDocSale({ docSaleId, closeButton, completePayment }:
     setLogoB64(newLogoB64);
     setDocSale(doc);
   }
-  const addPayment = (payment: Payment, totalAmount:number) => {
+  const addPayment = (payment: Payment, totalAmount: number) => {
     const total = docSale.ProductSale.reduce((acc, p) => { return acc + (p.quantity * parseFloat(p.price)) }, 0)
-    setDocSale(d => ({...d, Payment: [...d.Payment, payment], isPaid: (totalAmount === total)}));
+    setDocSale(d => ({ ...d, Payment: [...d.Payment, payment], isPaid: (totalAmount === total) }));
     if (totalAmount === total) completePayment(docSale.id);
   }
 
@@ -100,19 +101,26 @@ export default function ViewDocSale({ docSaleId, closeButton, completePayment }:
   return (
     <Windows closeButton={closeButton} tittle={`detalles de venta número ${docSale.number}`}>
       {openViewPayments &&
-        <ViewPayments 
-        closeButton={() => setOpenViewPayments(false)} 
-        addPayment={addPayment}
-        totalAmount={totalAmount()}
-        currency={docSale.Currency} 
-        docName={`VENTA ${docSale.number}`} 
-        payments={docSale.Payment}
-        docSaleId={docSaleId}
+        <ViewPayments
+          closeButton={() => setOpenViewPayments(false)}
+          addPayment={addPayment}
+          totalAmount={totalAmount()}
+          currency={docSale.Currency}
+          docName={`VENTA ${docSale.number}`}
+          payments={docSale.Payment}
+          docSaleId={docSaleId}
         />
       }
-      {openCancelDocSale && <CancelDocSale closeButton={() => setOpenCancelDocSale(false)} docSale={docSale} />}
+      {openCancelDocSale &&
+        <CancelDocSale
+          closeButton={() => setOpenCancelDocSale(false)}
+          docSale={docSale}
+          completeCalcellation={completeCalcellation}
+          setDocSale={setDocSale}
+        />
+      }
 
-      <div className="p-3 w-[600px] relative" ref={divRef}>
+      <div className="p-3 w-[610px] relative" ref={divRef}>
 
         {loadingData &&
           <div className="flex bg-white rounded justify-center items-center absolute top-0 right-0 left-0 bottom-0" >
@@ -171,36 +179,37 @@ export default function ViewDocSale({ docSaleId, closeButton, completePayment }:
           <div className="bg-white px-1 font-semibold" >{docSale.paymentType === 'PAID' ? 'PAGADO' : 'CRÉDITO'}</div>
         </div>
 
-        <div className={`${docSale.isPaid? 'border-success bg-success' : 'border-danger bg-danger'} ms-2 rounded-full overflow-hidden border flex`}>
-          <div className="px-1">ESTADO</div>
-          <div className="bg-white px-1 font-semibold" >{docSale.isPaid ? 'SIN DEUDA' : 'PENDIENTE DE PAGO'}</div>
+        <div className={`${docSale.isPaid ? 'border-success bg-success' : 'border-danger bg-danger'} ms-2 rounded-full overflow-hidden border flex`}>
+          <div className="px-1 text-white">ESTADO</div>
+          {docSale.canceled ?
+            <div className="bg-white px-1 font-semibold" >ANULADO</div>
+            :
+            <div className="bg-white px-1 font-semibold" >{docSale.isPaid ? 'SIN DEUDA' : 'PENDIENTE DE PAGO'}</div>
+          }
         </div>
 
-        {/* <div className={`border-success bg-success ms-2 rounded-full overflow-hidden border flex`} onClick={() => completePayment(docSale.id)}>
-          <div className="px-1">E</div>
-          <div className="bg-white px-1 font-semibold" >Prueba</div>
-        </div> */}
-
         <button
-          onClick={() => setOpenViewPayments(true)}
-          disabled={loadingData}
+          onClick={() => { if (!docSale.canceled) setOpenViewPayments(true) }}
+          disabled={loadingData || docSale.canceled}
           className={`border-warning/70 bg-warning/70 ms-2 rounded-full overflow-hidden border flex cursor-pointer hover:border-warning hover:bg-warning disabled:cursor-not-allowed disabled:border-secondary/70 disabled:bg-secondary/70 disabled:text-white`}>
           <div className="px-1">PAGOS</div>
           <div className="bg-white px-1 font-semibold" >{docSale.Payment.length}</div>
         </button>
 
-        <button
-          disabled={loadingData}
-          onClick={() => setOpenCancelDocSale(true)}
-          className="ms-auto flex justify-center items-center px-2 rounded-full border border-danger text-danger bg-white/70 hover:bg-danger hover:text-white disabled:cursor-not-allowed  disabled:bg-secondary/70 disabled:text-white disabled:border-secondary"
-        >
-          <TiDelete className="me-2" /> ANULAR
-        </button>
+        {!docSale.canceled &&
+          <button
+            disabled={loadingData}
+            onClick={() => setOpenCancelDocSale(true)}
+            className="ms-auto flex justify-center items-center px-1 rounded-full border border-danger text-danger bg-white/70 hover:bg-danger hover:text-white disabled:cursor-not-allowed  disabled:bg-secondary/70 disabled:text-white disabled:border-secondary"
+          >
+            <TiDelete className="me-1" /> ANULAR
+          </button>
+        }
 
         <button
           disabled={loadingData}
           onClick={downloadPNG}
-          className="ms-auto flex justify-center items-center px-2 rounded-full border border-primary text-primary bg-white/70 hover:bg-primary hover:text-white disabled:cursor-not-allowed  disabled:bg-secondary/70 disabled:text-white disabled:border-secondary"
+          className={`${docSale.canceled ? 'ms-auto' : 'ms-2'} flex justify-center items-center px-2 rounded-full border border-primary text-primary bg-white/70 hover:bg-primary hover:text-white disabled:cursor-not-allowed  disabled:bg-secondary/70 disabled:text-white disabled:border-secondary`}
         >
           <FaShare className="me-2" /> COMPARTIR
         </button>

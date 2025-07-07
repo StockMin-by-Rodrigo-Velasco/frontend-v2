@@ -92,6 +92,13 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
         setOpenConfirmDialog(true);
     }
 
+    const cleanDataShoppingCart = () => {
+        cleanProductsCart();
+        setOpenShoppingCart(false);
+        setCustomerSelected(initialCustomer); 
+        replaceData('customerName', '')
+    }
+
     const createDocQuotation = () => {
         if (productsSale.length <= 0) {
             dispatch(showNotificationError({ tittle: 'Registro de nueva venta', description: 'El carrito de compras no contiene productos dentro, por favor agregue productos e inténtelo de nuevo.' }));
@@ -127,7 +134,7 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
             }
             if (customerSelected.id !== '') doc.customerId = customerSelected.id;
             // console.log('venta',doc);
-            dispatch(createDocSaleAPI(doc, openDocSale));
+            dispatch(createDocSaleAPI(doc, (doc: DocSale) => {cleanDataShoppingCart();openDocSale(doc)}));
         }else if (docType === 'QUOTATION'){
             const newProductsSale = productsSale.map(({productWarehouseId, ...p})=>p);
             const doc: CreateDocQuotationDto = {
@@ -140,7 +147,7 @@ export default function ShoppingCart({ productsCart, handleShoppingCart, setOpen
             }
             if (customerSelected.id !== '') doc.customerId = customerSelected.id;
             // console.log('cotizacion',doc);
-            dispatch(createDocQuotationAPI(doc, openDocQuotation));
+            dispatch(createDocQuotationAPI(doc, (doc: DocQuotation) => {cleanDataShoppingCart();openDocQuotation(doc)}));
         }
     }
 

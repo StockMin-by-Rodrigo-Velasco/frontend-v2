@@ -88,6 +88,7 @@ export interface DocSale {
     currencyId: string;
     isPaid: boolean;
     createdAt?: string;
+    canceled: boolean;
 
     User: User;
     Currency: Currency;
@@ -95,7 +96,7 @@ export interface DocSale {
     Payment: Payment[];
     ProductSale: ProductSale[];
 }
-export const initialDocSale: DocSale = { id: '', number:0, paymentType: 'PAID', customerName: '', details: '', customerId: '', branchId: '', userId: '', currencyId: '', isPaid:false, createdAt: '', User: initialUser, Currency: initialCurrency, Customer: initialCustomer, Payment: [], ProductSale: [] }
+export const initialDocSale: DocSale = { id: '', number:0, paymentType: 'PAID', customerName: '', details: '', customerId: '', branchId: '', userId: '', currencyId: '', isPaid:false, canceled:false, createdAt: '', User: initialUser, Currency: initialCurrency, Customer: initialCustomer, Payment: [], ProductSale: [] }
 
 export interface DocQuotation {
     id: string;
