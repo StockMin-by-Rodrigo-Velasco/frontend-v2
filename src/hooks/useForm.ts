@@ -54,7 +54,7 @@ export function useFormArray<T>( array: T[])
         const { value, name, type } = e.target;
         const prop = name.split(':')[0]; // Nombre de la propiedad del objeto
         const index = parseInt(name.split(':')[1]); // Lugar del objeto en el array
-        let newArray = arrayData;
+        const newArray = arrayData;
 
         newArray[index] = {...newArray[index], [prop]: (value==='' && type==='number')? '0' : value };
         setArrayData([...newArray]);
