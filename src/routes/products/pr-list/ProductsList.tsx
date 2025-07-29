@@ -81,9 +81,9 @@ export default function ProductsList() {
     const { value, name } = e.target;
     const newFilter = { ...filter, [name]: value };
     const newData = products.filter(i =>
-      i.Category.name.includes(newFilter.category) &&
-      i.Brand.name.includes(newFilter.brand) &&
-      (i.name.includes(newFilter.search) || i.code.includes(newFilter.search))
+      i.Category.name.includes(newFilter.category.toLowerCase()) &&
+      i.Brand.name.includes(newFilter.brand.toLowerCase()) &&
+      (i.name.includes(newFilter.search.toLowerCase()) || i.code.includes(newFilter.search.toLowerCase()))
     );
 
     const newListProducts: ProductoForDataTable[] = newData.map(p => ({

@@ -64,9 +64,9 @@ export default function WarehouseSelected() {
     const { value, name } = e.target;
     const newFilter = { ...filter, [name]: value };
     const newData = productsWarehouse.filter(p =>
-      p.Product.Category.id.includes(newFilter.category) &&
-      p.Product.Brand.id.includes(newFilter.brand) &&
-      (p.Product.name.includes(newFilter.search) || p.Product.code.includes(newFilter.search))
+      p.Product.Category.id.includes(newFilter.category.toLowerCase()) &&
+      p.Product.Brand.id.includes(newFilter.brand.toLowerCase()) &&
+      (p.Product.name.includes(newFilter.search.toLowerCase()) || p.Product.code.includes(newFilter.search.toLowerCase()))
     )
     setFilteredProducts(newData);
     setFilter(newFilter);
