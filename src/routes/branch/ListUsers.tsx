@@ -44,7 +44,7 @@ export default function ListUsers() {
       {openLoginSuperUser&& <LoginSuperUser  branchId={branchId} closeButton={()=>{setOpenLoginSuperUser(false)}} />}
       {openLoginUser&& <LoginUser branchId={branchId} userId={userIdSelected}  closeButton={()=>{setOpenLoginUser(false)}} />}
 
-      <div className=" max-w-[450px] rounded-[20px] bg-white flex flex-col items-center justify-center">
+      <div className="w-full h-full bg-white flex flex-col items-center justify-center relative pb-6 md:max-w-[450px] md:h-auto md:rounded-[20px]">
         <img src={logo} alt="logoEmpresa" width={'400px'} className="m-8" onDoubleClick={()=>{setOpenLoginSuperUser(true)}} />
 
         <div className="flex w-full px-9" >
@@ -64,7 +64,7 @@ export default function ListUsers() {
               </div>
           ))}
         </div>
-        <div className="flex p-2 border-t-[1px] border-secondary w-full">
+        <div className="flex p-2 border-t-[1px] border-secondary w-full absolute bottom-0">
           <span className="ms-auto me-2 text-[12px] text-secondary" >Desde </span>
           <img className="me-3" src={logos.logoHorizontal} alt="logoStockMin" width={'80px'} />
         </div>

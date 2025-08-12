@@ -37,7 +37,7 @@ export default function LoginBranch() {
             {loadingApplication && <LoadingApplication />}
 
             <div className="w-full h-screen bg-light flex items-center justify-center" >
-                <div className="p-10 rounded-[20px] bg-white flex flex-col items-center justify-center" >
+                <div className="w-full h-full p-10 bg-white flex flex-col items-center justify-center md:w-auto md:h-auto md:rounded-[20px]" >
                     <img src={logos.logoVertical} alt="logo-vertical" width={'400px'} />
 
                     <form className='mt-10' onSubmit={onSubmit}>
