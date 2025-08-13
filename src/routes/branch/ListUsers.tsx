@@ -45,7 +45,7 @@ export default function ListUsers() {
       {openLoginUser&& <LoginUser branchId={branchId} userId={userIdSelected}  closeButton={()=>{setOpenLoginUser(false)}} />}
 
       <div className="w-full h-full bg-white flex flex-col items-center justify-center relative pb-6 md:max-w-[450px] md:h-auto md:rounded-[20px]">
-        <img src={logo} alt="logoEmpresa" width={'400px'} className="m-8" onDoubleClick={()=>{setOpenLoginSuperUser(true)}} />
+        <img src={logo} alt="logoEmpresa" className="m-8 w-[300px] md:w-[400px]" onDoubleClick={()=>{setOpenLoginSuperUser(true)}} />
 
         <div className="flex w-full px-9" >
           <p className="font-semibold">Elige tu usuario:</p>

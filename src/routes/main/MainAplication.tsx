@@ -17,11 +17,11 @@ export default function MainAplication() {
     dispatch(getBranchModuleDataAPI(navigate));
   }, [])
   return (
-    <div className="w-screen h-screen bg-light p-2 flex" >
+    <div className="w-screen h-screen bg-light p-0 md:p-2 flex relative" >
       {showNotification && <Notification />}
       {loadingApplication && <LoadingApplication />}
       <Navbar />
-      <div className="flex flex-col p-2 w-full h-full bg-white ms-2 rounded overflow-hidden relative" >
+      <div className="flex flex-col p-2 w-full h-full bg-white md:ms-2 rounded overflow-hidden relative" >
         <Outlet />
       </div>
     </div>

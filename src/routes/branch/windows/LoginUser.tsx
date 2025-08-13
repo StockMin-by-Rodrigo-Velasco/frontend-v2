@@ -31,15 +31,15 @@ export default function LoginUser({ userId: id, branchId, closeButton }: LoginUs
   return (
     <div className="absolute bg-black bg-opacity-80 w-full h-full flex items-center justify-center z-30" >
       <button onClick={closeButton} className="text-white">
-        <IoCloseSharp className="text-5xl absolute top-16 right-16"/>
+        <IoCloseSharp className="text-5xl absolute top-10 right-10 md:top-16 md:right-16"/>
       </button>
       <form
         className="text-white flex flex-col justify-center items-center"
         onSubmit={handleSubmit}
       >
-        <h1 className="font-bold text-3xl" >Ingresa tu contraseña:</h1>
+        <h1 className="font-bold text-2xl md:text-3xl" >Ingresa tu contraseña:</h1>
         <input
-          className={`bg-transparent w-96 mt-10 mb-2 text-3xl border-4 p-3 ${description ? 'border-danger' : 'border-white'} rounded-lg focus:outline-none disabled:border-secondary-2 disabled:cursor-not-allowed`}
+          className={`bg-transparent w-80 md:w-96 mt-10 mb-2 text-3xl border-4 p-3 ${description ? 'border-danger' : 'border-white'} rounded-lg focus:outline-none disabled:border-secondary-2 disabled:cursor-not-allowed`}
           onChange={handleInputChange}
           value={data.password}
           name="password"

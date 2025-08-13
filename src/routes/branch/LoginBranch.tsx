@@ -40,13 +40,13 @@ export default function LoginBranch() {
                 <div className="w-full h-full p-10 bg-white flex flex-col items-center justify-center md:w-auto md:h-auto md:rounded-[20px]" >
                     <img src={logos.logoVertical} alt="logo-vertical" width={'400px'} />
 
-                    <form className='mt-10' onSubmit={onSubmit}>
+                    <form className='mt-10 flex justify-center items-center flex-col ' onSubmit={onSubmit}>
                         <InputLoginText
                             handleInputChange={handleInputChange}
                             name='code'
                             placeholder='Ingrese el codigo de su sucursal'
                             value={data.code}
-                            className='w-96'
+                            className='w-80 md:w-96'
                             required={true}
                         />
 
@@ -55,7 +55,7 @@ export default function LoginBranch() {
                             name='password'
                             placeholder='Ingrese su contraseña'
                             value={data.password}
-                            className='w-96'
+                            className='w-80 md:w-96'
                             required={true}
                         />
                         <div className='flex justify-center items-center mt-6' >
