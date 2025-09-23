@@ -81,7 +81,7 @@ export const getBranchModuleDataAPI = (navigate: (path: string) => void) => {
                     dispatch(getUsers(users));
 
                     dispatch(finishLoadingAplication());
-                    navigate('/main');
+                    navigate('/main/products');
                 } else {
 
                     dispatch(finishLoadingAplication());
@@ -92,6 +92,7 @@ export const getBranchModuleDataAPI = (navigate: (path: string) => void) => {
                 navigate('/');
             }
         } catch (error) {
+            console.log(error)
             dispatch(finishLoadingAplication());
         }
     }

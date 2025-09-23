@@ -1,8 +1,8 @@
 import DataTable, { DataTableColumnTypes, DataTableColumnInterface } from "../../../components/DataTable";
 import HeaderSection from "../../../components/HeaderSection"
 import BodySection from '../../../components/BodySection';
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store";
 import { useEffect, useState } from "react";
 import { InputSearch, InputSelectSearch } from "../../../components/Input";
 import UpdateProduct from "./windows/UpdateProduct";
@@ -10,6 +10,7 @@ import { FaPlus } from "react-icons/fa";
 import CreateProduct from "./windows/CreateProduct";
 import { Product } from "../../../interfaces";
 import FooterSection from '../../../components/FooterSection';
+import { handleSearch, toggleActiveSearch } from "../../../redux/aplication/aplicationSlice";
 
 
 interface ProductoForDataTable extends Product {
@@ -56,6 +57,7 @@ const filterInitialState: FilterInterface = {
 
 export default function ProductsList() {
   const { products, brands, categories } = useSelector((s: RootState) => s.Products);
+  const dispatch = useDispatch<AppDispatch>();
 
   const [filter, setFilter] = useState<FilterInterface>(filterInitialState);
   const [filteredProducto, setFilteredProducto] = useState<ProductoForDataTable[]>([]);
@@ -104,6 +106,9 @@ export default function ProductsList() {
       category: p.Category.name
     }))
     setFilteredProducto([...newListaProductos]);
+
+    dispatch(toggleActiveSearch(true));
+    dispatch(handleSearch(''));
   }, [products]);
   return (
     <>

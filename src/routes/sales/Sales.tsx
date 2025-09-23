@@ -7,7 +7,7 @@ import { getSalesModuleDataAPI } from "../../redux/sales/salesThunk";
 
 
 export default function Sales() {
-  const { loadingApplication } = useSelector((s: RootState) => s.Aplication);
+  const { loadingModule } = useSelector((s: RootState) => s.Aplication);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
@@ -19,7 +19,7 @@ export default function Sales() {
 
   return (
     <>
-      { loadingApplication&& <LoadingModule title="Cargando datos de la tienda" />}
+      { loadingModule&& <LoadingModule title="Cargando datos de la tienda" />}
       <Outlet />
     </>
   );

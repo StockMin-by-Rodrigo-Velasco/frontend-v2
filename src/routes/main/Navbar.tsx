@@ -1,24 +1,18 @@
 import logos from "../../assets/logos";
-import { NavLink, useLocation, useNavigate } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../redux/store";
+import { NavLink, useLocation } from "react-router";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 import { FaRegUser } from "react-icons/fa";
-import { TbHistory, TbLock, TbLogout2 } from "react-icons/tb";
+import { TbHistory, TbLock } from "react-icons/tb";
 import { BiObjectsHorizontalLeft } from "react-icons/bi";
 import { MdOutlineShoppingCart } from "react-icons/md";
 
-import { useState } from 'react';
-import UserProfile from "./windows/UserProfile";
-import { perfilColor, perfilImg } from "../../assets/profile";
 import { CiBoxes, CiCircleList } from "react-icons/ci";
-import { logoutUserAPI } from "../../redux/branch/branchThunk";
 import { LuSettings, LuWarehouse } from "react-icons/lu";
 import { AiOutlineShop } from "react-icons/ai";
 import { FiUsers } from "react-icons/fi";
 import { GrTransaction } from "react-icons/gr";
-import { HiMenuAlt2 } from "react-icons/hi";
-
 
 interface SubTitle {
     title: string;
@@ -33,14 +27,14 @@ interface Module {
     subTitles: SubTitle[];
 }
 
+
 export default function Navbar() {
     const { pathname } = useLocation();
     const { loadingModule } = useSelector((s: RootState) => s.Aplication);
     const { userData, permissions: listaPermisos } = useSelector((s: RootState) => s.Branch);
-    const dispatch = useDispatch<AppDispatch>();
-    const navigate = useNavigate();
-    const [viewPerfil, setViewPerfil] = useState(false);
-    const [isVisible, setIsVisible] = useState(false);
+    const { minNavbar } = useSelector((s: RootState) => s.Aplication);
+    // const dispatch = useDispatch<AppDispatch>();
+    // const navigate = useNavigate();
 
     const productsModulePermissions: Record<string, string> = {};
     const warehousesPermissionsModule: Record<string, string> = {};
@@ -151,17 +145,14 @@ export default function Navbar() {
     ]
 
 
-    const logout = () => {
-        dispatch(logoutUserAPI(navigate));
-    }
+    // const logout = () => {
+    //     dispatch(logoutUserAPI(navigate));
+    // }
 
     return (
         <>
-            <button className="md:hidden absolute top-1 left-1 z-30 bg-primary text-white text-2xl rounded" onClick={() => setIsVisible(true)} ><HiMenuAlt2 /></button>
-            {isVisible&& <div className={`bg-black/30 absolute top-0 left-0 right-0 bottom-0 z-30 md:hidden`} onClick={() => setIsVisible(false)}></div>}
             <div
-                className={`${isVisible?'flex flex-col':'hidden md:flex md:flex-col'} bg-primary w-[220px] md:w-[270px] absolute z-30 h-full md:h-auto md:relative md:z-0 items-center text-white md:rounded`} >
-                {viewPerfil && <UserProfile closeButton={() => setViewPerfil(false)} />}
+                className={`${minNavbar ? '-left-[220px] md:-left-[220px]' : 'left-0 md:left-2'} flex flex-col transition-all duration-500 top-0 bottom-0 items-center text-white z-40 md:w-[220px] md:my-2 px-2 bg-primary absolute h-full md:h-auto md:rounded`} >
                 <img src={logos.logoVerticalWhite} width={'150px'} className="mt-3 mb-10" />
                 {modules.map(i => (
                     <div key={i.path} className="mb-2" >
@@ -204,10 +195,10 @@ export default function Navbar() {
                     </div>
                 ))}
 
-                <div className="w-full mt-auto p-2 flex items-center">
+                {/* <div className="w-full mt-auto p-2 flex items-center">
                     <div className="flex justify-center items-center w-8 h-8 rounded cursor-pointer transition-all duration-300 hover:w-9 hover:h-9"
                         style={{ backgroundColor: perfilColor(userData.profile.split(' ')[1]) }}
-                        onClick={() => { setViewPerfil(true) }}
+                        onClick={() => { setViewProfile(true) }}
                     >
                         <img src={perfilImg(userData.profile.split(' ')[0])} width='30px' />
                     </div>
@@ -221,8 +212,10 @@ export default function Navbar() {
                         className="bg-danger bg-opacity-70 h-8 rounded flex justify-center items-center px-1 ms-auto hover:bg-opacity-100">
                         <TbLogout2 />
                     </button>
-                </div>
+                </div> */}
             </div>
         </>
+
+
     );
 }

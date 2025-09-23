@@ -15,7 +15,7 @@ import FooterSection from "../../../components/FooterSection";
 import ShoppingCart from "./components/ShoppingCart";
 import PurchaseSummary from "./windows/PurchaseSummary";
 import ViewDocSale from "./windows/ViewDocSale";
-import { DocQuotation, DocSale } from "../../../interfaces";
+import { DocQuotation, DocSale, MoneyCollected } from "../../../interfaces";
 import SalesAndQuotationsList from "./windows/SalesAndQuotationsList";
 import ViewDocQuotation from "./windows/ViewDocQuotation";
 
@@ -39,6 +39,7 @@ export default function Store() {
     const { arrayData: productsCart, handleInputChange: handleShoppingCart, replaceData, resetData } = useFormArray<ProductCart>([]);
 
     const [docSales, setDocSales] = useState<DocSale[]>([]);
+    const [moneyCollected, setMoneyCollected] = useState<MoneyCollected>({})
     const [docQuotations, setDocQuotations] = useState<DocQuotation[]>([]);
 
     const { data: filter, handleInputChange } = useForm<SearchFilter>(initialSerchFilter);
@@ -72,10 +73,32 @@ export default function Store() {
         setDocSales([...newDocSales]);        
     }
 
+    const getListDocSales = (docs: DocSale[]) => {
+        setDocSales(docs)
+        const newMoneyCollected: MoneyCollected = {}
+
+        for (let i = 0; i < docs.length; i++) {
+            const key = docs[i].Currency.code
+            const paymets = docs[i].Payment
+
+            if(newMoneyCollected[key] === undefined) newMoneyCollected[key] = {}
+
+            for (let p = 0; p < paymets.length; p++) {
+                const amount = parseFloat(paymets[p].amount)
+                const code = paymets[p].PaymentMethod.code
+
+                if(code in newMoneyCollected[key]) newMoneyCollected[key][code] += amount
+                else newMoneyCollected[key][code] = amount  
+            } 
+        }
+
+        setMoneyCollected(newMoneyCollected)
+    }
+
 
     const toggleProduct = (productId: string) => {
         let newProductsCart: ProductCart[] = productsCart;
-        let newProductsStore: ProductStore[] = productsStore;
+        const newProductsStore: ProductStore[] = productsStore;
 
         for (let i = 0; i < newProductsStore.length; i++) {
             if (newProductsStore[i].Product.id === productId) {
@@ -85,7 +108,7 @@ export default function Store() {
                     newProductsCart = newProductsCart.filter(ps => ps.Product.id !== Product.id);
                 } else {
                     newProductsStore[i].selected = true;
-                    const { selected, ...res } = newProductsStore[i];
+                    const { selected, ...res } = newProductsStore[i]
                     newProductsCart = [{ ...res, quantityCart: 1, priceCart: res.Product.price || '0' }, ...newProductsCart];
                 }
             }
@@ -138,7 +161,9 @@ export default function Store() {
                     openDocSale={openDocSale}
                     openDocQuotation={openDocQuotation}
                     docSales={docSales}
+                    moneyCollected={moneyCollected}
                     setDocSales={setDocSales}
+                    getListDocSales={getListDocSales}
                     docQuotations={docQuotations}
                     setDocQuotations={setDocQuotations}
                 />

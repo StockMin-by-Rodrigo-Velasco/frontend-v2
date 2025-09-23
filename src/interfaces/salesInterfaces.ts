@@ -98,6 +98,12 @@ export interface DocSale {
 }
 export const initialDocSale: DocSale = { id: '', number:0, paymentType: 'PAID', customerName: '', details: '', customerId: '', branchId: '', userId: '', currencyId: '', isPaid:false, canceled:false, createdAt: '', User: initialUser, Currency: initialCurrency, Customer: initialCustomer, Payment: [], ProductSale: [] }
 
+export type MoneyCollected = { //key: currencyId | subkey: paymentMethodId | value: ammount 
+    [key:string]:{
+        [subkey:string]:number
+    }
+}
+
 export interface DocQuotation {
     id: string;
     number: number; 

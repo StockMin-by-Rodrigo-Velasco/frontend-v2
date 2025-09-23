@@ -1,16 +1,20 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 
 interface AplicationInterface {
     loadingData: boolean;
     loadingApplication: boolean;
     loadingModule: boolean;
+    minNavbar: boolean;
+    searching: {active: boolean, value: string};
 }
 
 const initialState: AplicationInterface = {
     loadingData: false,
     loadingApplication: false,
     loadingModule: false,
+    minNavbar: false,
+    searching: {active: true, value:''}
 }
 
 const AplicationSlice = createSlice({
@@ -34,6 +38,15 @@ const AplicationSlice = createSlice({
     },
     finishLoadingModule: (state) => {
         state.loadingModule = false;
+    },
+    minimizeNavbar: (state, action: PayloadAction<boolean>) => {
+        state.minNavbar = action.payload;
+    },
+    handleSearch: (state, action: PayloadAction<string> ) => {
+        state.searching.value = action.payload
+    },
+    toggleActiveSearch: (state, action: PayloadAction<boolean> ) => {
+        state.searching.active = action.payload
     }
   }
 });
@@ -47,6 +60,11 @@ export const {
 
     startLoadingModule,
     finishLoadingModule,
+
+    minimizeNavbar,
+
+    handleSearch,
+    toggleActiveSearch
 } = AplicationSlice.actions
 
 export default AplicationSlice.reducer

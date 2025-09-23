@@ -3,7 +3,7 @@ import Accordion from '../../../components/Accordion';
 import BodySection from '../../../components/BodySection';
 import DataTable, { DataTableColumnInterface, DataTableColumnTypes } from '../../../components/DataTable';
 import { AppDispatch, RootState } from '../../../redux/store';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import UpdateCategory from './windows/UpdateCategory';
 import UpdateBrand from './windows/UpdateBrand';
 import { FaPlus } from 'react-icons/fa';
@@ -12,6 +12,7 @@ import CreateCategory from './windows/CreateCategory';
 import AddUnitMeasure from './windows/AddUnitMeasure';
 import { Category, Brand } from '../../../interfaces';
 import { toggleUnitMeasureAPI } from '../../../redux/products/productsThunk';
+import { handleSearch, toggleActiveSearch } from '../../../redux/aplication/aplicationSlice';
 
 
 const marcaColumns: DataTableColumnInterface<Brand>[] = [
@@ -50,6 +51,11 @@ export default function ProductsOptions() {
     dispatch(toggleUnitMeasureAPI({branchId, unitMeasureId}));
   }
 
+  useEffect(() => {
+    dispatch(toggleActiveSearch(false));
+    dispatch(handleSearch(''));
+  }, [])
+  
   return (
     <>
       <BodySection>

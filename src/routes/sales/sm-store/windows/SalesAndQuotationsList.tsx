@@ -2,38 +2,39 @@ import { useDispatch, useSelector } from "react-redux";
 import { InputDateSearch, InputSelectSearch } from "../../../../components/Input";
 import Windows from "../../../../components/Windows";
 import { useForm } from "../../../../hooks";
-import { AppDispatch, RootState } from "../../../../redux/store";
-import { useEffect } from "react";
+import { AppDispatch, RootState } from '../../../../redux/store';
+import { useEffect, useState } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
 import { IoCloseCircle, IoSearch } from "react-icons/io5";
-import { dateLocalWhitTime } from "../../../../helpers";
+import { dateLocalWhitTime, paymentMethodIcon } from "../../../../helpers";
 import { BsBoxArrowInUpRight } from "react-icons/bs";
 import { getDocQuotationsAPI, getDocSalesAPI } from "../../../../redux/sales/salesThunk";
 import { DateRange, initDateRange } from "../../../../interfaces/formInterface";
-import { DocQuotation, DocSale } from "../../../../interfaces";
+import { DocQuotation, DocSale, MoneyCollected } from "../../../../interfaces";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { TiWarning } from "react-icons/ti";
 
-interface ListaVentasCotizacionesProp {
-    closeButton: () => void;
-    openDocSale: (doc: DocSale) => void;
-    openDocQuotation: (doc: DocQuotation) => void;
-    docSales: DocSale[];
-    setDocSales: React.Dispatch<React.SetStateAction<DocSale[]>>;
-    docQuotations: DocQuotation[];
+interface SalesAndQuotationsListProp {
+    closeButton: () => void
+    openDocSale: (doc: DocSale) => void
+    openDocQuotation: (doc: DocQuotation) => void
+    docSales: DocSale[]
+    moneyCollected: MoneyCollected
+    setDocSales: React.Dispatch<React.SetStateAction<DocSale[]>>
+    getListDocSales: (docs: DocSale[]) => void
+    docQuotations: DocQuotation[]
     setDocQuotations: React.Dispatch<React.SetStateAction<DocQuotation[]>>
 }
 
 
-export default function SalesAndQuotationsList({ closeButton, openDocSale, openDocQuotation, docSales, setDocSales, docQuotations, setDocQuotations }: ListaVentasCotizacionesProp) {
+export default function SalesAndQuotationsList({ closeButton, openDocSale, openDocQuotation, docSales, moneyCollected, getListDocSales, docQuotations, setDocQuotations }: SalesAndQuotationsListProp) {
     const { loadingData } = useSelector((s: RootState) => s.Aplication);
     const { id: branchId } = useSelector((s: RootState) => s.Branch);
-
-    // const [docSales, setDocSales] = useState<DocSale[]>([]);
-    // const [docQuotations, setDocQuotations] = useState<DocQuotation[]>([]);
+    const { exchangeRates, exchangeRateFavorite, paymentMethods } = useSelector((s: RootState) => s.Sales)
 
     const dispatch = useDispatch<AppDispatch>();
 
+    const [moneyCollectSelected, setMoneyCollectSelected] = useState(exchangeRateFavorite.Currency.code);
     const { data: dateRange, handleInputChange } = useForm<DateRange>(initDateRange);
     const { data: dataView, handleInputChange: verHandleChange } = useForm<{ ver: string }>({ ver: 'ventas' });
 
@@ -46,7 +47,7 @@ export default function SalesAndQuotationsList({ closeButton, openDocSale, openD
         toStr.setHours(toStr.getHours() + 28); // Ajustamos a la hora de Bolivia
         const to = toStr.getTime().toString();
 
-        dispatch(getDocSalesAPI({ from, to, branchId }, setDocSales));
+        dispatch(getDocSalesAPI({ from, to, branchId }, getListDocSales));
         dispatch(getDocQuotationsAPI({ from, to, branchId }, setDocQuotations));
     }
 
@@ -160,7 +161,44 @@ export default function SalesAndQuotationsList({ closeButton, openDocSale, openD
 
             </div>
 
+            <div className="p-2 flex">
+                <select
+                    name="moneyCollected"
+                    defaultValue={exchangeRateFavorite.Currency.code}
+                    className="uppercase text-xs me-2"
+                    onChange={(e) => setMoneyCollectSelected(e.target.value)}
+                >
+                    <option value='usd'>usd</option>
+                    {
+                        exchangeRates.map(c => (
+                            <option key={c.id} value={c.Currency.code}>{c.Currency.code}</option>
+                        ))
+                    }
+                </select>
 
+                {(moneyCollected[moneyCollectSelected] !== undefined) &&
+                    <div className="flex text-sm bg-secondary-1 ">
+                        {
+                            paymentMethods.map(p => {
+                                const Icon = paymentMethodIcon(p.code)
+                                if (moneyCollected[moneyCollectSelected][p.code] !== undefined)
+                                    return <div key={p.id}>
+                                        <span  
+                                        data-name={p.name} 
+                                        className={`flex justify-center items-center px-2 cursor-default hover:bg-primary hover:text-white relative hover:before:content-[attr(data-name)] before:absolute before:-top-6 before:left-0 before:bg-secondary before:text-white before:text-xs before:px-2 before:py-[2px] before:rounded-full before:opacity-0 hover:before:opacity-100 before:transition`}
+                                        >
+                                            <Icon className="me-2" />
+                                            {moneyCollected[moneyCollectSelected][p.code].toFixed(2).toString()}
+                                        </span>
+                                    </div>
+
+                            })
+                        }
+                    </div>
+                }
+
+
+            </div>
         </Windows>
     );
 }
